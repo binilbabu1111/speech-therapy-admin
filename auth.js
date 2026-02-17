@@ -9,7 +9,8 @@ let isLogin = true;
 
 
 // Exported functions for use in other modules
-export async function handleAuth(mode, email, password, name, role = 'user') {
+export async function handleAuth(mode, email, password, name, additionalInfo = {}) {
+    const role = additionalInfo.role || 'user';
     try {
         let error;
         let userData;
@@ -24,7 +25,6 @@ export async function handleAuth(mode, email, password, name, role = 'user') {
 
             if (!error && userData) {
                 // Determine if we need to upsert user on login? 
-                // Usually only needed if data changed, but good for 'last_login'
                 await upsertUser(userData);
             }
         } else {
@@ -34,7 +34,8 @@ export async function handleAuth(mode, email, password, name, role = 'user') {
                 options: {
                     data: {
                         full_name: name,
-                        role: role // Pass role to metadata
+                        role: role,
+                        ...additionalInfo // Store everything in metadata too
                     }
                 }
             });
@@ -42,10 +43,9 @@ export async function handleAuth(mode, email, password, name, role = 'user') {
             userData = data.user;
 
             if (!error && userData) {
-                // Pass role to upsertUser
-                await upsertUser(userData, { role: role });
+                // Pass all additionalInfo to upsertUser
+                await upsertUser(userData, { role, ...additionalInfo });
                 alert("Registration successful! Please check your email to confirm your account.");
-                // return; // Stop here if email confirmation is enabled
             }
         }
 

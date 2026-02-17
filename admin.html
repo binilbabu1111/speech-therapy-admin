@@ -867,21 +867,11 @@
                             // Verify Admin Role
                             const status = await checkAdminStatus(session.user.id);
                             if (!status.isAdmin) {
-                                // If not found in DB, try to create basic profile (self-healing)
-                                if (status.error && status.error.includes("not found")) {
-                                    console.log("User profile missing, attempting to create...");
-                                    try {
-                                        await upsertUser(session.user, {
-                                            role: 'user',
-                                            status: 'active'
-                                        });
-                                        alert("Profile created. Pending Admin approval.");
-                                    } catch (err) {
-                                        console.error("Failed to create profile:", err);
-                                    }
-                                }
+                                const role = status.role || 'none';
+                                const userEmail = session.user.email;
 
-                                alert(`Access Denied: ${status.error || 'Not an administrator'}`);
+                                alert(`Access Denied!\n\nUser: ${userEmail}\nCurrent Role: ${role}\n\nTo access this page, you must update this user's role to 'admin' in the Supabase SQL Editor.`);
+
                                 await supabase.auth.signOut();
                                 showLogin();
                                 return;

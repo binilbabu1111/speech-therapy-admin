@@ -4,9 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | JisWorld Speech Therapy</title>
-    <meta name="description"
-        content="Log in or create an account at JisWorld Speech Therapy to manage appointments, track therapy progress, and connect with your child's therapist.">
+    <title>Premium Login | JisWorld Speech Therapy</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
@@ -15,11 +13,9 @@
 
     <style>
         /* ═══════════════════════════════════════════
-           RESET & BASE
+           RESET & BASE STYLES
            ═══════════════════════════════════════════ */
-        *,
-        *::before,
-        *::after {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -31,696 +27,495 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: #f8f9fa;
+            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            overflow-x: hidden;
+            color: #2D3436;
+        }
+
+        /* Animated Background Orbs */
+        .bg-orbs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
             overflow: hidden;
         }
 
-        /* Floating orbs background */
-        body::before,
-        body::after {
-            content: '';
-            position: fixed;
+        .orb {
+            position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.35;
-            z-index: 0;
-            animation: float 8s ease-in-out infinite;
+            filter: blur(100px);
+            opacity: 0.5;
+            animation: float 25s infinite alternate ease-in-out;
         }
 
-        body::before {
-            width: 400px;
-            height: 400px;
+        .orb-1 {
+            width: 450px;
+            height: 450px;
             background: #C4A484;
             top: -100px;
-            left: -100px;
+            left: -150px;
         }
 
-        body::after {
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #8F9779;
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        .orb-3 {
             width: 350px;
             height: 350px;
-            background: #7c5cbf;
-            bottom: -80px;
-            right: -80px;
-            animation-delay: 4s;
+            background: #5BA4CF;
+            top: 50%;
+            left: 50%;
+            animation-delay: -10s;
         }
 
         @keyframes float {
-
-            0%,
-            100% {
+            0% {
                 transform: translate(0, 0) scale(1);
             }
 
-            50% {
-                transform: translate(30px, -30px) scale(1.05);
+            100% {
+                transform: translate(120px, 80px) scale(1.15);
             }
         }
 
         /* ═══════════════════════════════════════════
            MAIN CONTAINER
            ═══════════════════════════════════════════ */
-        .auth-container {
+        .auth-card {
             position: relative;
-            width: 900px;
+            width: 1000px;
             max-width: 95vw;
-            height: 600px;
+            height: 650px;
             max-height: 90vh;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            box-shadow:
-                0 25px 60px rgba(0, 0, 0, 0.5),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(25px);
+            border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             overflow: hidden;
-            z-index: 1;
-            display: flex;
-        }
-
-        /* ═══════════════════════════════════════════
-           FORM PANELS (Sign In / Sign Up)
-           ═══════════════════════════════════════════ */
-        .form-panel {
-            flex: 1;
-            padding: 40px 36px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            overflow-y: auto;
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-
-        .form-panel.sign-up {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 50%;
-            height: 100%;
-            justify-content: flex-start;
-            padding-top: 30px;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateX(30px);
-        }
-
-        /* When active */
-        .auth-container.register-active .form-panel.sign-in {
-            opacity: 0;
-            pointer-events: none;
-            transform: translateX(-30px);
-        }
-
-        .auth-container.register-active .form-panel.sign-up {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateX(0);
-        }
-
-        /* ═══════════════════════════════════════════
-           SLIDING OVERLAY PANEL
-           ═══════════════════════════════════════════ */
-        .overlay-panel {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(135deg, #C4A484, #a8855f, #8d6e63);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px;
-            color: white;
-            transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
             z-index: 10;
-            overflow: hidden;
         }
 
-        .overlay-panel::before {
-            content: '';
+        /* ═══════════════════════════════════════════
+           PANELS & FORMS
+           ═══════════════════════════════════════════ */
+        .form-container {
             position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
-            top: -80px;
-            right: -80px;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            padding: 50px 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 2;
         }
 
-        .overlay-panel::after {
-            content: '';
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.06);
-            bottom: -50px;
-            left: -50px;
+        .sign-in-container {
+            left: 0;
+            opacity: 1;
         }
 
-        .auth-container.register-active .overlay-panel {
-            transform: translateX(-100%);
+        .sign-up-container {
+            left: 0;
+            opacity: 0;
+            z-index: 1;
         }
 
-        .overlay-content {
-            position: relative;
+        .auth-card.right-panel-active .sign-in-container {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .auth-card.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
             z-index: 5;
         }
 
-        .overlay-content h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            line-height: 1.2;
-        }
-
-        .overlay-content p {
-            font-size: 0.92rem;
-            opacity: 0.9;
-            margin-bottom: 28px;
-            line-height: 1.6;
-            max-width: 280px;
-        }
-
-        .overlay-content .emoji-icon {
-            font-size: 3rem;
-            margin-bottom: 16px;
-            display: block;
-        }
-
-        .ghost-btn {
-            background: transparent;
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.7);
-            padding: 12px 36px;
-            border-radius: 50px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 0.5px;
-        }
-
-        .ghost-btn:hover {
-            background: white;
-            color: #8d6e63;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        /* ═══════════════════════════════════════════
-           FORM STYLES
-           ═══════════════════════════════════════════ */
-        .form-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 6px;
-        }
-
-        .form-subtitle {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 28px;
-        }
-
-        .social-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .social-btn {
-            flex: 1;
+        form {
+            background-color: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 10px 16px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 500;
+            flex-direction: column;
+            height: 100%;
+            text-align: center;
+        }
+
+        .form-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1A1A1A;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .form-subtitle {
+            font-size: 0.95rem;
+            color: #777;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Social Auth */
+        .social-container {
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-btn {
+            border: 1px solid #DDDDDD;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 5px;
+            height: 50px;
+            width: 50px;
+            background: #fff;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .social-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-1px);
+            border-color: #C4A484;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
         .social-btn img {
-            width: 18px;
-            height: 18px;
+            width: 20px;
         }
 
         .divider {
+            color: #BBB;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            width: 100%;
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 0.78rem;
+            gap: 10px;
         }
 
         .divider::before,
         .divider::after {
-            content: '';
+            content: "";
             flex: 1;
             height: 1px;
-            background: rgba(255, 255, 255, 0.1);
+            background: #EEE;
         }
 
-        /* ── Input Fields ── */
+        /* Inputs */
         .input-group {
-            position: relative;
-            margin-bottom: 16px;
-        }
-
-        .input-group.half {
-            display: inline-block;
-            width: calc(50% - 6px);
-        }
-
-        .input-group.half+.input-group.half {
-            margin-left: 12px;
+            width: 100%;
+            margin-bottom: 12px;
+            text-align: left;
         }
 
         .input-group label {
             display: block;
-            font-size: 0.78rem;
-            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #555;
             margin-bottom: 5px;
-            font-weight: 500;
+            margin-left: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .input-group input,
-        .input-group select,
-        .input-group textarea {
+        input {
+            background-color: #F8F9FA;
+            border: 1px solid #EEE;
+            padding: 14px 20px;
+            border-radius: 12px;
             width: 100%;
-            padding: 11px 14px;
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 10px;
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.88rem;
-            outline: none;
+            font-size: 0.95rem;
+            font-family: inherit;
             transition: all 0.3s ease;
         }
 
-        .input-group input::placeholder,
-        .input-group textarea::placeholder {
-            color: rgba(255, 255, 255, 0.25);
-        }
-
-        .input-group input:focus,
-        .input-group select:focus,
-        .input-group textarea:focus {
+        input:focus {
+            outline: none;
             border-color: #C4A484;
-            background: rgba(196, 164, 132, 0.08);
-            box-shadow: 0 0 0 3px rgba(196, 164, 132, 0.15);
+            background-color: #FFF;
+            box-shadow: 0 0 0 4px rgba(196, 164, 132, 0.1);
         }
 
-        .input-group select option {
-            background: #302b63;
-            color: white;
+        .row {
+            display: flex;
+            gap: 15px;
+            width: 100%;
         }
 
-        .field-error {
-            color: #ff6b6b;
-            font-size: 0.72rem;
-            margin-top: 3px;
-            min-height: 0.9em;
+        /* Buttons */
+        .primary-btn {
+            border-radius: 15px;
+            border: none;
+            background: #2D2D2D;
+            color: #FFFFFF;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 16px 80px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
         }
 
-        .input-error {
-            border-color: #ff6b6b !important;
+        .primary-btn:hover {
+            background: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .input-valid {
-            border-color: #51cf66 !important;
+        .primary-btn:active {
+            transform: scale(0.98);
         }
 
-        /* ── Row layouts ── */
-        .field-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0 12px;
+        .ghost-btn {
+            background: transparent;
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            border-radius: 15px;
+            font-weight: 700;
+            padding: 12px 45px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        /* ── Remember / Forgot row ── */
+        .ghost-btn:hover {
+            background-color: #FFFFFF;
+            color: #C4A484;
+        }
+
+        /* Extras */
         .options-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            font-size: 0.82rem;
-        }
-
-        .options-row label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: rgba(255, 255, 255, 0.6);
-            cursor: pointer;
-        }
-
-        .options-row input[type="checkbox"] {
-            accent-color: #C4A484;
-            width: 15px;
-            height: 15px;
-        }
-
-        .forgot-link {
-            color: #C4A484;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .forgot-link:hover {
-            color: #e0c9a8;
-        }
-
-        /* ── Submit button ── */
-        .submit-btn {
             width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #C4A484, #a8855f);
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .submit-btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.15));
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(196, 164, 132, 0.35);
-        }
-
-        .submit-btn:hover::after {
-            opacity: 1;
-        }
-
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .auth-error {
-            color: #ff6b6b;
-            font-size: 0.82rem;
-            margin-top: 10px;
-            min-height: 1.2em;
-            text-align: center;
-        }
-
-        /* ── Password strength ── */
-        .strength-wrap {
-            margin-top: 6px;
-        }
-
-        .strength-track {
-            height: 4px;
-            border-radius: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            overflow: hidden;
-        }
-
-        .strength-fill {
-            height: 100%;
-            width: 0;
-            border-radius: 2px;
-            transition: width .35s ease, background .35s ease;
-        }
-
-        .strength-label {
-            font-size: 0.7rem;
-            margin-top: 3px;
-            font-weight: 600;
-        }
-
-        .strength-checklist {
-            list-style: none;
-            padding: 0;
-            margin: 4px 0 0;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1px 10px;
-            font-size: 0.68rem;
-            color: rgba(255, 255, 255, 0.35);
-        }
-
-        .strength-checklist li::before {
-            content: '○ ';
-        }
-
-        .strength-checklist li.met {
-            color: #51cf66;
-        }
-
-        .strength-checklist li.met::before {
-            content: '● ';
-        }
-
-        /* ── Checkboxes ── */
-        .checkbox-group {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 10px;
-        }
-
-        .checkbox-group input[type=checkbox] {
-            accent-color: #C4A484;
-            width: 15px;
-            height: 15px;
-            margin-top: 2px;
-            flex-shrink: 0;
-        }
-
-        .terms-link {
-            color: #C4A484;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        /* ── Parent/Guardian Section ── */
-        .parent-section {
-            border: 1px solid rgba(196, 164, 132, 0.25);
-            border-radius: 12px;
-            padding: 14px 16px;
-            background: rgba(196, 164, 132, 0.05);
-            margin-bottom: 14px;
-        }
-
-        .parent-section legend {
-            font-weight: 600;
-            font-size: 0.82rem;
-            color: #C4A484;
-            padding: 0 6px;
-        }
-
-        .parent-section hr {
-            border: none;
-            border-top: 1px solid rgba(196, 164, 132, 0.15);
-            margin: 10px 0;
-        }
-
-        /* ── Toast ── */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(20px);
-            color: #fff;
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-size: 0.88rem;
-            z-index: 9999;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            opacity: 0;
-            transition: opacity .3s, transform .3s;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* ── Mobile-only tab toggle ── */
-        .mobile-toggle {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
+            margin: 10px 0 20px;
             font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.5);
+            color: #666;
         }
 
-        .mobile-toggle a {
+        .options-row a {
             color: #C4A484;
             text-decoration: none;
             font-weight: 600;
-            cursor: pointer;
         }
 
-        .mobile-toggle a:hover {
-            color: #e0c9a8;
-        }
-
-        .back-home {
-            display: block;
-            text-align: center;
-            margin-top: 16px;
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.35);
+        .back-link {
+            margin-top: 25px;
+            color: #AAA;
             text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
         }
 
-        .back-home:hover {
+        .back-link:hover {
             color: #C4A484;
         }
 
         /* ═══════════════════════════════════════════
-           RESPONSIVE
+           SLIDING OVERLAY
            ═══════════════════════════════════════════ */
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .auth-card.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            background: linear-gradient(135deg, #C4A484 0%, #8b6e4e 100%);
+            color: #FFFFFF;
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .auth-card.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 50px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+
+        .auth-card.right-panel-active .overlay-left {
+            transform: translateX(0);
+        }
+
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .auth-card.right-panel-active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        .overlay h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .overlay p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        /* ── Mobile View ── */
+        .mobile-only {
+            display: none;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .mobile-only span {
+            color: #C4A484;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
         @media (max-width: 768px) {
-            body {
-                padding: 16px;
-                overflow: auto;
-                align-items: flex-start;
-                padding-top: 40px;
-            }
-
-            .auth-container {
-                flex-direction: column;
-                min-height: auto;
+            .auth-card {
+                width: 90%;
+                height: auto;
                 border-radius: 20px;
+                padding: 40px 0;
             }
 
-            .overlay-panel {
+            .overlay-container {
                 display: none;
             }
 
-            .form-panel {
-                padding: 32px 24px;
-                width: 100%;
-            }
-
-            .form-panel.sign-up {
+            .form-container {
                 position: relative;
                 width: 100%;
+                left: 0;
+                transform: none !important;
+                padding: 0 30px;
                 opacity: 0;
-                pointer-events: none;
-                transform: none;
-                max-height: 0;
-                padding: 0 24px;
-                overflow: hidden;
-                transition: max-height 0.5s ease, opacity 0.4s ease, padding 0.4s ease;
+                display: none;
             }
 
-            .auth-container.register-active .form-panel.sign-in {
-                opacity: 0;
-                pointer-events: none;
-                max-height: 0;
-                padding: 0 24px;
-                overflow: hidden;
-                transform: none;
-            }
-
-            .auth-container.register-active .form-panel.sign-up {
+            .form-container.active {
+                display: flex;
                 opacity: 1;
-                pointer-events: auto;
-                max-height: 2000px;
-                padding: 32px 24px;
             }
 
-            .mobile-toggle {
+            .mobile-only {
                 display: block;
             }
-
-            .field-row {
-                grid-template-columns: 1fr;
-            }
         }
 
-        @media (max-width: 480px) {
-            .form-panel {
-                padding: 24px 18px;
-            }
-
-            .form-title {
-                font-size: 1.5rem;
-            }
-
-            .input-group.half {
-                width: 100%;
-            }
-
-            .input-group.half+.input-group.half {
-                margin-left: 0;
-            }
+        /* Errors & Toasts */
+        .field-error {
+            color: #E74C3C;
+            font-size: 0.7rem;
+            margin-top: 4px;
+            min-height: 1em;
         }
 
-        /* Make .hidden override everything */
-        .hidden {
-            display: none !important;
+        .auth-error {
+            color: #E74C3C;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .form-content {
+            width: 100%;
+            max-height: 480px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .form-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .form-content::-webkit-scrollbar-thumb {
+            background: #eee;
+            border-radius: 10px;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="auth-container" id="authContainer">
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
 
-        <!-- ════════ SIGN IN PANEL (Left) ════════ -->
-        <div class="form-panel sign-in">
-            <h1 class="form-title">Welcome Back</h1>
-            <p class="form-subtitle">Sign in to continue your journey</p>
-
-            <div class="social-row">
-                <button class="social-btn" id="googleBtn" type="button">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
-                    Google
-                </button>
-            </div>
-
-            <div class="divider">or use email</div>
-
+    <div class="auth-card" id="authCard">
+        <!-- ════════ SIGN IN ════════ -->
+        <div class="form-container sign-in-container active">
             <form id="loginForm" novalidate>
+                <h1 class="form-title">Welcome Back</h1>
+                <p class="form-subtitle">Login to your therapy dashboard</p>
+
+                <div class="social-container">
+                    <div class="social-btn" id="googleBtn">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+                    </div>
+                </div>
+
+                <div class="divider">or use email</div>
+
                 <div class="input-group">
-                    <label>Email</label>
-                    <input type="email" id="loginEmail" placeholder="name@example.com" required>
+                    <label>Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="jane@example.com" required>
                     <div class="field-error" id="err-loginEmail"></div>
                 </div>
 
@@ -732,540 +527,174 @@
 
                 <div class="options-row">
                     <label>
-                        <input type="checkbox" id="rememberMe"> Remember me
+                        <input type="checkbox" id="rememberMe" style="width: auto; margin-right: 8px;"> Remember me
                     </label>
-                    <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
+                    <a href="#" id="forgotLink">Forgot password?</a>
                 </div>
 
-                <button type="submit" class="submit-btn" id="loginBtn">Sign In</button>
+                <button type="submit" class="primary-btn" id="loginBtn">Sign In</button>
                 <div class="auth-error" id="login-error-msg"></div>
+
+                <a href="index.html" class="back-link">← Back to World</a>
+
+                <div class="mobile-only">
+                    Don't have an account? <span onclick="toggleMobileMode('register')">Sign Up</span>
+                </div>
             </form>
-
-            <a href="index.html" class="back-home">← Back to Home</a>
-
-            <!-- Mobile only -->
-            <div class="mobile-toggle">
-                Don't have an account? <a onclick="switchToRegister()">Sign Up</a>
-            </div>
         </div>
 
-        <!-- ════════ SIGN UP PANEL (Right) ════════ -->
-        <div class="form-panel sign-up">
-            <h1 class="form-title">Create Account</h1>
-            <p class="form-subtitle">Start your child's therapy journey today</p>
-
-            <div class="social-row">
-                <button class="social-btn" id="googleBtnReg" type="button">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
-                    Google
-                </button>
-            </div>
-
-            <div class="divider">or register with email</div>
-
+        <!-- ════════ SIGN UP ════════ -->
+        <div class="form-container sign-up-container">
             <form id="registerForm" novalidate>
-                <!-- Name Row -->
-                <div class="field-row">
-                    <div class="input-group">
-                        <label>First Name *</label>
-                        <input type="text" id="firstName" placeholder="Jane" minlength="2" maxlength="50">
-                        <div class="field-error" id="err-firstName"></div>
-                    </div>
-                    <div class="input-group">
-                        <label>Last Name *</label>
-                        <input type="text" id="lastName" placeholder="Doe" minlength="2" maxlength="50">
-                        <div class="field-error" id="err-lastName"></div>
+                <h1 class="form-title">Create Account</h1>
+                <p class="form-subtitle">Register for child therapy services</p>
+
+                <div class="social-container">
+                    <div class="social-btn" id="googleBtnReg">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
                     </div>
                 </div>
 
-                <div class="input-group">
-                    <label>Email *</label>
-                    <input type="email" id="regEmail" placeholder="name@example.com" required>
-                    <div class="field-error" id="err-regEmail"></div>
-                </div>
+                <div class="divider">or enter details</div>
 
-                <!-- Password + Strength -->
-                <div class="input-group">
-                    <label>Password *</label>
-                    <input type="password" id="regPassword" placeholder="••••••••" required>
-                    <div class="field-error" id="err-regPassword"></div>
-                    <div class="strength-wrap">
-                        <div class="strength-track">
-                            <div class="strength-fill" id="strengthFill"></div>
-                        </div>
-                        <div class="strength-label" id="strengthLabel"></div>
-                        <ul class="strength-checklist" id="strengthChecklist">
-                            <li id="chk-len">8+ characters</li>
-                            <li id="chk-upper">Uppercase</li>
-                            <li id="chk-lower">Lowercase</li>
-                            <li id="chk-digit">Number</li>
-                            <li id="chk-special">Special char</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>Confirm Password *</label>
-                    <input type="password" id="confirmPassword" placeholder="••••••••">
-                    <div class="field-error" id="err-confirmPassword"></div>
-                </div>
-
-                <div class="field-row">
-                    <div class="input-group">
-                        <label>Date of Birth *</label>
-                        <input type="date" id="dob">
-                        <div class="field-error" id="err-dob"></div>
-                    </div>
-                    <div class="input-group">
-                        <label>Phone <span style="opacity:.4">(optional)</span></label>
-                        <input type="tel" id="phone" placeholder="(555) 123-4567">
-                        <div class="field-error" id="err-phone"></div>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>Address <span style="opacity:.4">(optional)</span></label>
-                    <input type="text" id="address" placeholder="123 Main St, City">
-                </div>
-
-                <div class="input-group">
-                    <label>I am a… *</label>
-                    <select id="roleSelect">
-                        <option value="parent">Parent / Guardian</option>
-                        <option value="therapist">Therapist</option>
-                        <option value="reception">Receptionist</option>
-                    </select>
-                </div>
-
-                <!-- Parent / Guardian Details -->
-                <fieldset class="parent-section" id="parentGuardianSection">
-                    <legend>👨‍👩‍👧 Parent / Guardian Details</legend>
-                    <div class="field-row" style="margin-top:8px;">
+                <div class="form-content">
+                    <div class="row">
                         <div class="input-group">
-                            <label>Parent Full Name</label>
-                            <input type="text" id="parentName" placeholder="Jane Doe">
+                            <label>First Name</label>
+                            <input type="text" id="firstName" placeholder="Jane" required>
+                            <div class="field-error" id="err-firstName"></div>
                         </div>
                         <div class="input-group">
-                            <label>Parent Email</label>
-                            <input type="email" id="parentEmail" placeholder="parent@email.com">
+                            <label>Last Name</label>
+                            <input type="text" id="lastName" placeholder="Doe" required>
+                            <div class="field-error" id="err-lastName"></div>
                         </div>
                     </div>
-                    <div class="input-group">
-                        <label>Parent Phone</label>
-                        <input type="tel" id="parentPhone" placeholder="(555) 987-6543">
-                    </div>
-                    <hr>
-                    <div class="field-row">
-                        <div class="input-group">
-                            <label>Child's Name</label>
-                            <input type="text" id="childName" placeholder="Child's full name">
-                        </div>
-                        <div class="input-group">
-                            <label>Child's Date of Birth</label>
-                            <input type="date" id="childDob">
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <label>Therapy Needs</label>
-                        <textarea id="childNeeds" rows="2"
-                            placeholder="Describe any speech, language, or developmental needs..."></textarea>
-                    </div>
-                </fieldset>
 
-                <!-- Terms & Newsletter -->
-                <div class="checkbox-group">
-                    <input type="checkbox" id="termsCheck">
-                    <label for="termsCheck">I agree to the <span class="terms-link"
-                            onclick="alert('Terms & Conditions: By registering you agree to our standard Terms of Service and Privacy Policy.')">Terms
-                            & Conditions</span> *</label>
-                </div>
-                <div class="field-error" id="err-terms" style="margin-top:-6px;margin-bottom:8px;"></div>
+                    <div class="input-group">
+                        <label>Email *</label>
+                        <input type="email" id="regEmail" placeholder="jane@example.com" required>
+                        <div class="field-error" id="err-regEmail"></div>
+                    </div>
 
-                <div class="checkbox-group">
-                    <input type="checkbox" id="newsletterCheck">
-                    <label for="newsletterCheck">Subscribe to therapy tips & updates</label>
+                    <div class="input-group">
+                        <label>Password *</label>
+                        <input type="password" id="regPassword" placeholder="••••••••" required>
+                        <div class="field-error" id="err-regPassword"></div>
+                    </div>
+
+                    <div class="input-group" style="display:flex; align-items:flex-start; gap:8px;">
+                        <input type="checkbox" id="terms" style="width:auto; margin-top:4px;">
+                        <span style="font-size: 0.8rem; color:#666;">I agree to the Terms & Conditions</span>
+                    </div>
                 </div>
 
-                <button type="submit" class="submit-btn" id="registerBtn">Create Account</button>
-                <div class="auth-error" id="register-error-msg"></div>
+                <button type="submit" class="primary-btn" id="registerBtn">Register Now</button>
+                <div class="auth-error" id="reg-error-msg"></div>
+
+                <div class="mobile-only">
+                    Already have an account? <span onclick="toggleMobileMode('login')">Sign In</span>
+                </div>
             </form>
-
-            <a href="index.html" class="back-home">← Back to Home</a>
-
-            <!-- Mobile only -->
-            <div class="mobile-toggle">
-                Already have an account? <a onclick="switchToLogin()">Sign In</a>
-            </div>
         </div>
 
-        <!-- ════════ SLIDING OVERLAY ════════ -->
-        <div class="overlay-panel">
-            <div class="overlay-content" id="overlayContent">
-                <!-- Default: Sign-In active, overlay says "Go to Sign Up" -->
-                <span class="emoji-icon">🎈</span>
-                <h2 id="overlayTitle">New Here?</h2>
-                <p id="overlayText">Create an account and start your child's speech therapy journey with us!</p>
-                <button class="ghost-btn" id="overlayBtn" onclick="toggleMode()">Sign Up</button>
+        <!-- ════════ OVERLAY ════════ -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h2>Welcome Back!</h2>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost-btn" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h2>Hello, Parent!</h2>
+                    <p>Enter your details and start your journey with us today</p>
+                    <button class="ghost-btn" id="signUp">Sign Up</button>
+                </div>
             </div>
         </div>
-
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="toast"></div>
+    <!-- ════════ AUTH LOGIC ════════ -->
+    <script type="module">
+        import { handleAuth, handleGoogleLogin } from './auth.js';
 
-    <script>
-        /* ═══════════════════════════════════════════
-           SUPABASE CLIENT
-           ═══════════════════════════════════════════ */
-        const SUPABASE_URL = 'https://hhrqjolqkuzwylypekhr.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_2WZKcFYxtVP8qtdsoLj82w_Jc551SaB';
-        let supabaseClient = null;
-        try {
-            const storageType = window.localStorage.getItem('jw_remember') === 'true'
-                ? window.localStorage : window.sessionStorage;
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-                auth: { storage: storageType }
-            });
-        } catch (e) { console.error("Supabase init failed:", e); }
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const authCard = document.getElementById('authCard');
+        const signInPanel = document.querySelector('.sign-in-container');
+        const signUpPanel = document.querySelector('.sign-up-container');
 
-        /* ═══════════════════════════════════════════
-           MODE SWITCHING
-           ═══════════════════════════════════════════ */
-        function toggleMode() {
-            var c = document.getElementById('authContainer');
-            var isRegister = c.classList.toggle('register-active');
-
-            var title = document.getElementById('overlayTitle');
-            var text = document.getElementById('overlayText');
-            var btn = document.getElementById('overlayBtn');
-
-            if (isRegister) {
-                title.textContent = "Welcome Back!";
-                text.textContent = "Already have an account? Sign in to access your dashboard and track progress.";
-                btn.textContent = "Sign In";
-            } else {
-                title.textContent = "New Here?";
-                text.textContent = "Create an account and start your child's speech therapy journey with us!";
-                btn.textContent = "Sign Up";
-            }
-
-            // Clear errors
-            document.querySelectorAll('.field-error, .auth-error').forEach(function (el) { el.textContent = ''; });
-            document.querySelectorAll('.input-error, .input-valid').forEach(function (el) {
-                el.classList.remove('input-error', 'input-valid');
-            });
-
-            // Reset scroll position to top
-            var signUp = document.querySelector('.form-panel.sign-up');
-            if (signUp) signUp.scrollTop = 0;
-        }
-
-        // Mobile helpers
-        function switchToRegister() {
-            var c = document.getElementById('authContainer');
-            if (!c.classList.contains('register-active')) toggleMode();
-        }
-        function switchToLogin() {
-            var c = document.getElementById('authContainer');
-            if (c.classList.contains('register-active')) toggleMode();
-        }
-
-        /* ═══════════════════════════════════════════
-           TOAST
-           ═══════════════════════════════════════════ */
-        function showToast(msg, dur) {
-            dur = dur || 3000;
-            var t = document.getElementById('toast');
-            t.textContent = msg;
-            t.classList.add('show');
-            setTimeout(function () { t.classList.remove('show'); }, dur);
-        }
-
-        /* ═══════════════════════════════════════════
-           PASSWORD STRENGTH
-           ═══════════════════════════════════════════ */
-        function checkPasswordStrength(pw) {
-            var checks = {
-                len: pw.length >= 8,
-                upper: /[A-Z]/.test(pw),
-                lower: /[a-z]/.test(pw),
-                digit: /[0-9]/.test(pw),
-                special: /[^A-Za-z0-9]/.test(pw)
-            };
-            var score = 0;
-            for (var k in checks) if (checks[k]) score++;
-            return { checks: checks, score: score };
-        }
-
-        function updateStrengthUI(pw) {
-            var result = checkPasswordStrength(pw);
-            var fill = document.getElementById('strengthFill');
-            var label = document.getElementById('strengthLabel');
-            var ids = { len: 'chk-len', upper: 'chk-upper', lower: 'chk-lower', digit: 'chk-digit', special: 'chk-special' };
-            for (var key in ids) {
-                var el = document.getElementById(ids[key]);
-                if (result.checks[key]) el.classList.add('met');
-                else el.classList.remove('met');
-            }
-            var pct = (result.score / 5) * 100;
-            fill.style.width = pct + '%';
-            var colors = ['#ff6b6b', '#ff922b', '#fcc419', '#a9e34b', '#51cf66'];
-            var labels = ['Weak', 'Fair', 'Good', 'Strong', 'Excellent'];
-            var idx = Math.max(0, result.score - 1);
-            fill.style.background = colors[idx];
-            label.textContent = pw.length > 0 ? labels[idx] : '';
-            label.style.color = colors[idx];
-            if (pw.length === 0) fill.style.width = '0';
-        }
-
-        /* ═══════════════════════════════════════════
-           VALIDATION
-           ═══════════════════════════════════════════ */
-        function setErr(id, msg) {
-            var el = document.getElementById('err-' + id);
-            var inp = document.getElementById(id);
-            if (el) el.textContent = msg;
-            if (inp) { inp.classList.remove('input-valid'); inp.classList.add('input-error'); }
-        }
-        function setOk(id) {
-            var el = document.getElementById('err-' + id);
-            var inp = document.getElementById(id);
-            if (el) el.textContent = '';
-            if (inp) { inp.classList.remove('input-error'); inp.classList.add('input-valid'); }
-        }
-        function clearState(id) {
-            var el = document.getElementById('err-' + id);
-            var inp = document.getElementById(id);
-            if (el) el.textContent = '';
-            if (inp) inp.classList.remove('input-error', 'input-valid');
-        }
-
-        var nameRe = /^[a-zA-Z\s\-']+$/;
-
-        function validateField(id) {
-            var inp = document.getElementById(id);
-            if (!inp) return true;
-            var val = inp.value.trim();
-            switch (id) {
-                case 'firstName': case 'lastName':
-                    if (!val) { setErr(id, 'Required.'); return false; }
-                    if (val.length < 2) { setErr(id, 'At least 2 chars.'); return false; }
-                    if (!nameRe.test(val)) { setErr(id, 'Letters only.'); return false; }
-                    setOk(id); return true;
-                case 'loginEmail': case 'regEmail':
-                    if (!val) { setErr(id, 'Email is required.'); return false; }
-                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) { setErr(id, 'Invalid email.'); return false; }
-                    setOk(id); return true;
-                case 'loginPassword':
-                    if (!val) { setErr(id, 'Required.'); return false; }
-                    if (val.length < 6) { setErr(id, 'Min 6 characters.'); return false; }
-                    setOk(id); return true;
-                case 'regPassword':
-                    if (!val) { setErr(id, 'Required.'); return false; }
-                    if (val.length < 8) { setErr(id, 'Min 8 characters.'); return false; }
-                    var res = checkPasswordStrength(val);
-                    if (res.score < 4) { setErr(id, 'Needs uppercase, lowercase, number & special.'); return false; }
-                    setOk(id); return true;
-                case 'confirmPassword':
-                    var pw = document.getElementById('regPassword').value;
-                    if (!val) { setErr(id, 'Confirm your password.'); return false; }
-                    if (val !== pw) { setErr(id, 'Passwords don\'t match.'); return false; }
-                    setOk(id); return true;
-                case 'dob':
-                    if (!val) { setErr(id, 'Required.'); return false; }
-                    if (new Date(val) > new Date()) { setErr(id, 'Can\'t be in the future.'); return false; }
-                    setOk(id); return true;
-                case 'phone':
-                    if (!val) { clearState(id); return true; }
-                    var digits = val.replace(/\D/g, '');
-                    if (digits.length < 10 || digits.length > 15) { setErr(id, '10-15 digits.'); return false; }
-                    setOk(id); return true;
-                default: return true;
-            }
-        }
-
-        function validateRegistration() {
-            var fields = ['firstName', 'lastName', 'regEmail', 'regPassword', 'confirmPassword', 'dob', 'phone'];
-            var ok = true;
-            for (var i = 0; i < fields.length; i++) if (!validateField(fields[i])) ok = false;
-            if (!document.getElementById('termsCheck').checked) {
-                document.getElementById('err-terms').textContent = 'You must agree to the Terms.';
-                ok = false;
-            } else { document.getElementById('err-terms').textContent = ''; }
-            return ok;
-        }
-
-        /* ═══════════════════════════════════════════
-           AUTH HANDLERS
-           ═══════════════════════════════════════════ */
-        async function handleLogin(email, password) {
-            if (!supabaseClient) { showToast("System error"); return; }
-            try {
-                var result = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
-                if (result.error) throw result.error;
-                if (document.getElementById('rememberMe').checked) localStorage.setItem('jw_remember', 'true');
-                else localStorage.removeItem('jw_remember');
-                if (result.data.user) await ensureUserRecords(result.data.user, '', 'parent');
-                window.location.href = email.includes('admin') ? 'admin.html' : 'profile.html';
-            } catch (err) {
-                document.getElementById('login-error-msg').textContent = err.message || 'Login failed.';
-            }
-        }
-
-        async function handleRegister(formData) {
-            if (!supabaseClient) { showToast("System error"); return; }
-            try {
-                var result = await supabaseClient.auth.signUp({
-                    email: formData.email, password: formData.password,
-                    options: {
-                        data: {
-                            full_name: formData.firstName + ' ' + formData.lastName,
-                            first_name: formData.firstName, last_name: formData.lastName,
-                            role: formData.role, phone: formData.phone || null,
-                            address: formData.address || null, dob: formData.dob || null,
-                            newsletter: formData.newsletter
-                        }
-                    }
-                });
-                if (result.error) throw result.error;
-                if (result.data.user) {
-                    await ensureUserRecords(result.data.user, formData.firstName + ' ' + formData.lastName, formData.role);
-                    showToast("Account created! Check your email to verify.", 5000);
-                }
-                if (formData.role === 'admin' || formData.email.includes('admin'))
-                    window.location.href = 'admin.html';
-                else window.location.href = 'profile.html';
-            } catch (err) {
-                document.getElementById('register-error-msg').textContent = err.message || 'Registration failed.';
-            }
-        }
-
-        async function ensureUserRecords(user, displayName, role) {
-            try {
-                var uName = displayName || user.user_metadata?.full_name || user.email.split('@')[0];
-                var uRole = role || user.user_metadata?.role || 'parent';
-                await supabaseClient.from('users').upsert({
-                    id: user.id, email: user.email, display_name: uName,
-                    role: uRole, updated_at: new Date().toISOString()
-                }, { onConflict: 'id' });
-                if (uRole === 'parent' || uRole === 'user') {
-                    var existing = await supabaseClient.from('parents').select('id').eq('user_id', user.id).maybeSingle();
-                    if (!existing.data) await supabaseClient.from('parents').insert({ user_id: user.id });
-                }
-            } catch (err) { console.warn("ensureUserRecords:", err); }
-        }
-
-        async function handleGoogleLogin() {
-            if (!supabaseClient) return;
-            try {
-                var result = await supabaseClient.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: { redirectTo: window.location.origin + '/profile.html' }
-                });
-                if (result.error) throw result.error;
-            } catch (err) { showToast(err.message); }
-        }
-
-        async function handleForgotPassword() {
-            var email = document.getElementById('loginEmail').value.trim();
-            if (!email) { setErr('loginEmail', 'Enter your email first.'); document.getElementById('loginEmail').focus(); return; }
-            if (!supabaseClient) return;
-            try {
-                var result = await supabaseClient.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin + '/login.html?reset=true'
-                });
-                if (result.error) throw result.error;
-                showToast("Reset email sent! Check your inbox.", 5000);
-            } catch (err) { showToast("Error: " + (err.message || "Could not send reset email.")); }
-        }
-
-        /* ═══════════════════════════════════════════
-           DOM READY
-           ═══════════════════════════════════════════ */
-        document.addEventListener('DOMContentLoaded', function () {
-            // Set max dates
-            var today = new Date().toISOString().split('T')[0];
-            ['dob', 'childDob'].forEach(function (id) {
-                var el = document.getElementById(id);
-                if (el) el.setAttribute('max', today);
-            });
-
-            // Google buttons
-            document.getElementById('googleBtn').addEventListener('click', handleGoogleLogin);
-            document.getElementById('googleBtnReg').addEventListener('click', handleGoogleLogin);
-
-            // Forgot password
-            document.getElementById('forgotLink').addEventListener('click', function (e) {
-                e.preventDefault(); handleForgotPassword();
-            });
-
-            // Password strength (real-time)
-            document.getElementById('regPassword').addEventListener('input', function () {
-                updateStrengthUI(this.value);
-            });
-
-            // Blur validation
-            ['firstName', 'lastName', 'regEmail', 'regPassword', 'confirmPassword', 'dob', 'phone'].forEach(function (id) {
-                var el = document.getElementById(id);
-                if (el) el.addEventListener('blur', function () { validateField(id); });
-            });
-            ['loginEmail', 'loginPassword'].forEach(function (id) {
-                var el = document.getElementById(id);
-                if (el) el.addEventListener('blur', function () { validateField(id); });
-            });
-
-            // Role selector → parent section
-            document.getElementById('roleSelect').addEventListener('change', function () {
-                var ps = document.getElementById('parentGuardianSection');
-                if (this.value === 'parent') ps.classList.remove('hidden');
-                else ps.classList.add('hidden');
-            });
-
-            // Terms clear on check
-            document.getElementById('termsCheck').addEventListener('change', function () {
-                if (this.checked) document.getElementById('err-terms').textContent = '';
-            });
-
-            // ── LOGIN FORM SUBMIT ──
-            document.getElementById('loginForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-                var ok1 = validateField('loginEmail');
-                var ok2 = validateField('loginPassword');
-                if (!ok1 || !ok2) return;
-                var btn = document.getElementById('loginBtn');
-                btn.textContent = "Signing in..."; btn.disabled = true;
-                handleLogin(
-                    document.getElementById('loginEmail').value.trim(),
-                    document.getElementById('loginPassword').value
-                ).catch(function () { }).finally(function () {
-                    btn.textContent = "Sign In"; btn.disabled = false;
-                });
-            });
-
-            // ── REGISTER FORM SUBMIT ──
-            document.getElementById('registerForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-                if (!validateRegistration()) return;
-                var btn = document.getElementById('registerBtn');
-                btn.textContent = "Creating account..."; btn.disabled = true;
-                handleRegister({
-                    email: document.getElementById('regEmail').value.trim(),
-                    password: document.getElementById('regPassword').value,
-                    firstName: document.getElementById('firstName').value.trim(),
-                    lastName: document.getElementById('lastName').value.trim(),
-                    role: document.getElementById('roleSelect').value || 'parent',
-                    dob: document.getElementById('dob').value,
-                    phone: document.getElementById('phone').value.trim(),
-                    address: document.getElementById('address').value.trim(),
-                    newsletter: document.getElementById('newsletterCheck').checked
-                }).catch(function () { }).finally(function () {
-                    btn.textContent = "Create Account"; btn.disabled = false;
-                });
-            });
+        // Layout Toggles (Desktop)
+        signUpButton.addEventListener('click', () => {
+            authCard.classList.add("right-panel-active");
         });
-    </script>
 
+        signInButton.addEventListener('click', () => {
+            authCard.classList.remove("right-panel-active");
+        });
+
+        // Layout Toggles (Mobile)
+        window.toggleMobileMode = (mode) => {
+            if (mode === 'register') {
+                signInPanel.classList.remove('active');
+                signUpPanel.classList.add('active');
+            } else {
+                signUpPanel.classList.remove('active');
+                signInPanel.classList.add('active');
+            }
+        };
+
+        // Form Submissions
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorMsg = document.getElementById('login-error-msg');
+            const submitBtn = document.getElementById('loginBtn');
+
+            submitBtn.textContent = 'Verifying...';
+            submitBtn.disabled = true;
+
+            try {
+                await handleAuth('login', email, password);
+            } catch (error) {
+                errorMsg.textContent = error.message;
+                submitBtn.textContent = 'Sign In';
+                submitBtn.disabled = false;
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const errorMsg = document.getElementById('reg-error-msg');
+            const submitBtn = document.getElementById('registerBtn');
+
+            if (!document.getElementById('terms').checked) {
+                errorMsg.textContent = "Please agree to the Terms & Conditions";
+                return;
+            }
+
+            submitBtn.textContent = 'Creating...';
+            submitBtn.disabled = true;
+
+            try {
+                await handleAuth('signup', email, password, `${firstName} ${lastName}`);
+            } catch (error) {
+                errorMsg.textContent = error.message;
+                submitBtn.textContent = 'Register Now';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Google Auth
+        document.getElementById('googleBtn').addEventListener('click', handleGoogleLogin);
+        document.getElementById('googleBtnReg').addEventListener('click', handleGoogleLogin);
+    </script>
 </body>
 
 </html>
