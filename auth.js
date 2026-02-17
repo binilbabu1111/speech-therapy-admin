@@ -1,5 +1,5 @@
 import { supabase } from './supabase-config.js';
-import { upsertUser } from './db-service.js';
+import { upsertUser, completeRegistrationProfile } from './db-service.js';
 
 // State (kept if needed for internal logic, but largely unused now)
 let isLogin = true;
@@ -43,8 +43,12 @@ export async function handleAuth(mode, email, password, name, additionalInfo = {
             userData = data.user;
 
             if (!error && userData) {
-                // Pass all additionalInfo to upsertUser
+                // Pass all additionalInfo to upsertUser (sanitized inside)
                 await upsertUser(userData, { role, ...additionalInfo });
+
+                // If sign up, complete the profile with parent/child records
+                await completeRegistrationProfile(userData.id, additionalInfo);
+
                 alert("Registration successful! Please check your email to confirm your account.");
             }
         }

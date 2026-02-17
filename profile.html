@@ -34,6 +34,44 @@
             --text-muted: #64748b;
             --glow-indigo: 0 0 20px rgba(99, 102, 241, 0.3);
             --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
+            --color-error: #ff5252;
+            --bg-error: rgba(255, 82, 82, 0.1);
+        }
+
+        .field-error {
+            color: var(--color-error);
+            font-size: 0.75rem;
+            margin-top: 6px;
+            font-weight: 500;
+            min-height: 16px;
+            display: none;
+            text-shadow: 0 0 10px rgba(255, 82, 82, 0.2);
+        }
+
+        .field-error.visible {
+            display: block;
+        }
+
+        .input-error {
+            border-color: var(--color-error) !important;
+            box-shadow: 0 0 15px rgba(255, 82, 82, 0.15) !important;
+            background: var(--bg-error) !important;
+        }
+
+        .form-error {
+            color: var(--color-error);
+            font-size: 0.85rem;
+            margin-top: 1.5rem;
+            text-align: center;
+            padding: 0.85rem;
+            background: var(--bg-error);
+            border: 1px solid rgba(255, 82, 82, 0.2);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .form-error.visible {
+            display: block;
         }
 
         * {
@@ -1613,21 +1651,19 @@
             } catch (e) { loading.style.display = 'none'; container.innerHTML = emptyState('💬', 'No messages yet.<br>Messages from your therapist will appear here.'); }
         }
         /* ═══ SHARED CHILD FORM VALIDATION ═══ */
-        function validateChildForm(fn, ln, dob, grade, diagnosis) {
-            const errors = [];
-            const nameRegex = /^[a-zA-Z\s\-'.]+$/;
-            const today = new Date().toISOString().split('T')[0];
-            if (!fn || fn.length < 2) errors.push('First name must be at least 2 characters.');
-            else if (!nameRegex.test(fn)) errors.push('First name contains invalid characters.');
-            if (!ln || ln.length < 2) errors.push('Last name must be at least 2 characters.');
-            else if (!nameRegex.test(ln)) errors.push('Last name contains invalid characters.');
-            if (dob) {
-                if (dob > today) errors.push('Date of birth cannot be in the future.');
-                if (dob < '2005-01-01') errors.push('Date of birth seems too far in the past (before 2005).');
-            }
-            if (grade && grade.length > 20) errors.push('Grade must be 20 characters or less.');
-            if (diagnosis && diagnosis.length > 200) errors.push('Diagnosis must be 200 characters or less.');
-            return errors;
+        import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js';
+
+        function validateChildData(data, prefix = 'ac-') {
+            let hasError = false;
+            if (!toggleError(`${prefix}firstname`, "First name is required", validators.isRequired(data.fn))) hasError = true;
+            else if (data.fn.length < 2) { toggleError(`${prefix}firstname`, "Min 2 characters", false); hasError = true; }
+
+            if (!toggleError(`${prefix}lastname`, "Last name is required", validators.isRequired(data.ln))) hasError = true;
+            else if (data.ln.length < 2) { toggleError(`${prefix}lastname`, "Min 2 characters", false); hasError = true; }
+
+            if (data.dob && !toggleError(`${prefix}dob`, "Invalid date", new Date(data.dob) <= new Date())) hasError = true;
+
+            return !hasError;
         }
 
         // Set max DOB to today on page load
@@ -1659,8 +1695,9 @@
             const dob = document.getElementById('ac-dob').value;
             const grade = document.getElementById('ac-grade').value.trim();
             const diagnosis = document.getElementById('ac-diagnosis').value.trim();
-            const vErrors = validateChildForm(fn, ln, dob, grade, diagnosis);
-            if (vErrors.length > 0) { errEl.textContent = vErrors.join(' '); return; }
+
+            if (!validateChildData({ fn, ln, dob, grade, diagnosis }, 'ac-')) return;
+
             const btn = document.getElementById('ac-submit-btn');
             btn.disabled = true; btn.textContent = 'Saving...';
             try {
@@ -1675,15 +1712,12 @@
                 });
                 if (error) throw error;
                 closeAddChildModal();
-                document.getElementById('ac-firstname').value = '';
-                document.getElementById('ac-lastname').value = '';
-                document.getElementById('ac-dob').value = '';
-                document.getElementById('ac-grade').value = '';
-                document.getElementById('ac-diagnosis').value = '';
+                document.getElementById('add-child-form').reset();
                 loadChildren();
             } catch (e) {
                 console.error('Add child error:', e);
                 errEl.textContent = 'Failed to add child: ' + (e.message || 'Unknown error');
+                errEl.classList.add('visible');
             }
             btn.disabled = false; btn.textContent = 'Add Child';
         };
@@ -1708,14 +1742,17 @@
         window.submitEditChild = async () => {
             const errEl = document.getElementById('ec-error-msg');
             errEl.textContent = '';
+            clearAllErrors('#edit-child-form');
+
             const childId = document.getElementById('ec-child-id').value;
             const fn = document.getElementById('ec-firstname').value.trim();
             const ln = document.getElementById('ec-lastname').value.trim();
             const dob = document.getElementById('ec-dob').value;
             const grade = document.getElementById('ec-grade').value.trim();
             const diagnosis = document.getElementById('ec-diagnosis').value.trim();
-            const vErrors = validateChildForm(fn, ln, dob, grade, diagnosis);
-            if (vErrors.length > 0) { errEl.textContent = vErrors.join(' '); return; }
+
+            if (!validateChildData({ fn, ln, dob, grade, diagnosis }, 'ec-')) return;
+
             const btn = document.getElementById('ec-submit-btn');
             btn.disabled = true; btn.textContent = 'Saving...';
             try {
@@ -1733,6 +1770,7 @@
             } catch (e) {
                 console.error('Edit child error:', e);
                 errEl.textContent = 'Failed to update child: ' + (e.message || 'Unknown error');
+                errEl.classList.add('visible');
             }
             btn.disabled = false; btn.textContent = 'Save Changes';
         };
@@ -1748,57 +1786,52 @@
                 <button onclick="closeAddChildModal()"
                     style="background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;padding:0;line-height:1;">✕</button>
             </div>
-            <div id="ac-error-msg" style="color:#f87171;font-size:0.8rem;margin-bottom:0.75rem;min-height:1.2em;"></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;">
-                <div>
-                    <label
-                        style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">First
-                        Name *</label>
-                    <input id="ac-firstname" type="text" placeholder="Aarav" required minlength="2" maxlength="50"
-                        style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;"
-                        onfocus="this.style.borderColor='var(--accent-indigo)'"
-                        onblur="this.style.borderColor='var(--border-glass)'">
+            <form id="add-child-form" onsubmit="event.preventDefault(); submitAddChild();">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;">
+                    <div>
+                        <label
+                            style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">First
+                            Name *</label>
+                        <input id="ac-firstname" type="text" placeholder="Aarav" required minlength="2" maxlength="50"
+                            style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;">
+                        <div class="field-error" id="err-ac-firstname"></div>
+                    </div>
+                    <div>
+                        <label
+                            style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Last
+                            Name *</label>
+                        <input id="ac-lastname" type="text" placeholder="John" required minlength="2" maxlength="50"
+                            style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;">
+                        <div class="field-error" id="err-ac-lastname"></div>
+                    </div>
                 </div>
-                <div>
+                <div style="margin-top:0.85rem;">
                     <label
-                        style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Last
-                        Name *</label>
-                    <input id="ac-lastname" type="text" placeholder="John" required minlength="2" maxlength="50"
-                        style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;"
-                        onfocus="this.style.borderColor='var(--accent-indigo)'"
-                        onblur="this.style.borderColor='var(--border-glass)'">
+                        style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Date
+                        of Birth</label>
+                    <input id="ac-dob" type="date" min="2005-01-01"
+                        style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;">
+                    <div class="field-error" id="err-ac-dob"></div>
                 </div>
-            </div>
-            <div style="margin-top:0.85rem;">
-                <label
-                    style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Date
-                    of Birth</label>
-                <input id="ac-dob" type="date" min="2005-01-01"
-                    style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;"
-                    onfocus="this.style.borderColor='var(--accent-indigo)'"
-                    onblur="this.style.borderColor='var(--border-glass)'">
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-top:0.85rem;">
-                <div>
-                    <label
-                        style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Grade</label>
-                    <input id="ac-grade" type="text" placeholder="Grade 1" maxlength="20"
-                        style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;"
-                        onfocus="this.style.borderColor='var(--accent-indigo)'"
-                        onblur="this.style.borderColor='var(--border-glass)'">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-top:0.85rem;">
+                    <div>
+                        <label
+                            style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Grade</label>
+                        <input id="ac-grade" type="text" placeholder="Grade 1" maxlength="20"
+                            style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label
+                            style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Diagnosis</label>
+                        <input id="ac-diagnosis" type="text" placeholder="e.g. Speech delay" maxlength="200"
+                            style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;">
+                    </div>
                 </div>
-                <div>
-                    <label
-                        style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Diagnosis</label>
-                    <input id="ac-diagnosis" type="text" placeholder="e.g. Speech delay" maxlength="200"
-                        style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;"
-                        onfocus="this.style.borderColor='var(--accent-indigo)'"
-                        onblur="this.style.borderColor='var(--border-glass)'">
-                </div>
-            </div>
-            <button id="ac-submit-btn" onclick="submitAddChild()"
-                style="margin-top:1.5rem;width:100%;padding:0.75rem;background:linear-gradient(135deg,var(--accent-indigo),var(--accent-violet));color:#fff;border:none;border-radius:12px;cursor:pointer;font-size:0.95rem;font-weight:700;transition:all 0.3s;letter-spacing:0.03em;">Add
-                Child</button>
+                <div class="form-error" id="ac-error-msg"></div>
+                <button id="ac-submit-btn" type="submit"
+                    style="margin-top:1.5rem;width:100%;padding:0.75rem;background:linear-gradient(135deg,var(--accent-indigo),var(--accent-violet));color:#fff;border:none;border-radius:12px;cursor:pointer;font-size:0.95rem;font-weight:700;transition:all 0.3s;letter-spacing:0.03em;">Add
+                    Child</button>
+            </form>
         </div>
     </div>
     <style>
@@ -1816,64 +1849,63 @@
         style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);opacity:0;transition:opacity 0.3s;">
         <div
             style="background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:2rem;width:90%;max-width:480px;box-shadow:0 25px 60px rgba(0,0,0,0.5);transform:translateY(20px);transition:transform 0.3s;">
-            <input type="hidden" id="ec-child-id">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-                <h3 style="margin:0;font-size:1.1rem;color:var(--text-primary);">✏️ Edit Child Profile</h3>
-                <button onclick="closeEditChildModal()"
-                    style="background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;padding:0;line-height:1;">✕</button>
-            </div>
-            <div id="ec-error-msg" style="color:#f87171;font-size:0.8rem;margin-bottom:0.75rem;min-height:1.2em;"></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;">
-                <div>
-                    <label
-                        style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">First
-                        Name *</label>
-                    <input id="ec-firstname" type="text" required minlength="2" maxlength="50"
-                        style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;"
-                        onfocus="this.style.borderColor='var(--accent-indigo)'"
-                        onblur="this.style.borderColor='var(--border-glass)'">
+            <form id="edit-child-form" onsubmit="event.preventDefault(); submitEditChild();">
+                <input type="hidden" id="ec-child-id">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;">
+                    <div>
+                        <label
+                            style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">First
+                            Name *</label>
+                        <input id="ec-firstname" type="text" required minlength="2" maxlength="50"
+                            style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;">
+                        <div class="field-error" id="err-ec-firstname"></div>
+                    </div>
+                    <div>
+                        <label
+                            style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Last
+                            Name *</label>
+                        <input id="ec-lastname" type="text" required minlength="2" maxlength="50"
+                            style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;">
+                        <div class="field-error" id="err-ec-lastname"></div>
+                    </div>
                 </div>
-                <div>
+                <div style="margin-top:0.85rem;">
                     <label
-                        style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Last
-                        Name *</label>
-                    <input id="ec-lastname" type="text" required minlength="2" maxlength="50"
-                        style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;"
-                        onfocus="this.style.borderColor='var(--accent-indigo)'"
-                        onblur="this.style.borderColor='var(--border-glass)'">
+                        style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Date
+                        of Birth</label>
+                    <input id="ec-dob" type="date" min="2005-01-01"
+                        style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;">
+                    <div class="field-error" id="err-ec-dob"></div>
                 </div>
-            </div>
-            <div style="margin-top:0.85rem;">
-                <label
-                    style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Date
-                    of Birth</label>
-                <input id="ec-dob" type="date" min="2005-01-01"
-                    style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;"
-                    onfocus="this.style.borderColor='var(--accent-indigo)'"
-                    onblur="this.style.borderColor='var(--border-glass)'">
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-top:0.85rem;">
-                <div>
-                    <label
-                        style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Grade</label>
-                    <input id="ec-grade" type="text" maxlength="20"
-                        style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;"
-                        onfocus="this.style.borderColor='var(--accent-indigo)'"
-                        onblur="this.style.borderColor='var(--border-glass)'">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-top:0.85rem;">
+                    <div>
+                        <label
+                            style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Grade</label>
+                        <input id="ec-grade" type="text" maxlength="20"
+                            style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label
+                            style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Diagnosis</label>
+                        <input id="ec-diagnosis" type="text" maxlength="200"
+                            style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;">
+                    </div>
                 </div>
-                <div>
-                    <label
-                        style="display:block;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">Diagnosis</label>
-                    <input id="ec-diagnosis" type="text" maxlength="200"
-                        style="width:100%;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border-glass);border-radius:10px;color:var(--text-primary);font-size:0.9rem;outline:none;transition:border 0.2s;box-sizing:border-box;"
-                        onfocus="this.style.borderColor='var(--accent-indigo)'"
-                        onblur="this.style.borderColor='var(--border-glass)'">
-                </div>
-            </div>
-            <button id="ec-submit-btn" onclick="submitEditChild()"
-                style="margin-top:1.5rem;width:100%;padding:0.75rem;background:linear-gradient(135deg,var(--accent-indigo),var(--accent-violet));color:#fff;border:none;border-radius:12px;cursor:pointer;font-size:0.95rem;font-weight:700;transition:all 0.3s;letter-spacing:0.03em;">Save
-                Changes</button>
+                <div class="form-error" id="ec-error-msg"></div>
+                <button id="ec-submit-btn" type="submit"
+                    style="margin-top:1.5rem;width:100%;padding:0.75rem;background:linear-gradient(135deg,var(--accent-indigo),var(--accent-violet));color:#fff;border:none;border-radius:12px;cursor:pointer;font-size:0.95rem;font-weight:700;transition:all 0.3s;letter-spacing:0.03em;">Save
+                    Changes</button>
+            </form>
         </div>
+    </div>
+    <script type="module">
+        import { initRealTimeValidation } from './validation.js';
+        window.addEventListener('load', () => {
+            initRealTimeValidation('#add-child-form');
+            initRealTimeValidation('#edit-child-form');
+        });
+    </script>
+    </div>
     </div>
     <style>
         #edit-child-modal.open {

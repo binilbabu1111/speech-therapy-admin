@@ -611,7 +611,7 @@
                         </div>
                         <div class="input-group">
                             <label>Date of Birth *</label>
-                            <input type="date" id="regDob" required>
+                            <input type="date" id="regDob" class="max-today" required>
                             <div class="field-error" id="err-regDob"></div>
                         </div>
                     </div>
@@ -644,7 +644,7 @@
                         </div>
                         <div class="input-group">
                             <label>Child's Date of Birth *</label>
-                            <input type="date" id="childDob" required>
+                            <input type="date" id="childDob" class="max-today" required>
                             <div class="field-error" id="err-childDob"></div>
                         </div>
                     </div>
@@ -730,7 +730,13 @@
         };
 
         // Initialize real-time validation
-        initRealTimeValidation('.auth-container');
+        initRealTimeValidation('#authCard');
+
+        // Set max DOB to today on page load
+        (function () {
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('.max-today').forEach(el => el.setAttribute('max', today));
+        })();
 
         // Form Submissions
         document.getElementById('loginForm').addEventListener('submit', async (e) => {

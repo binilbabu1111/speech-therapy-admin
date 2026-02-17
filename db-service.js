@@ -8,22 +8,72 @@ import { supabase } from './supabase-config.js';
 export async function upsertUser(user, additionalData = {}) {
     if (!user) return;
 
-    // Handle both auth user objects and plain objects
-    const metadata = user.user_metadata || {};
-    const updates = {
+    // Sanitize updates: only include valid columns for the 'users' table
+    const validColumns = ['id', 'email', 'display_name', 'phone', 'role', 'status', 'avatar_url'];
+    const sanitizedUpdates = {
         id: user.id,
         email: user.email,
         display_name: metadata.full_name || user.display_name || user.email.split('@')[0],
-        updated_at: new Date(),
-        ...additionalData
+        updated_at: new Date()
     };
+
+    // Only copy valid columns from additionalData
+    Object.keys(additionalData).forEach(key => {
+        if (validColumns.includes(key)) {
+            sanitizedUpdates[key] = additionalData[key];
+        }
+    });
 
     const { error } = await supabase
         .from('users')
-        .upsert(updates);
+        .upsert(sanitizedUpdates);
 
     if (error) {
         console.error('Error upserting user:', error);
+        throw error;
+    }
+}
+
+/**
+ * Completes the registration profile by creating parent and student records.
+ * @param {string} userId - The user ID from auth.
+ * @param {object} additionalInfo - Form data.
+ */
+export async function completeRegistrationProfile(userId, additionalInfo) {
+    try {
+        // 1. Ensure user is in 'users' table (upsertUser handled this, but we use its results)
+
+        // 2. Create Parent Record
+        const { data: parentData, error: parentError } = await supabase
+            .from('parents')
+            .upsert({
+                user_id: userId,
+                address: additionalInfo.address || null,
+                emergency_contact: additionalInfo.phone || null // Using phone as emergency contact for now
+            })
+            .select()
+            .single();
+
+        if (parentError) throw parentError;
+
+        // 3. Create Student Record if child info provided
+        if (additionalInfo.child_name) {
+            const [firstName, ...lastNames] = additionalInfo.child_name.split(' ');
+            const { error: studentError } = await supabase
+                .from('students')
+                .insert({
+                    parent_id: parentData.id,
+                    first_name: firstName || 'Child',
+                    last_name: lastNames.join(' ') || 'User',
+                    dob: additionalInfo.child_dob || null,
+                    diagnosis: additionalInfo.therapy_needs || null,
+                    therapy_status: 'Active'
+                });
+
+            if (studentError) throw studentError;
+        }
+    } catch (error) {
+        console.error('Error completing profile registration:', error);
         throw error;
     }
 }
