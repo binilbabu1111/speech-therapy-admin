@@ -5,6 +5,40 @@
     <meta charSet="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="style.css">
+    <style>
+        .field-error {
+            color: #FF5252;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            font-weight: 500;
+            min-height: 15px;
+            display: none;
+        }
+
+        .field-error.visible {
+            display: block;
+        }
+
+        .input-error {
+            border-color: #FF5252 !important;
+            background-color: rgba(255, 82, 82, 0.02) !important;
+        }
+
+        .form-error {
+            color: #FF5252;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            text-align: center;
+            padding: 0.75rem;
+            background: rgba(255, 82, 82, 0.05);
+            border-radius: 0.75rem;
+            display: none;
+        }
+
+        .form-error.visible {
+            display: block;
+        }
+    </style>
 </head>
 
 <body class="antialiased" style="font-family:&#x27;Open Sans&#x27;, sans-serif">
@@ -471,52 +505,76 @@
                                     </div>
                                 </div>
                             </div>
+                            <script type="module">
+                                import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js';
+
+                                initRealTimeValidation('#appointment-form');
+
+                                const contactForm = document.getElementById('appointment-form');
+                                if (contactForm) {
+                                    contactForm.addEventListener('submit', async (e) => {
+                                        e.preventDefault();
+
+                                        const errorMsg = document.getElementById('form-error-msg');
+                                        clearAllErrors('#appointment-form');
+
+                                        const submitBtn = contactForm.querySelector('button[type="submit"]');
+                                        const originalText = submitBtn.textContent;
+
+                                        const data = {
+                                            parentName: document.getElementById('parent-name').value.trim(),
+                                            childName: document.getElementById('child-name').value.trim(),
+                                            email: document.getElementById('email').value.trim(),
+                                            phone: document.getElementById('phone').value.trim(),
+                                            childAge: document.getElementById('child-age').value,
+                                            message: document.getElementById('message').value.trim()
+                                        };
+
+                                        let hasError = false;
+                                        if (!toggleError('parent-name', "Name is required", validators.isRequired(data.parentName))) hasError = true;
+                                        if (!toggleError('child-name', "Child's name is required", validators.isRequired(data.childName))) hasError = true;
+
+                                        if (!toggleError('email', "Email is required", validators.isRequired(data.email))) hasError = true;
+                                        else if (!toggleError('email', "Invalid format", validators.isEmail(data.email))) hasError = true;
+
+                                        if (data.phone && !toggleError('phone', "Invalid phone", validators.isPhone(data.phone))) hasError = true;
+                                        if (!toggleError('child-age', "Please select age", validators.isRequired(data.childAge))) hasError = true;
+
+                                        if (hasError) return;
+
+                                        submitBtn.disabled = true;
+                                        submitBtn.textContent = 'Sending...';
+
+                                        try {
+                                            const { submitInquiry } = await import('./db-service.js');
+                                            await submitInquiry({
+                                                name: data.parentName,
+                                                email: data.email,
+                                                phone: data.phone,
+                                                child_info: `Child: ${data.childName}, Age: ${data.childAge}`,
+                                                message: data.message,
+                                                status: 'New'
+                                            });
+
+                                            alert('Thank you! Your inquiry has been received. We will contact you shortly.');
+                                            contactForm.reset();
+                                            clearAllErrors('#appointment-form');
+                                        } catch (error) {
+                                            errorMsg.textContent = 'Failed to send inquiry. Please try again or call us.';
+                                            errorMsg.classList.add('visible');
+                                            console.error(error);
+                                        } finally {
+                                            submitBtn.disabled = false;
+                                            submitBtn.textContent = originalText;
+                                        }
+                                    });
+                                }
+                            </script>
+                            <div class="absolute -top-4 -right-4 w-24 h-24 bg-[#C4A484]/5 rounded-full -z-10"></div>
+                            <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-[#8F9779]/5 rounded-full -z-10"></div>
                         </div>
-                        <script type="module">
-                            const contactForm = document.getElementById('appointment-form');
-                            if (contactForm) {
-                                contactForm.addEventListener('submit', async (e) => {
-                                    e.preventDefault();
-
-                                    const submitBtn = contactForm.querySelector('button[type="submit"]');
-                                    const originalText = submitBtn.textContent;
-                                    submitBtn.disabled = true;
-                                    submitBtn.textContent = 'Sending...';
-
-                                    const formData = new FormData(contactForm);
-                                    const data = {
-                                        name: formData.get('parent-name'),
-                                        email: formData.get('email'),
-                                        phone: formData.get('phone'),
-                                        child_info: `Child: ${formData.get('child-name')}, Age: ${formData.get('child-age')}`,
-                                        message: formData.get('message'),
-                                        status: 'New'
-                                    };
-
-                                    try {
-                                        // Import dynamically to ensure module is loaded
-                                        const { submitInquiry } = await import('./db-service.js');
-                                        await submitInquiry(data);
-
-                                        alert('Thank you! Your inquiry has been received. We will contact you shortly.');
-                                        contactForm.reset();
-                                        // Close modal if it was open (though this form is on main page)
-                                        document.getElementById('appointment-modal').classList.add('hidden');
-                                    } catch (error) {
-                                        alert('Failed to send inquiry. Please try again or call us directly.');
-                                        console.error(error);
-                                    } finally {
-                                        submitBtn.disabled = false;
-                                        submitBtn.textContent = originalText;
-                                    }
-                                });
-                            }
-                        </script>
-                        <div class="absolute -top-4 -right-4 w-24 h-24 bg-[#C4A484]/5 rounded-full -z-10"></div>
-                        <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-[#8F9779]/5 rounded-full -z-10"></div>
                     </div>
                 </div>
-            </div>
         </section>
         <section id="why-us" class="py-16 sm:py-24 bg-gradient-to-b from-[#EBF5FB] to-[#FAFBFD]">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -663,23 +721,31 @@
                                         Name</label><input type="text" id="parent-name" required minlength="2"
                                         maxlength="100"
                                         class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 focus:ring-[#C4A484]/30 focus:border-[#C4A484] transition-all"
-                                        placeholder="Your name" /></div>
+                                        placeholder="Your name" />
+                                    <div class="field-error" id="err-parent-name"></div>
+                                </div>
                                 <div><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Child&#x27;s
-                                        Name</label><input type="text" id="child-name"
+                                        Name</label><input type="text" id="child-name" required
                                         class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 focus:ring-[#C4A484]/30 focus:border-[#C4A484] transition-all"
-                                        placeholder="Child&#x27;s name" /></div>
+                                        placeholder="Child&#x27;s name" />
+                                    <div class="field-error" id="err-child-name"></div>
+                                </div>
                                 <div><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Email</label><input
                                         type="email" id="email" required
                                         class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 focus:ring-[#C4A484]/30 focus:border-[#C4A484] transition-all"
-                                        placeholder="you@example.com" /></div>
+                                        placeholder="you@example.com" />
+                                    <div class="field-error" id="err-email"></div>
+                                </div>
                                 <div><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Phone</label><input
                                         type="tel" id="phone"
                                         class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 focus:ring-[#C4A484]/30 focus:border-[#C4A484] transition-all"
-                                        placeholder="(555) 000-0000" /></div>
+                                        placeholder="(555) 000-0000" />
+                                    <div class="field-error" id="err-phone"></div>
+                                </div>
                             </div>
                             <div class="mt-4"><label
                                     class="block text-sm font-medium text-[#4A5568] mb-1.5">Child&#x27;s
-                                    Age</label><select id="child-age"
+                                    Age</label><select id="child-age" required
                                     class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] focus:outline-none focus:ring-2 focus:ring-[#C4A484]/30 focus:border-[#C4A484] transition-all">
                                     <option value="">Select age range</option>
                                     <option>0 – 1 year</option>
@@ -688,12 +754,17 @@
                                     <option>3 – 5 years</option>
                                     <option>5 – 8 years</option>
                                     <option>8 – 12 years</option>
-                                </select></div>
+                                </select>
+                                <div class="field-error" id="err-child-age"></div>
+                            </div>
                             <div class="mt-4"><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Concerns /
                                     Message</label><textarea rows="4" id="message" maxlength="500"
                                     class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 focus:ring-[#C4A484]/30 focus:border-[#C4A484] transition-all resize-none"
                                     placeholder="Tell us about your child&#x27;s speech or language concerns..."></textarea>
-                            </div><button type="submit"
+                                <div class="field-error" id="err-message"></div>
+                            </div>
+                            <div class="form-error" id="form-error-msg"></div>
+                            <button type="submit"
                                 class="mt-6 w-full px-6 py-3 bg-[#C4A484] hover:bg-[#A38568] text-white font-semibold rounded-full transition-colors shadow-lg shadow-[#C4A484]/20">Request
                                 Appointment</button>
                         </form>
@@ -816,45 +887,116 @@
             <form id="modal-appointment-form" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-[#5C5C5C] mb-1">Parent's Name</label>
-                    <input type="text" name="parent_name" required minlength="2" maxlength="100"
+                    <input type="text" id="m-parent-name" required minlength="2" maxlength="100"
                         placeholder="Your Full Name"
                         class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#C4A484] focus:border-transparent outline-none transition-all">
+                    <div class="field-error" id="err-m-parent-name"></div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-[#5C5C5C] mb-1">Child's Name</label>
-                        <input type="text" name="child_name" required placeholder="Child's First Name"
+                        <input type="text" id="m-child-name" required placeholder="Child's First Name"
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#C4A484] focus:border-transparent outline-none transition-all">
+                        <div class="field-error" id="err-m-child-name"></div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-[#5C5C5C] mb-1">Child's Age</label>
-                        <input type="text" name="child_age" required placeholder="e.g. 5 years"
+                        <input type="text" id="m-child-age" required placeholder="e.g. 5 years"
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#C4A484] focus:border-transparent outline-none transition-all">
+                        <div class="field-error" id="err-m-child-age"></div>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-[#5C5C5C] mb-1">Email Address</label>
-                        <input type="email" name="email" required placeholder="name@example.com"
+                        <input type="email" id="m-email" required placeholder="name@example.com"
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#C4A484] focus:border-transparent outline-none transition-all">
+                        <div class="field-error" id="err-m-email"></div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-[#5C5C5C] mb-1">Phone Number</label>
-                        <input type="tel" name="phone" placeholder="(555) 123-4567"
+                        <input type="tel" id="m-phone" placeholder="(555) 123-4567"
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#C4A484] focus:border-transparent outline-none transition-all">
+                        <div class="field-error" id="err-m-phone"></div>
                     </div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#5C5C5C] mb-1">What are your concerns?</label>
-                    <textarea name="message" rows="3" maxlength="500"
+                    <textarea id="m-message" rows="3" maxlength="500"
                         placeholder="Tell us a little about your child's speech needs..."
                         class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#C4A484] focus:border-transparent outline-none transition-all"></textarea>
+                    <div class="field-error" id="err-m-message"></div>
                 </div>
-                <button type="submit"
+                <div class="form-error" id="modal-error-msg"></div>
+                <button type="submit" id="modalSubmitBtn"
                     class="w-full btn-primary py-3 rounded-lg shadow-md hover:shadow-lg transform transition-all">
                     Submit Request
                 </button>
             </form>
+
+            <script type="module">
+                import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js';
+
+                initRealTimeValidation('#modal-appointment-form');
+
+                const modalForm = document.getElementById('modal-appointment-form');
+                modalForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const errorMsg = document.getElementById('modal-error-msg');
+                    clearAllErrors('#modal-appointment-form');
+
+                    const submitBtn = document.getElementById('modalSubmitBtn');
+                    const originalText = submitBtn.textContent;
+
+                    const data = {
+                        parentName: document.getElementById('m-parent-name').value.trim(),
+                        childName: document.getElementById('m-child-name').value.trim(),
+                        childAge: document.getElementById('m-child-age').value.trim(),
+                        email: document.getElementById('m-email').value.trim(),
+                        phone: document.getElementById('m-phone').value.trim(),
+                        message: document.getElementById('m-message').value.trim()
+                    };
+
+                    let hasError = false;
+                    if (!toggleError('m-parent-name', "Name is required", validators.isRequired(data.parentName))) hasError = true;
+                    if (!toggleError('m-child-name', "Child's name is required", validators.isRequired(data.childName))) hasError = true;
+                    if (!toggleError('m-child-age', "Age is required", validators.isRequired(data.childAge))) hasError = true;
+
+                    if (!toggleError('m-email', "Email is required", validators.isRequired(data.email))) hasError = true;
+                    else if (!toggleError('m-email', "Invalid format", validators.isEmail(data.email))) hasError = true;
+
+                    if (data.phone && !toggleError('m-phone', "Invalid phone", validators.isPhone(data.phone))) hasError = true;
+
+                    if (hasError) return;
+
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Sending...';
+
+                    try {
+                        const { submitInquiry } = await import('./db-service.js');
+                        await submitInquiry({
+                            name: data.parentName,
+                            email: data.email,
+                            phone: data.phone,
+                            child_info: `Child: ${data.childName}, Age: ${data.childAge}`,
+                            message: data.message,
+                            status: 'New'
+                        });
+
+                        alert('Thank you! Your request has been sent.');
+                        modalForm.reset();
+                        clearAllErrors('#modal-appointment-form');
+                        window.toggleBookingModal();
+                    } catch (error) {
+                        errorMsg.textContent = 'Failed to send request. Please try again.';
+                        errorMsg.classList.add('visible');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
+                });
+            </script>
         </div>
     </div>
 

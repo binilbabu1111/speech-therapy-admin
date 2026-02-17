@@ -95,8 +95,8 @@
             position: relative;
             width: 1000px;
             max-width: 95vw;
-            height: 650px;
-            max-height: 90vh;
+            height: 680px;
+            max-height: 95vh;
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(25px);
             border-radius: 30px;
@@ -114,7 +114,7 @@
             top: 0;
             height: 100%;
             width: 50%;
-            padding: 50px 70px;
+            padding: 40px 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -155,25 +155,38 @@
         }
 
         .form-title {
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 800;
             color: #1A1A1A;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             text-align: center;
         }
 
         .form-subtitle {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #777;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-align: center;
+        }
+
+        .section-header {
+            width: 100%;
+            text-align: left;
+            margin: 20px 0 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #EEE;
+            color: #8b6e4e;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Social Auth */
         .social-container {
-            margin: 20px 0;
+            margin: 10px 0;
             display: flex;
-            gap: 15px;
+            gap: 12px;
         }
 
         .social-btn {
@@ -182,9 +195,8 @@
             display: inline-flex;
             justify-content: center;
             align-items: center;
-            margin: 0 5px;
-            height: 50px;
-            width: 50px;
+            height: 44px;
+            width: 44px;
             background: #fff;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -192,18 +204,18 @@
 
         .social-btn:hover {
             border-color: #C4A484;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .social-btn img {
-            width: 20px;
+            width: 18px;
         }
 
         .divider {
             color: #BBB;
-            font-size: 0.8rem;
-            margin-bottom: 20px;
+            font-size: 0.75rem;
+            margin-bottom: 15px;
             width: 100%;
             display: flex;
             align-items: center;
@@ -221,54 +233,58 @@
         /* Inputs */
         .input-group {
             width: 100%;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             text-align: left;
         }
 
         .input-group label {
             display: block;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: #555;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             margin-left: 5px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        input {
+        input,
+        select,
+        textarea {
             background-color: #F8F9FA;
             border: 1px solid #EEE;
-            padding: 14px 20px;
-            border-radius: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
             width: 100%;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-family: inherit;
             transition: all 0.3s ease;
         }
 
-        input:focus {
+        input:focus,
+        select:focus,
+        textarea:focus {
             outline: none;
             border-color: #C4A484;
             background-color: #FFF;
-            box-shadow: 0 0 0 4px rgba(196, 164, 132, 0.1);
+            box-shadow: 0 0 0 3px rgba(196, 164, 132, 0.1);
         }
 
         .row {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             width: 100%;
         }
 
         /* Buttons */
         .primary-btn {
-            border-radius: 15px;
+            border-radius: 12px;
             border: none;
             background: #2D2D2D;
             color: #FFFFFF;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 700;
-            padding: 16px 80px;
+            padding: 14px;
             letter-spacing: 1px;
             text-transform: uppercase;
             transition: all 0.3s ease;
@@ -280,20 +296,16 @@
         .primary-btn:hover {
             background: #000;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .primary-btn:active {
-            transform: scale(0.98);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
         }
 
         .ghost-btn {
             background: transparent;
             border: 1px solid #FFFFFF;
             color: #FFFFFF;
-            border-radius: 15px;
-            font-weight: 700;
-            padding: 12px 45px;
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 10px 40px;
             text-transform: uppercase;
             letter-spacing: 1px;
             cursor: pointer;
@@ -310,8 +322,8 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin: 10px 0 20px;
-            font-size: 0.85rem;
+            margin: 5px 0 15px;
+            font-size: 0.8rem;
             color: #666;
         }
 
@@ -322,10 +334,10 @@
         }
 
         .back-link {
-            margin-top: 25px;
+            margin-top: 15px;
             color: #AAA;
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             transition: color 0.3s;
         }
 
@@ -399,23 +411,23 @@
         }
 
         .overlay h2 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .overlay p {
-            font-size: 1rem;
+            font-size: 0.95rem;
             line-height: 1.6;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             opacity: 0.9;
         }
 
         /* ── Mobile View ── */
         .mobile-only {
             display: none;
-            margin-top: 20px;
-            font-size: 0.9rem;
+            margin-top: 15px;
+            font-size: 0.85rem;
             color: #666;
         }
 
@@ -427,10 +439,8 @@
 
         @media (max-width: 768px) {
             .auth-card {
-                width: 90%;
                 height: auto;
-                border-radius: 20px;
-                padding: 40px 0;
+                padding: 30px 0;
             }
 
             .overlay-container {
@@ -441,9 +451,7 @@
                 position: relative;
                 width: 100%;
                 left: 0;
-                transform: none !important;
-                padding: 0 30px;
-                opacity: 0;
+                padding: 0 25px;
                 display: none;
             }
 
@@ -459,32 +467,49 @@
 
         /* Errors & Toasts */
         .field-error {
-            color: #E74C3C;
+            color: #FF5252;
             font-size: 0.7rem;
-            margin-top: 4px;
-            min-height: 1em;
+            margin-top: 3px;
+            font-weight: 500;
+            min-height: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .input-error {
+            border-color: #FF5252 !important;
+            background-color: rgba(255, 82, 82, 0.02) !important;
         }
 
         .auth-error {
-            color: #E74C3C;
-            font-size: 0.9rem;
-            margin-top: 15px;
+            color: #FF5252;
+            font-size: 0.85rem;
+            margin-top: 10px;
             font-weight: 600;
+            text-align: center;
+            background: rgba(255, 82, 82, 0.05);
+            padding: 8px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .auth-error.visible {
+            display: block;
         }
 
         .form-content {
             width: 100%;
-            max-height: 480px;
+            max-height: 420px;
             overflow-y: auto;
-            padding-right: 5px;
+            padding-right: 10px;
+            margin-top: 10px;
         }
 
         .form-content::-webkit-scrollbar {
-            width: 4px;
+            width: 5px;
         }
 
         .form-content::-webkit-scrollbar-thumb {
-            background: #eee;
+            background: #e0d0c0;
             border-radius: 10px;
         }
     </style>
@@ -526,8 +551,8 @@
                 </div>
 
                 <div class="options-row">
-                    <label>
-                        <input type="checkbox" id="rememberMe" style="width: auto; margin-right: 8px;"> Remember me
+                    <label style="display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="rememberMe" style="width: auto;"> Remember me
                     </label>
                     <a href="#" id="forgotLink">Forgot password?</a>
                 </div>
@@ -535,7 +560,7 @@
                 <button type="submit" class="primary-btn" id="loginBtn">Sign In</button>
                 <div class="auth-error" id="login-error-msg"></div>
 
-                <a href="index.html" class="back-link">← Back to World</a>
+                <a href="index.html" class="back-link">← Back to Home</a>
 
                 <div class="mobile-only">
                     Don't have an account? <span onclick="toggleMobileMode('register')">Sign Up</span>
@@ -547,7 +572,7 @@
         <div class="form-container sign-up-container">
             <form id="registerForm" novalidate>
                 <h1 class="form-title">Create Account</h1>
-                <p class="form-subtitle">Register for child therapy services</p>
+                <p class="form-subtitle">Join JisWorld Speech Therapy</p>
 
                 <div class="social-container">
                     <div class="social-btn" id="googleBtnReg">
@@ -558,34 +583,92 @@
                 <div class="divider">or enter details</div>
 
                 <div class="form-content">
+                    <div class="section-header">Parent / Guardian Info</div>
                     <div class="row">
                         <div class="input-group">
-                            <label>First Name</label>
+                            <label>First Name *</label>
                             <input type="text" id="firstName" placeholder="Jane" required>
                             <div class="field-error" id="err-firstName"></div>
                         </div>
                         <div class="input-group">
-                            <label>Last Name</label>
+                            <label>Last Name *</label>
                             <input type="text" id="lastName" placeholder="Doe" required>
                             <div class="field-error" id="err-lastName"></div>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label>Email *</label>
+                        <label>Email Address *</label>
                         <input type="email" id="regEmail" placeholder="jane@example.com" required>
                         <div class="field-error" id="err-regEmail"></div>
                     </div>
 
-                    <div class="input-group">
-                        <label>Password *</label>
-                        <input type="password" id="regPassword" placeholder="••••••••" required>
-                        <div class="field-error" id="err-regPassword"></div>
+                    <div class="row">
+                        <div class="input-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="regPhone" placeholder="+1 (555) 000-0000">
+                            <div class="field-error" id="err-regPhone"></div>
+                        </div>
+                        <div class="input-group">
+                            <label>Date of Birth *</label>
+                            <input type="date" id="regDob" required>
+                            <div class="field-error" id="err-regDob"></div>
+                        </div>
                     </div>
 
-                    <div class="input-group" style="display:flex; align-items:flex-start; gap:8px;">
-                        <input type="checkbox" id="terms" style="width:auto; margin-top:4px;">
-                        <span style="font-size: 0.8rem; color:#666;">I agree to the Terms & Conditions</span>
+                    <div class="input-group">
+                        <label>Home Address</label>
+                        <textarea id="regAddress" rows="2" placeholder="123 Therapy St, City, State"></textarea>
+                        <div class="field-error" id="err-regAddress"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-group">
+                            <label>Password *</label>
+                            <input type="password" id="regPassword" placeholder="••••••••" required>
+                            <div class="field-error" id="err-regPassword"></div>
+                        </div>
+                        <div class="input-group">
+                            <label>Confirm Password *</label>
+                            <input type="password" id="confirmPassword" placeholder="••••••••" required>
+                            <div class="field-error" id="err-confirmPassword"></div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">Child Info</div>
+                    <div class="row">
+                        <div class="input-group">
+                            <label>Child's Full Name *</label>
+                            <input type="text" id="childName" placeholder="Little Timmy" required>
+                            <div class="field-error" id="err-childName"></div>
+                        </div>
+                        <div class="input-group">
+                            <label>Child's Date of Birth *</label>
+                            <input type="date" id="childDob" required>
+                            <div class="field-error" id="err-childDob"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Therapy Needs / Notes</label>
+                        <textarea id="therapyNeeds" rows="2"
+                            placeholder="Briefly describe your child's needs..."></textarea>
+                        <div class="field-error" id="err-therapyNeeds"></div>
+                    </div>
+
+                    <div class="section-header">Preferences</div>
+                    <div class="input-group"
+                        style="display:flex; align-items:flex-start; gap:10px; margin-bottom: 5px;">
+                        <input type="checkbox" id="terms"
+                            style="width:18px; height:18px; margin-top:2px; flex-shrink:0;">
+                        <span style="font-size: 0.8rem; color:#666; line-height: 1.4;">I agree to the <b>Terms &
+                                Conditions</b> and Privacy Policy.</span>
+                    </div>
+                    <div class="input-group" style="display:flex; align-items:flex-start; gap:10px;">
+                        <input type="checkbox" id="newsletter"
+                            style="width:18px; height:18px; margin-top:2px; flex-shrink:0;">
+                        <span style="font-size: 0.8rem; color:#666; line-height: 1.4;">Subscribe to our newsletter for
+                            therapy tips and updates.</span>
                     </div>
                 </div>
 
@@ -603,12 +686,12 @@
             <div class="overlay">
                 <div class="overlay-panel overlay-left">
                     <h2>Welcome Back!</h2>
-                    <p>To keep connected with us please login with your personal info</p>
+                    <p>Access your child's progress by logging into your account</p>
                     <button class="ghost-btn" id="signIn">Sign In</button>
                 </div>
                 <div class="overlay-panel overlay-right">
                     <h2>Hello, Parent!</h2>
-                    <p>Enter your details and start your journey with us today</p>
+                    <p>Start your child's journey to better communication today</p>
                     <button class="ghost-btn" id="signUp">Sign Up</button>
                 </div>
             </div>
@@ -618,6 +701,7 @@
     <!-- ════════ AUTH LOGIC ════════ -->
     <script type="module">
         import { handleAuth, handleGoogleLogin } from './auth.js';
+        import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js';
 
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');
@@ -645,21 +729,34 @@
             }
         };
 
+        // Initialize real-time validation
+        initRealTimeValidation('.auth-container');
+
         // Form Submissions
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
+            const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             const errorMsg = document.getElementById('login-error-msg');
             const submitBtn = document.getElementById('loginBtn');
 
+            let hasError = false;
+            if (!toggleError('loginEmail', "Email is required", validators.isRequired(email))) hasError = true;
+            else if (!toggleError('loginEmail', "Invalid email format", validators.isEmail(email))) hasError = true;
+
+            if (!toggleError('loginPassword', "Password is required", validators.isRequired(password))) hasError = true;
+
+            if (hasError) return;
+
             submitBtn.textContent = 'Verifying...';
             submitBtn.disabled = true;
+            errorMsg.classList.remove('visible');
 
             try {
                 await handleAuth('login', email, password);
             } catch (error) {
                 errorMsg.textContent = error.message;
+                errorMsg.classList.add('visible');
                 submitBtn.textContent = 'Sign In';
                 submitBtn.disabled = false;
             }
@@ -667,25 +764,79 @@
 
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
             const errorMsg = document.getElementById('reg-error-msg');
             const submitBtn = document.getElementById('registerBtn');
 
-            if (!document.getElementById('terms').checked) {
+            // Reset UI
+            clearAllErrors('.sign-up-container');
+
+            // Fields capture
+            const fields = {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                email: document.getElementById('regEmail').value.trim(),
+                phone: document.getElementById('regPhone').value.trim(),
+                dob: document.getElementById('regDob').value,
+                address: document.getElementById('regAddress').value.trim(),
+                password: document.getElementById('regPassword').value,
+                confirmPassword: document.getElementById('confirmPassword').value,
+                childName: document.getElementById('childName').value.trim(),
+                childDob: document.getElementById('childDob').value,
+                therapyNeeds: document.getElementById('therapyNeeds').value.trim(),
+                terms: document.getElementById('terms').checked,
+                newsletter: document.getElementById('newsletter').checked
+            };
+
+            // Validation Suite
+            let hasError = false;
+
+            if (!toggleError('firstName', "Required", validators.isRequired(fields.firstName))) hasError = true;
+            if (!toggleError('lastName', "Required", validators.isRequired(fields.lastName))) hasError = true;
+
+            if (!toggleError('regEmail', "Required", validators.isRequired(fields.email))) hasError = true;
+            else if (!toggleError('regEmail', "Invalid format", validators.isEmail(fields.email))) hasError = true;
+
+            if (fields.phone && !toggleError('regPhone', "Invalid phone", validators.isPhone(fields.phone))) hasError = true;
+            if (!toggleError('regDob', "Birth date required", validators.isRequired(fields.dob))) hasError = true;
+
+            if (!toggleError('regPassword', "Password required", validators.isRequired(fields.password))) hasError = true;
+            else if (!toggleError('regPassword', "Min 8 characters", validators.isMinLength(fields.password, 8))) hasError = true;
+
+            if (!toggleError('confirmPassword', "Passwords don't match", validators.passwordsMatch(fields.password, fields.confirmPassword))) hasError = true;
+
+            if (!toggleError('childName', "Required", validators.isRequired(fields.childName))) hasError = true;
+            if (!toggleError('childDob', "Child's birth date required", validators.isRequired(fields.childDob))) hasError = true;
+
+            if (!fields.terms) {
                 errorMsg.textContent = "Please agree to the Terms & Conditions";
+                errorMsg.classList.add('visible');
+                hasError = true;
+            }
+
+            if (hasError) {
+                document.querySelector('.form-content').scrollTop = 0;
                 return;
             }
 
-            submitBtn.textContent = 'Creating...';
+            submitBtn.textContent = 'Creating Account...';
             submitBtn.disabled = true;
 
+            const additionalInfo = {
+                phone: fields.phone,
+                dob: fields.dob,
+                address: fields.address,
+                child_name: fields.childName,
+                child_dob: fields.childDob,
+                therapy_needs: fields.therapyNeeds,
+                newsletter_subscribed: fields.newsletter,
+                role: 'parent'
+            };
+
             try {
-                await handleAuth('signup', email, password, `${firstName} ${lastName}`);
+                await handleAuth('signup', fields.email, fields.password, `${fields.firstName} ${fields.lastName}`, additionalInfo);
             } catch (error) {
                 errorMsg.textContent = error.message;
+                errorMsg.classList.add('visible');
                 submitBtn.textContent = 'Register Now';
                 submitBtn.disabled = false;
             }
