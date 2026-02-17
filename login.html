@@ -7,49 +7,493 @@
     <title>Login | JisWorld Speech Therapy</title>
     <meta name="description"
         content="Log in or create an account at JisWorld Speech Therapy to manage appointments, track therapy progress, and connect with your child's therapist.">
-    <link rel="stylesheet" href="style.css?v=login-v2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Quicksand:wght@500;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        /* ── Password Strength Bar ── */
-        .password-strength-wrap {
-            margin-top: 8px;
+        /* ═══════════════════════════════════════════
+           RESET & BASE
+           ═══════════════════════════════════════════ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .strength-bar-track {
-            height: 6px;
-            border-radius: 3px;
-            background: rgba(0, 0, 0, 0.08);
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             overflow: hidden;
         }
 
-        .strength-bar-fill {
+        /* Floating orbs background */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.35;
+            z-index: 0;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        body::before {
+            width: 400px;
+            height: 400px;
+            background: #C4A484;
+            top: -100px;
+            left: -100px;
+        }
+
+        body::after {
+            width: 350px;
+            height: 350px;
+            background: #7c5cbf;
+            bottom: -80px;
+            right: -80px;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(30px, -30px) scale(1.05);
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+           MAIN CONTAINER
+           ═══════════════════════════════════════════ */
+        .auth-container {
+            position: relative;
+            width: 900px;
+            max-width: 95vw;
+            height: 600px;
+            max-height: 90vh;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.5),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            z-index: 1;
+            display: flex;
+        }
+
+        /* ═══════════════════════════════════════════
+           FORM PANELS (Sign In / Sign Up)
+           ═══════════════════════════════════════════ */
+        .form-panel {
+            flex: 1;
+            padding: 40px 36px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .form-panel.sign-up {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            justify-content: flex-start;
+            padding-top: 30px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(30px);
+        }
+
+        /* When active */
+        .auth-container.register-active .form-panel.sign-in {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-30px);
+        }
+
+        .auth-container.register-active .form-panel.sign-up {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+
+        /* ═══════════════════════════════════════════
+           SLIDING OVERLAY PANEL
+           ═══════════════════════════════════════════ */
+        .overlay-panel {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(135deg, #C4A484, #a8855f, #8d6e63);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+            color: white;
+            transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .overlay-panel::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            top: -80px;
+            right: -80px;
+        }
+
+        .overlay-panel::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            bottom: -50px;
+            left: -50px;
+        }
+
+        .auth-container.register-active .overlay-panel {
+            transform: translateX(-100%);
+        }
+
+        .overlay-content {
+            position: relative;
+            z-index: 5;
+        }
+
+        .overlay-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .overlay-content p {
+            font-size: 0.92rem;
+            opacity: 0.9;
+            margin-bottom: 28px;
+            line-height: 1.6;
+            max-width: 280px;
+        }
+
+        .overlay-content .emoji-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .ghost-btn {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            padding: 12px 36px;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .ghost-btn:hover {
+            background: white;
+            color: #8d6e63;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ═══════════════════════════════════════════
+           FORM STYLES
+           ═══════════════════════════════════════════ */
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 6px;
+        }
+
+        .form-subtitle {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 28px;
+        }
+
+        .social-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .social-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .social-btn img {
+            width: 18px;
+            height: 18px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.78rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ── Input Fields ── */
+        .input-group {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .input-group.half {
+            display: inline-block;
+            width: calc(50% - 6px);
+        }
+
+        .input-group.half+.input-group.half {
+            margin-left: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.88rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input::placeholder,
+        .input-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            border-color: #C4A484;
+            background: rgba(196, 164, 132, 0.08);
+            box-shadow: 0 0 0 3px rgba(196, 164, 132, 0.15);
+        }
+
+        .input-group select option {
+            background: #302b63;
+            color: white;
+        }
+
+        .field-error {
+            color: #ff6b6b;
+            font-size: 0.72rem;
+            margin-top: 3px;
+            min-height: 0.9em;
+        }
+
+        .input-error {
+            border-color: #ff6b6b !important;
+        }
+
+        .input-valid {
+            border-color: #51cf66 !important;
+        }
+
+        /* ── Row layouts ── */
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 12px;
+        }
+
+        /* ── Remember / Forgot row ── */
+        .options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.82rem;
+        }
+
+        .options-row label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+        }
+
+        .options-row input[type="checkbox"] {
+            accent-color: #C4A484;
+            width: 15px;
+            height: 15px;
+        }
+
+        .forgot-link {
+            color: #C4A484;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .forgot-link:hover {
+            color: #e0c9a8;
+        }
+
+        /* ── Submit button ── */
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #C4A484, #a8855f);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.15));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(196, 164, 132, 0.35);
+        }
+
+        .submit-btn:hover::after {
+            opacity: 1;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-error {
+            color: #ff6b6b;
+            font-size: 0.82rem;
+            margin-top: 10px;
+            min-height: 1.2em;
+            text-align: center;
+        }
+
+        /* ── Password strength ── */
+        .strength-wrap {
+            margin-top: 6px;
+        }
+
+        .strength-track {
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .strength-fill {
             height: 100%;
             width: 0;
-            border-radius: 3px;
+            border-radius: 2px;
             transition: width .35s ease, background .35s ease;
         }
 
         .strength-label {
-            font-size: 0.75rem;
-            margin-top: 4px;
+            font-size: 0.7rem;
+            margin-top: 3px;
             font-weight: 600;
-            letter-spacing: 0.02em;
         }
 
         .strength-checklist {
             list-style: none;
             padding: 0;
-            margin: 6px 0 0;
+            margin: 4px 0 0;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2px 12px;
-            font-size: 0.72rem;
-            color: #888;
+            gap: 1px 10px;
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.35);
         }
 
         .strength-checklist li::before {
@@ -57,127 +501,57 @@
         }
 
         .strength-checklist li.met {
-            color: #16a34a;
+            color: #51cf66;
         }
 
         .strength-checklist li.met::before {
             content: '● ';
         }
 
-        /* ── Field error styling ── */
-        .field-error {
-            color: #dc2626;
-            font-size: 0.78rem;
-            margin-top: 3px;
-            min-height: 1em;
-            transition: opacity .2s;
+        /* ── Checkboxes ── */
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 10px;
         }
 
-        .input-error {
-            border-color: #dc2626 !important;
+        .checkbox-group input[type=checkbox] {
+            accent-color: #C4A484;
+            width: 15px;
+            height: 15px;
+            margin-top: 2px;
+            flex-shrink: 0;
         }
 
-        .input-valid {
-            border-color: #16a34a !important;
-        }
-
-        /* ── Parent / Guardian section ── */
-        #parentGuardianSection {
-            border: 1px solid rgba(196, 164, 132, .3);
-            border-radius: 12px;
-            padding: 16px 18px;
-            background: rgba(196, 164, 132, .04);
-            margin-bottom: 16px;
-        }
-
-        #parentGuardianSection legend {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #C4A484;
-            padding: 0 6px;
-        }
-
-        /* ── Terms link ── */
         .terms-link {
             color: #C4A484;
             text-decoration: underline;
             cursor: pointer;
         }
 
-        .terms-link:hover {
-            color: #a8855f;
+        /* ── Parent/Guardian Section ── */
+        .parent-section {
+            border: 1px solid rgba(196, 164, 132, 0.25);
+            border-radius: 12px;
+            padding: 14px 16px;
+            background: rgba(196, 164, 132, 0.05);
+            margin-bottom: 14px;
         }
 
-        /* ── Forgot-password link ── */
-        /* Override: ensure .hidden beats .field-row { display:grid } */
-        .hidden {
-            display: none !important;
-        }
-
-        .forgot-link {
-            display: block;
-            text-align: right;
-            font-size: 0.8rem;
-            margin-top: 4px;
+        .parent-section legend {
+            font-weight: 600;
+            font-size: 0.82rem;
             color: #C4A484;
-            text-decoration: none;
+            padding: 0 6px;
         }
 
-        .forgot-link:hover {
-            color: #a8855f;
-            text-decoration: underline;
-        }
-
-        /* ── Remember Me ── */
-        .remember-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.84rem;
-            color: #555;
-            margin-bottom: 8px;
-        }
-
-        .remember-row input[type=checkbox] {
-            accent-color: #C4A484;
-            width: 16px;
-            height: 16px;
-        }
-
-        /* ── Form width expansion for register ── */
-        .form-wrapper.register-mode {
-            max-width: 540px;
-        }
-
-        /* ── Two-col grid ── */
-        .field-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0 16px;
-        }
-
-        @media (max-width: 520px) {
-            .field-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ── Checkbox group ── */
-        .checkbox-group {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            font-size: 0.84rem;
-            color: #555;
-            margin-bottom: 10px;
-        }
-
-        .checkbox-group input[type=checkbox] {
-            accent-color: #C4A484;
-            width: 16px;
-            height: 16px;
-            margin-top: 2px;
-            flex-shrink: 0;
+        .parent-section hr {
+            border: none;
+            border-top: 1px solid rgba(196, 164, 132, 0.15);
+            margin: 10px 0;
         }
 
         /* ── Toast ── */
@@ -185,295 +559,432 @@
             position: fixed;
             bottom: 24px;
             left: 50%;
-            transform: translateX(-50%);
-            background: #1a1a1a;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
             color: #fff;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
             font-size: 0.88rem;
             z-index: 9999;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, .25);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             opacity: 0;
-            transition: opacity .3s;
+            transition: opacity .3s, transform .3s;
         }
 
         .toast.show {
             opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ── Mobile-only tab toggle ── */
+        .mobile-toggle {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .mobile-toggle a {
+            color: #C4A484;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .mobile-toggle a:hover {
+            color: #e0c9a8;
+        }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.35);
+            text-decoration: none;
+        }
+
+        .back-home:hover {
+            color: #C4A484;
+        }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+                overflow: auto;
+                align-items: flex-start;
+                padding-top: 40px;
+            }
+
+            .auth-container {
+                flex-direction: column;
+                min-height: auto;
+                border-radius: 20px;
+            }
+
+            .overlay-panel {
+                display: none;
+            }
+
+            .form-panel {
+                padding: 32px 24px;
+                width: 100%;
+            }
+
+            .form-panel.sign-up {
+                position: relative;
+                width: 100%;
+                opacity: 0;
+                pointer-events: none;
+                transform: none;
+                max-height: 0;
+                padding: 0 24px;
+                overflow: hidden;
+                transition: max-height 0.5s ease, opacity 0.4s ease, padding 0.4s ease;
+            }
+
+            .auth-container.register-active .form-panel.sign-in {
+                opacity: 0;
+                pointer-events: none;
+                max-height: 0;
+                padding: 0 24px;
+                overflow: hidden;
+                transform: none;
+            }
+
+            .auth-container.register-active .form-panel.sign-up {
+                opacity: 1;
+                pointer-events: auto;
+                max-height: 2000px;
+                padding: 32px 24px;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .field-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-panel {
+                padding: 24px 18px;
+            }
+
+            .form-title {
+                font-size: 1.5rem;
+            }
+
+            .input-group.half {
+                width: 100%;
+            }
+
+            .input-group.half+.input-group.half {
+                margin-left: 0;
+            }
+        }
+
+        /* Make .hidden override everything */
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
 
-<body class="bg-secondary flex-center min-h-screen">
+<body>
 
-    <div class="login-split-container">
-        <!-- Left Side: Image/Brand -->
-        <div class="login-image-side">
-            <div class="brand-overlay">
-                <h1>JisWorld</h1>
-                <p>Helping children find their voice.</p>
+    <div class="auth-container" id="authContainer">
+
+        <!-- ════════ SIGN IN PANEL (Left) ════════ -->
+        <div class="form-panel sign-in">
+            <h1 class="form-title">Welcome Back</h1>
+            <p class="form-subtitle">Sign in to continue your journey</p>
+
+            <div class="social-row">
+                <button class="social-btn" id="googleBtn" type="button">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+                    Google
+                </button>
+            </div>
+
+            <div class="divider">or use email</div>
+
+            <form id="loginForm" novalidate>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="name@example.com" required>
+                    <div class="field-error" id="err-loginEmail"></div>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                    <div class="field-error" id="err-loginPassword"></div>
+                </div>
+
+                <div class="options-row">
+                    <label>
+                        <input type="checkbox" id="rememberMe"> Remember me
+                    </label>
+                    <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="submit-btn" id="loginBtn">Sign In</button>
+                <div class="auth-error" id="login-error-msg"></div>
+            </form>
+
+            <a href="index.html" class="back-home">← Back to Home</a>
+
+            <!-- Mobile only -->
+            <div class="mobile-toggle">
+                Don't have an account? <a onclick="switchToRegister()">Sign Up</a>
             </div>
         </div>
 
-        <!-- Right Side: Form -->
-        <div class="login-form-side">
-            <div class="form-wrapper" id="formWrapper">
-                <div class="login-header text-center mb-6">
-                    <a href="index.html" class="logo mb-4 inline-block md:hidden">
-                        <span class="logo-text">Jis</span><span class="logo-highlight">World</span>
-                        <span class="logo-icon">🎈</span>
-                    </a>
-                    <h2 id="auth-title">Welcome Back!</h2>
-                    <p id="auth-subtitle" class="text-gray">Please log in to access your dashboard.</p>
-                </div>
+        <!-- ════════ SIGN UP PANEL (Right) ════════ -->
+        <div class="form-panel sign-up">
+            <h1 class="form-title">Create Account</h1>
+            <p class="form-subtitle">Start your child's therapy journey today</p>
 
-                <div class="login-tabs mb-6">
-                    <button class="tab-btn active text-[#2D2D2D] border-b-2 border-[#C4A484]"
-                        onclick="switchAuthMode('login')">Login</button>
-                    <button class="tab-btn text-gray-400 hover:text-[#C4A484]"
-                        onclick="switchAuthMode('register')">Register</button>
-                </div>
+            <div class="social-row">
+                <button class="social-btn" id="googleBtnReg" type="button">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+                    Google
+                </button>
+            </div>
 
-                <!-- Social Auth Buttons -->
-                <div class="social-auth mb-6 space-y-3">
-                    <button id="googleBtn"
-                        class="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors bg-white text-gray-700 font-medium">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
-                        <span class="btn-text">Google</span>
-                    </button>
-                </div>
+            <div class="divider">or register with email</div>
 
-                <div class="relative mb-6">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-200"></div>
+            <form id="registerForm" novalidate>
+                <!-- Name Row -->
+                <div class="field-row">
+                    <div class="input-group">
+                        <label>First Name *</label>
+                        <input type="text" id="firstName" placeholder="Jane" minlength="2" maxlength="50">
+                        <div class="field-error" id="err-firstName"></div>
                     </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-white text-gray-500">Or email</span>
+                    <div class="input-group">
+                        <label>Last Name *</label>
+                        <input type="text" id="lastName" placeholder="Doe" minlength="2" maxlength="50">
+                        <div class="field-error" id="err-lastName"></div>
                     </div>
                 </div>
 
-                <form id="authForm" novalidate>
-                    <!-- ═══════════ REGISTRATION-ONLY FIELDS ═══════════ -->
+                <div class="input-group">
+                    <label>Email *</label>
+                    <input type="email" id="regEmail" placeholder="name@example.com" required>
+                    <div class="field-error" id="err-regEmail"></div>
+                </div>
 
-                    <!-- First & Last Name row -->
-                    <div id="nameFields" class="field-row hidden">
-                        <div class="form-group mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">First Name *</label>
-                            <input type="text" id="firstName"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
-                                placeholder="Jane" minlength="2" maxlength="50">
-                            <div class="field-error" id="err-firstName"></div>
+                <!-- Password + Strength -->
+                <div class="input-group">
+                    <label>Password *</label>
+                    <input type="password" id="regPassword" placeholder="••••••••" required>
+                    <div class="field-error" id="err-regPassword"></div>
+                    <div class="strength-wrap">
+                        <div class="strength-track">
+                            <div class="strength-fill" id="strengthFill"></div>
                         </div>
-                        <div class="form-group mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Last Name *</label>
-                            <input type="text" id="lastName"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
-                                placeholder="Doe" minlength="2" maxlength="50">
-                            <div class="field-error" id="err-lastName"></div>
-                        </div>
+                        <div class="strength-label" id="strengthLabel"></div>
+                        <ul class="strength-checklist" id="strengthChecklist">
+                            <li id="chk-len">8+ characters</li>
+                            <li id="chk-upper">Uppercase</li>
+                            <li id="chk-lower">Lowercase</li>
+                            <li id="chk-digit">Number</li>
+                            <li id="chk-special">Special char</li>
+                        </ul>
                     </div>
+                </div>
 
-                    <!-- Email (always visible) -->
-                    <div class="form-group mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                        <input type="email" id="email"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
-                            placeholder="name@example.com" required>
-                        <div class="field-error" id="err-email"></div>
-                    </div>
+                <div class="input-group">
+                    <label>Confirm Password *</label>
+                    <input type="password" id="confirmPassword" placeholder="••••••••">
+                    <div class="field-error" id="err-confirmPassword"></div>
+                </div>
 
-                    <!-- Password (always visible) -->
-                    <div class="form-group mb-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
-                        <input type="password" id="password"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
-                            placeholder="••••••••" required>
-                        <div class="field-error" id="err-password"></div>
-                        <!-- Password strength (registration only) -->
-                        <div id="strengthWrap" class="password-strength-wrap hidden">
-                            <div class="strength-bar-track">
-                                <div class="strength-bar-fill" id="strengthFill"></div>
-                            </div>
-                            <div class="strength-label" id="strengthLabel"></div>
-                            <ul class="strength-checklist" id="strengthChecklist">
-                                <li id="chk-len">8+ characters</li>
-                                <li id="chk-upper">Uppercase letter</li>
-                                <li id="chk-lower">Lowercase letter</li>
-                                <li id="chk-digit">A number</li>
-                                <li id="chk-special">Special character</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Remember Me + Forgot Password (login only) -->
-                    <div id="loginExtras" class="mb-4" style="margin-top:4px;">
-                        <div class="remember-row">
-                            <input type="checkbox" id="rememberMe">
-                            <label for="rememberMe">Remember me</label>
-                        </div>
-                        <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
-                    </div>
-
-                    <!-- Confirm Password (registration only) -->
-                    <div id="confirmPwField" class="form-group mb-4 hidden">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password *</label>
-                        <input type="password" id="confirmPassword"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
-                            placeholder="••••••••">
-                        <div class="field-error" id="err-confirmPassword"></div>
-                    </div>
-
-                    <!-- Date of Birth (registration only) -->
-                    <div id="dobField" class="form-group mb-4 hidden">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth *</label>
-                        <input type="date" id="dob"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all">
+                <div class="field-row">
+                    <div class="input-group">
+                        <label>Date of Birth *</label>
+                        <input type="date" id="dob">
                         <div class="field-error" id="err-dob"></div>
                     </div>
-
-                    <!-- Phone & Address row (registration only) -->
-                    <div id="contactFields" class="field-row hidden">
-                        <div class="form-group mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone <span
-                                    style="color:#999;font-weight:400;">(optional)</span></label>
-                            <input type="tel" id="phone"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
-                                placeholder="(555) 123-4567">
-                            <div class="field-error" id="err-phone"></div>
-                        </div>
-                        <div class="form-group mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Address <span
-                                    style="color:#999;font-weight:400;">(optional)</span></label>
-                            <input type="text" id="address"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
-                                placeholder="123 Main St, City">
-                        </div>
+                    <div class="input-group">
+                        <label>Phone <span style="opacity:.4">(optional)</span></label>
+                        <input type="tel" id="phone" placeholder="(555) 123-4567">
+                        <div class="field-error" id="err-phone"></div>
                     </div>
-
-                    <!-- Role (registration only) -->
-                    <div id="roleField" class="hidden mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">I am a... *</label>
-                        <select id="roleSelect"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all">
-                            <option value="parent">Parent / Guardian</option>
-                            <option value="therapist">Therapist</option>
-                            <option value="reception">Receptionist</option>
-                        </select>
-                    </div>
-
-                    <!-- ═══ Parent / Guardian Section ═══ -->
-                    <fieldset id="parentGuardianSection" class="hidden">
-                        <legend>👨‍👩‍👧 Parent / Guardian Details</legend>
-
-                        <div class="field-row" style="margin-top:10px;">
-                            <div class="form-group mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Parent Full Name</label>
-                                <input type="text" id="parentName"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
-                                    placeholder="Jane Doe" minlength="2" maxlength="100">
-                            </div>
-                            <div class="form-group mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Parent Email</label>
-                                <input type="email" id="parentEmail"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
-                                    placeholder="parent@email.com">
-                            </div>
-                        </div>
-                        <div class="form-group mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Parent Phone</label>
-                            <input type="tel" id="parentPhone"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
-                                placeholder="(555) 987-6543">
-                        </div>
-
-                        <hr style="border-color:rgba(196,164,132,.2); margin:12px 0;">
-
-                        <div class="field-row">
-                            <div class="form-group mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Child's Name</label>
-                                <input type="text" id="childName"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
-                                    placeholder="Child's full name">
-                            </div>
-                            <div class="form-group mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Child's Date of
-                                    Birth</label>
-                                <input type="date" id="childDob"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all">
-                            </div>
-                        </div>
-                        <div class="form-group mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Child's Therapy Needs</label>
-                            <textarea id="childNeeds" rows="3"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
-                                placeholder="Briefly describe any speech, language, or developmental needs..."></textarea>
-                        </div>
-                    </fieldset>
-
-                    <!-- Terms & Conditions + Newsletter (registration only) -->
-                    <div id="termsSection" class="hidden" style="margin-bottom:16px;">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="termsCheck">
-                            <label for="termsCheck">I agree to the <span class="terms-link"
-                                    onclick="alert('Terms & Conditions: By registering you agree to our standard Terms of Service and Privacy Policy.')">Terms
-                                    & Conditions</span> *</label>
-                        </div>
-                        <div class="field-error" id="err-terms" style="margin-top:-6px;margin-bottom:6px;"></div>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="newsletterCheck">
-                            <label for="newsletterCheck">Subscribe to our newsletter for therapy tips & updates</label>
-                        </div>
-                    </div>
-
-                    <button type="submit" id="submitBtn"
-                        class="w-full py-3 bg-[#2D2D2D] hover:bg-[#1a1a1a] text-white font-semibold rounded-lg transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                        Log In
-                    </button>
-                    <div id="auth-error-msg"
-                        style="color:#dc2626;font-size:0.85rem;margin-top:0.75rem;min-height:1.2em;text-align:center;">
-                    </div>
-                </form>
-
-                <div class="text-center mt-6 text-sm">
-                    <a href="index.html" class="text-gray-400 hover:text-[#C4A484]">← Back to Home</a>
                 </div>
+
+                <div class="input-group">
+                    <label>Address <span style="opacity:.4">(optional)</span></label>
+                    <input type="text" id="address" placeholder="123 Main St, City">
+                </div>
+
+                <div class="input-group">
+                    <label>I am a… *</label>
+                    <select id="roleSelect">
+                        <option value="parent">Parent / Guardian</option>
+                        <option value="therapist">Therapist</option>
+                        <option value="reception">Receptionist</option>
+                    </select>
+                </div>
+
+                <!-- Parent / Guardian Details -->
+                <fieldset class="parent-section" id="parentGuardianSection">
+                    <legend>👨‍👩‍👧 Parent / Guardian Details</legend>
+                    <div class="field-row" style="margin-top:8px;">
+                        <div class="input-group">
+                            <label>Parent Full Name</label>
+                            <input type="text" id="parentName" placeholder="Jane Doe">
+                        </div>
+                        <div class="input-group">
+                            <label>Parent Email</label>
+                            <input type="email" id="parentEmail" placeholder="parent@email.com">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Parent Phone</label>
+                        <input type="tel" id="parentPhone" placeholder="(555) 987-6543">
+                    </div>
+                    <hr>
+                    <div class="field-row">
+                        <div class="input-group">
+                            <label>Child's Name</label>
+                            <input type="text" id="childName" placeholder="Child's full name">
+                        </div>
+                        <div class="input-group">
+                            <label>Child's Date of Birth</label>
+                            <input type="date" id="childDob">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Therapy Needs</label>
+                        <textarea id="childNeeds" rows="2"
+                            placeholder="Describe any speech, language, or developmental needs..."></textarea>
+                    </div>
+                </fieldset>
+
+                <!-- Terms & Newsletter -->
+                <div class="checkbox-group">
+                    <input type="checkbox" id="termsCheck">
+                    <label for="termsCheck">I agree to the <span class="terms-link"
+                            onclick="alert('Terms & Conditions: By registering you agree to our standard Terms of Service and Privacy Policy.')">Terms
+                            & Conditions</span> *</label>
+                </div>
+                <div class="field-error" id="err-terms" style="margin-top:-6px;margin-bottom:8px;"></div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="newsletterCheck">
+                    <label for="newsletterCheck">Subscribe to therapy tips & updates</label>
+                </div>
+
+                <button type="submit" class="submit-btn" id="registerBtn">Create Account</button>
+                <div class="auth-error" id="register-error-msg"></div>
+            </form>
+
+            <a href="index.html" class="back-home">← Back to Home</a>
+
+            <!-- Mobile only -->
+            <div class="mobile-toggle">
+                Already have an account? <a onclick="switchToLogin()">Sign In</a>
             </div>
         </div>
+
+        <!-- ════════ SLIDING OVERLAY ════════ -->
+        <div class="overlay-panel">
+            <div class="overlay-content" id="overlayContent">
+                <!-- Default: Sign-In active, overlay says "Go to Sign Up" -->
+                <span class="emoji-icon">🎈</span>
+                <h2 id="overlayTitle">New Here?</h2>
+                <p id="overlayText">Create an account and start your child's speech therapy journey with us!</p>
+                <button class="ghost-btn" id="overlayBtn" onclick="toggleMode()">Sign Up</button>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Toast element for notifications -->
+    <!-- Toast -->
     <div id="toast" class="toast"></div>
 
     <script>
-        console.log("Login Script Loading...");
-
-        // ── Supabase Client ──
+        /* ═══════════════════════════════════════════
+           SUPABASE CLIENT
+           ═══════════════════════════════════════════ */
         const SUPABASE_URL = 'https://hhrqjolqkuzwylypekhr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_2WZKcFYxtVP8qtdsoLj82w_Jc551SaB';
-
         let supabaseClient = null;
         try {
-            // Determine storage based on Remember Me checkbox
             const storageType = window.localStorage.getItem('jw_remember') === 'true'
                 ? window.localStorage : window.sessionStorage;
-
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
                 auth: { storage: storageType }
             });
-            console.log("Supabase client created successfully");
-        } catch (e) {
-            console.error("Failed to create Supabase client:", e);
+        } catch (e) { console.error("Supabase init failed:", e); }
+
+        /* ═══════════════════════════════════════════
+           MODE SWITCHING
+           ═══════════════════════════════════════════ */
+        function toggleMode() {
+            var c = document.getElementById('authContainer');
+            var isRegister = c.classList.toggle('register-active');
+
+            var title = document.getElementById('overlayTitle');
+            var text = document.getElementById('overlayText');
+            var btn = document.getElementById('overlayBtn');
+
+            if (isRegister) {
+                title.textContent = "Welcome Back!";
+                text.textContent = "Already have an account? Sign in to access your dashboard and track progress.";
+                btn.textContent = "Sign In";
+            } else {
+                title.textContent = "New Here?";
+                text.textContent = "Create an account and start your child's speech therapy journey with us!";
+                btn.textContent = "Sign Up";
+            }
+
+            // Clear errors
+            document.querySelectorAll('.field-error, .auth-error').forEach(function (el) { el.textContent = ''; });
+            document.querySelectorAll('.input-error, .input-valid').forEach(function (el) {
+                el.classList.remove('input-error', 'input-valid');
+            });
+
+            // Reset scroll position to top
+            var signUp = document.querySelector('.form-panel.sign-up');
+            if (signUp) signUp.scrollTop = 0;
         }
 
-        // ── Toast helper ──
-        function showToast(msg, duration) {
-            duration = duration || 3000;
+        // Mobile helpers
+        function switchToRegister() {
+            var c = document.getElementById('authContainer');
+            if (!c.classList.contains('register-active')) toggleMode();
+        }
+        function switchToLogin() {
+            var c = document.getElementById('authContainer');
+            if (c.classList.contains('register-active')) toggleMode();
+        }
+
+        /* ═══════════════════════════════════════════
+           TOAST
+           ═══════════════════════════════════════════ */
+        function showToast(msg, dur) {
+            dur = dur || 3000;
             var t = document.getElementById('toast');
             t.textContent = msg;
             t.classList.add('show');
-            setTimeout(function () { t.classList.remove('show'); }, duration);
+            setTimeout(function () { t.classList.remove('show'); }, dur);
         }
 
-        // ── Password strength checker ──
+        /* ═══════════════════════════════════════════
+           PASSWORD STRENGTH
+           ═══════════════════════════════════════════ */
         function checkPasswordStrength(pw) {
             var checks = {
                 len: pw.length >= 8,
@@ -483,11 +994,7 @@
                 special: /[^A-Za-z0-9]/.test(pw)
             };
             var score = 0;
-            if (checks.len) score++;
-            if (checks.upper) score++;
-            if (checks.lower) score++;
-            if (checks.digit) score++;
-            if (checks.special) score++;
+            for (var k in checks) if (checks[k]) score++;
             return { checks: checks, score: score };
         }
 
@@ -495,223 +1002,142 @@
             var result = checkPasswordStrength(pw);
             var fill = document.getElementById('strengthFill');
             var label = document.getElementById('strengthLabel');
-
-            // Update checklist
             var ids = { len: 'chk-len', upper: 'chk-upper', lower: 'chk-lower', digit: 'chk-digit', special: 'chk-special' };
             for (var key in ids) {
                 var el = document.getElementById(ids[key]);
-                if (result.checks[key]) { el.classList.add('met'); }
-                else { el.classList.remove('met'); }
+                if (result.checks[key]) el.classList.add('met');
+                else el.classList.remove('met');
             }
-
-            // Update bar
             var pct = (result.score / 5) * 100;
             fill.style.width = pct + '%';
-
-            if (result.score <= 1) {
-                fill.style.background = '#dc2626';
-                label.textContent = 'Weak';
-                label.style.color = '#dc2626';
-            } else if (result.score <= 2) {
-                fill.style.background = '#f97316';
-                label.textContent = 'Fair';
-                label.style.color = '#f97316';
-            } else if (result.score <= 3) {
-                fill.style.background = '#eab308';
-                label.textContent = 'Good';
-                label.style.color = '#eab308';
-            } else if (result.score === 4) {
-                fill.style.background = '#84cc16';
-                label.textContent = 'Strong';
-                label.style.color = '#84cc16';
-            } else {
-                fill.style.background = '#16a34a';
-                label.textContent = 'Excellent';
-                label.style.color = '#16a34a';
-            }
-
-            if (pw.length === 0) {
-                fill.style.width = '0';
-                label.textContent = '';
-            }
+            var colors = ['#ff6b6b', '#ff922b', '#fcc419', '#a9e34b', '#51cf66'];
+            var labels = ['Weak', 'Fair', 'Good', 'Strong', 'Excellent'];
+            var idx = Math.max(0, result.score - 1);
+            fill.style.background = colors[idx];
+            label.textContent = pw.length > 0 ? labels[idx] : '';
+            label.style.color = colors[idx];
+            if (pw.length === 0) fill.style.width = '0';
         }
 
-        // ── Field validation helpers ──
-        function setFieldError(id, msg) {
+        /* ═══════════════════════════════════════════
+           VALIDATION
+           ═══════════════════════════════════════════ */
+        function setErr(id, msg) {
             var el = document.getElementById('err-' + id);
             var inp = document.getElementById(id);
             if (el) el.textContent = msg;
-            if (inp) {
-                inp.classList.remove('input-valid');
-                inp.classList.add('input-error');
-            }
+            if (inp) { inp.classList.remove('input-valid'); inp.classList.add('input-error'); }
         }
-
-        function setFieldValid(id) {
+        function setOk(id) {
             var el = document.getElementById('err-' + id);
             var inp = document.getElementById(id);
             if (el) el.textContent = '';
-            if (inp) {
-                inp.classList.remove('input-error');
-                inp.classList.add('input-valid');
-            }
+            if (inp) { inp.classList.remove('input-error'); inp.classList.add('input-valid'); }
         }
-
-        function clearFieldState(id) {
+        function clearState(id) {
             var el = document.getElementById('err-' + id);
             var inp = document.getElementById(id);
             if (el) el.textContent = '';
-            if (inp) { inp.classList.remove('input-error', 'input-valid'); }
+            if (inp) inp.classList.remove('input-error', 'input-valid');
         }
 
-        var nameRegex = /^[a-zA-Z\s\-']+$/;
+        var nameRe = /^[a-zA-Z\s\-']+$/;
 
         function validateField(id) {
             var inp = document.getElementById(id);
             if (!inp) return true;
             var val = inp.value.trim();
-
             switch (id) {
-                case 'firstName':
-                case 'lastName':
-                    if (!val) { setFieldError(id, 'This field is required.'); return false; }
-                    if (val.length < 2) { setFieldError(id, 'At least 2 characters.'); return false; }
-                    if (!nameRegex.test(val)) { setFieldError(id, 'Letters, spaces, hyphens only.'); return false; }
-                    setFieldValid(id);
-                    return true;
-
-                case 'email':
-                    if (!val) { setFieldError(id, 'Email is required.'); return false; }
-                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) { setFieldError(id, 'Enter a valid email address.'); return false; }
-                    setFieldValid(id);
-                    return true;
-
-                case 'password':
-                    if (!val) { setFieldError(id, 'Password is required.'); return false; }
-                    var isRegister = document.getElementById('submitBtn').textContent.indexOf('Sign Up') !== -1;
-                    if (isRegister) {
-                        if (val.length < 8) { setFieldError(id, 'Must be at least 8 characters.'); return false; }
-                        var res = checkPasswordStrength(val);
-                        if (res.score < 4) { setFieldError(id, 'Must include uppercase, lowercase, number, and special character.'); return false; }
-                    } else {
-                        if (val.length < 6) { setFieldError(id, 'Must be at least 6 characters.'); return false; }
-                    }
-                    setFieldValid(id);
-                    return true;
-
+                case 'firstName': case 'lastName':
+                    if (!val) { setErr(id, 'Required.'); return false; }
+                    if (val.length < 2) { setErr(id, 'At least 2 chars.'); return false; }
+                    if (!nameRe.test(val)) { setErr(id, 'Letters only.'); return false; }
+                    setOk(id); return true;
+                case 'loginEmail': case 'regEmail':
+                    if (!val) { setErr(id, 'Email is required.'); return false; }
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) { setErr(id, 'Invalid email.'); return false; }
+                    setOk(id); return true;
+                case 'loginPassword':
+                    if (!val) { setErr(id, 'Required.'); return false; }
+                    if (val.length < 6) { setErr(id, 'Min 6 characters.'); return false; }
+                    setOk(id); return true;
+                case 'regPassword':
+                    if (!val) { setErr(id, 'Required.'); return false; }
+                    if (val.length < 8) { setErr(id, 'Min 8 characters.'); return false; }
+                    var res = checkPasswordStrength(val);
+                    if (res.score < 4) { setErr(id, 'Needs uppercase, lowercase, number & special.'); return false; }
+                    setOk(id); return true;
                 case 'confirmPassword':
-                    var pw = document.getElementById('password').value;
-                    if (!val) { setFieldError(id, 'Please confirm your password.'); return false; }
-                    if (val !== pw) { setFieldError(id, 'Passwords do not match.'); return false; }
-                    setFieldValid(id);
-                    return true;
-
+                    var pw = document.getElementById('regPassword').value;
+                    if (!val) { setErr(id, 'Confirm your password.'); return false; }
+                    if (val !== pw) { setErr(id, 'Passwords don\'t match.'); return false; }
+                    setOk(id); return true;
                 case 'dob':
-                    if (!val) { setFieldError(id, 'Date of birth is required.'); return false; }
-                    if (new Date(val) > new Date()) { setFieldError(id, 'Date of birth cannot be in the future.'); return false; }
-                    setFieldValid(id);
-                    return true;
-
+                    if (!val) { setErr(id, 'Required.'); return false; }
+                    if (new Date(val) > new Date()) { setErr(id, 'Can\'t be in the future.'); return false; }
+                    setOk(id); return true;
                 case 'phone':
-                    if (!val) { clearFieldState(id); return true; } // optional
+                    if (!val) { clearState(id); return true; }
                     var digits = val.replace(/\D/g, '');
-                    if (digits.length < 10 || digits.length > 15) { setFieldError(id, 'Enter 10–15 digits.'); return false; }
-                    setFieldValid(id);
-                    return true;
-
-                default:
-                    return true;
+                    if (digits.length < 10 || digits.length > 15) { setErr(id, '10-15 digits.'); return false; }
+                    setOk(id); return true;
+                default: return true;
             }
         }
 
-        // ── Comprehensive registration validation ──
         function validateRegistration() {
-            var fields = ['firstName', 'lastName', 'email', 'password', 'confirmPassword', 'dob', 'phone'];
-            var allValid = true;
-            for (var i = 0; i < fields.length; i++) {
-                if (!validateField(fields[i])) allValid = false;
-            }
-            // Terms checkbox
+            var fields = ['firstName', 'lastName', 'regEmail', 'regPassword', 'confirmPassword', 'dob', 'phone'];
+            var ok = true;
+            for (var i = 0; i < fields.length; i++) if (!validateField(fields[i])) ok = false;
             if (!document.getElementById('termsCheck').checked) {
-                document.getElementById('err-terms').textContent = 'You must agree to the Terms & Conditions.';
-                allValid = false;
-            } else {
-                document.getElementById('err-terms').textContent = '';
-            }
-            return allValid;
+                document.getElementById('err-terms').textContent = 'You must agree to the Terms.';
+                ok = false;
+            } else { document.getElementById('err-terms').textContent = ''; }
+            return ok;
         }
 
-        // ── Auth handler ──
-        async function handleAuth(mode, formData) {
-            console.log("handleAuth called:", mode);
-            if (!supabaseClient) {
-                showToast("System Error: Supabase client not initialized.");
-                return;
-            }
-
+        /* ═══════════════════════════════════════════
+           AUTH HANDLERS
+           ═══════════════════════════════════════════ */
+        async function handleLogin(email, password) {
+            if (!supabaseClient) { showToast("System error"); return; }
             try {
-                var error, userData;
+                var result = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+                if (result.error) throw result.error;
+                if (document.getElementById('rememberMe').checked) localStorage.setItem('jw_remember', 'true');
+                else localStorage.removeItem('jw_remember');
+                if (result.data.user) await ensureUserRecords(result.data.user, '', 'parent');
+                window.location.href = email.includes('admin') ? 'admin.html' : 'profile.html';
+            } catch (err) {
+                document.getElementById('login-error-msg').textContent = err.message || 'Login failed.';
+            }
+        }
 
-                if (mode === 'login') {
-                    var result = await supabaseClient.auth.signInWithPassword({
-                        email: formData.email,
-                        password: formData.password
-                    });
-                    error = result.error;
-                    userData = result.data ? result.data.user : null;
-
-                    // Remember Me: persist preference
-                    if (document.getElementById('rememberMe').checked) {
-                        localStorage.setItem('jw_remember', 'true');
-                    } else {
-                        localStorage.removeItem('jw_remember');
-                    }
-                } else {
-                    var result = await supabaseClient.auth.signUp({
-                        email: formData.email,
-                        password: formData.password,
-                        options: {
-                            data: {
-                                full_name: formData.firstName + ' ' + formData.lastName,
-                                first_name: formData.firstName,
-                                last_name: formData.lastName,
-                                role: formData.role,
-                                phone: formData.phone || null,
-                                address: formData.address || null,
-                                dob: formData.dob || null,
-                                newsletter: formData.newsletter
-                            }
+        async function handleRegister(formData) {
+            if (!supabaseClient) { showToast("System error"); return; }
+            try {
+                var result = await supabaseClient.auth.signUp({
+                    email: formData.email, password: formData.password,
+                    options: {
+                        data: {
+                            full_name: formData.firstName + ' ' + formData.lastName,
+                            first_name: formData.firstName, last_name: formData.lastName,
+                            role: formData.role, phone: formData.phone || null,
+                            address: formData.address || null, dob: formData.dob || null,
+                            newsletter: formData.newsletter
                         }
-                    });
-                    error = result.error;
-                    userData = result.data ? result.data.user : null;
-
-                    if (!error && userData) {
-                        showToast("Registration successful! Check your email to verify.", 5000);
                     }
+                });
+                if (result.error) throw result.error;
+                if (result.data.user) {
+                    await ensureUserRecords(result.data.user, formData.firstName + ' ' + formData.lastName, formData.role);
+                    showToast("Account created! Check your email to verify.", 5000);
                 }
-
-                if (error) throw error;
-
-                // Auto-create public.users + public.parents records
-                if (userData) {
-                    var displayName = mode === 'register'
-                        ? formData.firstName + ' ' + formData.lastName
-                        : '';
-                    await ensureUserRecords(userData, displayName, formData.role || 'parent');
-                }
-
-                console.log("Auth success, redirecting...");
-                if (formData.role === 'admin' || formData.email.includes('admin')) {
+                if (formData.role === 'admin' || formData.email.includes('admin'))
                     window.location.href = 'admin.html';
-                } else {
-                    window.location.href = 'profile.html';
-                }
-
-            } catch (error) {
-                console.error("Auth Error:", error);
-                var errEl = document.getElementById('auth-error-msg');
-                if (errEl) errEl.textContent = error.message || "Authentication failed. Please try again.";
+                else window.location.href = 'profile.html';
+            } catch (err) {
+                document.getElementById('register-error-msg').textContent = err.message || 'Registration failed.';
             }
         }
 
@@ -719,36 +1145,18 @@
             try {
                 var uName = displayName || user.user_metadata?.full_name || user.email.split('@')[0];
                 var uRole = role || user.user_metadata?.role || 'parent';
-
-                // Upsert into public.users
                 await supabaseClient.from('users').upsert({
-                    id: user.id,
-                    email: user.email,
-                    display_name: uName,
-                    role: uRole,
-                    updated_at: new Date().toISOString()
+                    id: user.id, email: user.email, display_name: uName,
+                    role: uRole, updated_at: new Date().toISOString()
                 }, { onConflict: 'id' });
-
-                // Auto-create parents record for parent-role users
                 if (uRole === 'parent' || uRole === 'user') {
-                    var existing = await supabaseClient
-                        .from('parents')
-                        .select('id')
-                        .eq('user_id', user.id)
-                        .maybeSingle();
-
-                    if (!existing.data) {
-                        await supabaseClient.from('parents').insert({ user_id: user.id });
-                        console.log("Created parent record for user:", user.id);
-                    }
+                    var existing = await supabaseClient.from('parents').select('id').eq('user_id', user.id).maybeSingle();
+                    if (!existing.data) await supabaseClient.from('parents').insert({ user_id: user.id });
                 }
-            } catch (err) {
-                console.warn("ensureUserRecords warning (non-blocking):", err);
-            }
+            } catch (err) { console.warn("ensureUserRecords:", err); }
         }
 
         async function handleGoogleLogin() {
-            console.log("Google login clicked");
             if (!supabaseClient) return;
             try {
                 var result = await supabaseClient.auth.signInWithOAuth({
@@ -756,218 +1164,108 @@
                     options: { redirectTo: window.location.origin + '/profile.html' }
                 });
                 if (result.error) throw result.error;
-            } catch (error) {
-                console.error("Google Auth Error:", error);
-                showToast(error.message);
-            }
+            } catch (err) { showToast(err.message); }
         }
 
-        // ── Forgot Password handler ──
         async function handleForgotPassword() {
-            var email = document.getElementById('email').value.trim();
-            if (!email) {
-                document.getElementById('err-email').textContent = 'Enter your email first, then click Forgot Password.';
-                document.getElementById('email').classList.add('input-error');
-                document.getElementById('email').focus();
-                return;
-            }
+            var email = document.getElementById('loginEmail').value.trim();
+            if (!email) { setErr('loginEmail', 'Enter your email first.'); document.getElementById('loginEmail').focus(); return; }
             if (!supabaseClient) return;
             try {
                 var result = await supabaseClient.auth.resetPasswordForEmail(email, {
                     redirectTo: window.location.origin + '/login.html?reset=true'
                 });
                 if (result.error) throw result.error;
-                showToast("Password reset email sent! Check your inbox.", 5000);
-            } catch (err) {
-                showToast("Error: " + (err.message || "Could not send reset email."), 4000);
-            }
+                showToast("Reset email sent! Check your inbox.", 5000);
+            } catch (err) { showToast("Error: " + (err.message || "Could not send reset email.")); }
         }
 
-        // ── Initialize when DOM is ready ──
+        /* ═══════════════════════════════════════════
+           DOM READY
+           ═══════════════════════════════════════════ */
         document.addEventListener('DOMContentLoaded', function () {
-            console.log("DOM Ready - attaching event listeners");
-
-            // Set max date for DOB fields
+            // Set max dates
             var today = new Date().toISOString().split('T')[0];
-            var dobInput = document.getElementById('dob');
-            var childDobInput = document.getElementById('childDob');
-            if (dobInput) dobInput.setAttribute('max', today);
-            if (childDobInput) childDobInput.setAttribute('max', today);
-
-            // Google login button
-            var googleBtn = document.getElementById('googleBtn');
-            if (googleBtn) {
-                googleBtn.addEventListener('click', handleGoogleLogin);
-            }
-
-            // Forgot password link
-            var forgotLink = document.getElementById('forgotLink');
-            if (forgotLink) {
-                forgotLink.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    handleForgotPassword();
-                });
-            }
-
-            // Password strength indicator (real-time)
-            var pwInput = document.getElementById('password');
-            if (pwInput) {
-                pwInput.addEventListener('input', function () {
-                    var isRegister = document.getElementById('submitBtn').textContent.indexOf('Sign Up') !== -1;
-                    if (isRegister) {
-                        updateStrengthUI(this.value);
-                    }
-                });
-            }
-
-            // Real-time validation on blur
-            var fieldsToValidate = ['firstName', 'lastName', 'email', 'password', 'confirmPassword', 'dob', 'phone'];
-            fieldsToValidate.forEach(function (id) {
+            ['dob', 'childDob'].forEach(function (id) {
                 var el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('blur', function () {
-                        var isRegister = document.getElementById('submitBtn').textContent.indexOf('Sign Up') !== -1;
-                        // Only validate registration-specific fields in register mode
-                        if (['firstName', 'lastName', 'confirmPassword', 'dob', 'phone'].indexOf(id) !== -1 && !isRegister) return;
-                        validateField(id);
-                    });
-                }
+                if (el) el.setAttribute('max', today);
             });
 
-            // Role selector: show/hide parent section
-            var roleSelect = document.getElementById('roleSelect');
-            if (roleSelect) {
-                roleSelect.addEventListener('change', function () {
-                    var parentSection = document.getElementById('parentGuardianSection');
-                    if (this.value === 'parent') {
-                        parentSection.classList.remove('hidden');
-                    } else {
-                        parentSection.classList.add('hidden');
-                    }
+            // Google buttons
+            document.getElementById('googleBtn').addEventListener('click', handleGoogleLogin);
+            document.getElementById('googleBtnReg').addEventListener('click', handleGoogleLogin);
+
+            // Forgot password
+            document.getElementById('forgotLink').addEventListener('click', function (e) {
+                e.preventDefault(); handleForgotPassword();
+            });
+
+            // Password strength (real-time)
+            document.getElementById('regPassword').addEventListener('input', function () {
+                updateStrengthUI(this.value);
+            });
+
+            // Blur validation
+            ['firstName', 'lastName', 'regEmail', 'regPassword', 'confirmPassword', 'dob', 'phone'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) el.addEventListener('blur', function () { validateField(id); });
+            });
+            ['loginEmail', 'loginPassword'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) el.addEventListener('blur', function () { validateField(id); });
+            });
+
+            // Role selector → parent section
+            document.getElementById('roleSelect').addEventListener('change', function () {
+                var ps = document.getElementById('parentGuardianSection');
+                if (this.value === 'parent') ps.classList.remove('hidden');
+                else ps.classList.add('hidden');
+            });
+
+            // Terms clear on check
+            document.getElementById('termsCheck').addEventListener('change', function () {
+                if (this.checked) document.getElementById('err-terms').textContent = '';
+            });
+
+            // ── LOGIN FORM SUBMIT ──
+            document.getElementById('loginForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                var ok1 = validateField('loginEmail');
+                var ok2 = validateField('loginPassword');
+                if (!ok1 || !ok2) return;
+                var btn = document.getElementById('loginBtn');
+                btn.textContent = "Signing in..."; btn.disabled = true;
+                handleLogin(
+                    document.getElementById('loginEmail').value.trim(),
+                    document.getElementById('loginPassword').value
+                ).catch(function () { }).finally(function () {
+                    btn.textContent = "Sign In"; btn.disabled = false;
                 });
-            }
+            });
 
-            // Terms checkbox: clear error on check
-            var termsCheck = document.getElementById('termsCheck');
-            if (termsCheck) {
-                termsCheck.addEventListener('change', function () {
-                    if (this.checked) document.getElementById('err-terms').textContent = '';
+            // ── REGISTER FORM SUBMIT ──
+            document.getElementById('registerForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (!validateRegistration()) return;
+                var btn = document.getElementById('registerBtn');
+                btn.textContent = "Creating account..."; btn.disabled = true;
+                handleRegister({
+                    email: document.getElementById('regEmail').value.trim(),
+                    password: document.getElementById('regPassword').value,
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    role: document.getElementById('roleSelect').value || 'parent',
+                    dob: document.getElementById('dob').value,
+                    phone: document.getElementById('phone').value.trim(),
+                    address: document.getElementById('address').value.trim(),
+                    newsletter: document.getElementById('newsletterCheck').checked
+                }).catch(function () { }).finally(function () {
+                    btn.textContent = "Create Account"; btn.disabled = false;
                 });
-            }
-
-            // Tab switching (exposed globally for onclick handlers)
-            window.switchAuthMode = function (mode) {
-                console.log("Switching mode:", mode);
-                var title = document.getElementById('auth-title');
-                var subtitle = document.getElementById('auth-subtitle');
-                var submitBtn = document.getElementById('submitBtn');
-                var tabs = document.querySelectorAll('.tab-btn');
-                var formWrapper = document.getElementById('formWrapper');
-
-                // Registration-only field containers
-                var regFields = ['nameFields', 'confirmPwField', 'dobField', 'contactFields',
-                    'roleField', 'termsSection', 'strengthWrap'];
-                var loginExtras = document.getElementById('loginExtras');
-
-                // Clear all errors
-                document.querySelectorAll('.field-error').forEach(function (el) { el.textContent = ''; });
-                document.querySelectorAll('.input-error, .input-valid').forEach(function (el) {
-                    el.classList.remove('input-error', 'input-valid');
-                });
-                document.getElementById('auth-error-msg').textContent = '';
-
-                if (mode === 'register') {
-                    title.textContent = "Create Account";
-                    subtitle.textContent = "Join JisWorld to start your child\'s therapy journey.";
-                    submitBtn.textContent = "Sign Up";
-                    formWrapper.classList.add('register-mode');
-
-                    regFields.forEach(function (id) {
-                        document.getElementById(id).classList.remove('hidden');
-                    });
-                    loginExtras.classList.add('hidden');
-
-                    // Show parent section if role is parent
-                    var parentSection = document.getElementById('parentGuardianSection');
-                    if (document.getElementById('roleSelect').value === 'parent') {
-                        parentSection.classList.remove('hidden');
-                    }
-
-                    tabs[0].classList.remove('active', 'text-[#2D2D2D]', 'border-b-2', 'border-[#C4A484]');
-                    tabs[0].classList.add('text-gray-400');
-                    tabs[1].classList.add('active', 'text-[#2D2D2D]', 'border-b-2', 'border-[#C4A484]');
-                    tabs[1].classList.remove('text-gray-400');
-
-                    // Reset strength bar
-                    updateStrengthUI(document.getElementById('password').value);
-                } else {
-                    title.textContent = "Welcome Back!";
-                    subtitle.textContent = "Please log in to access your dashboard.";
-                    submitBtn.textContent = "Log In";
-                    formWrapper.classList.remove('register-mode');
-
-                    regFields.forEach(function (id) {
-                        document.getElementById(id).classList.add('hidden');
-                    });
-                    document.getElementById('parentGuardianSection').classList.add('hidden');
-                    loginExtras.classList.remove('hidden');
-
-                    tabs[1].classList.remove('active', 'text-[#2D2D2D]', 'border-b-2', 'border-[#C4A484]');
-                    tabs[1].classList.add('text-gray-400');
-                    tabs[0].classList.add('active', 'text-[#2D2D2D]', 'border-b-2', 'border-[#C4A484]');
-                    tabs[0].classList.remove('text-gray-400');
-                }
-            };
-
-            // Form submit handler
-            var authForm = document.getElementById('authForm');
-            if (authForm) {
-                authForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    console.log("Form submit triggered");
-                    var errEl = document.getElementById('auth-error-msg');
-                    errEl.textContent = '';
-
-                    var submitBtn = document.getElementById('submitBtn');
-                    var mode = submitBtn.textContent.indexOf('Sign Up') !== -1 ? 'register' : 'login';
-
-                    if (mode === 'register') {
-                        if (!validateRegistration()) return;
-                    } else {
-                        // Login validation
-                        var emailOk = validateField('email');
-                        var pwOk = validateField('password');
-                        if (!emailOk || !pwOk) return;
-                    }
-
-                    var formData = {
-                        email: document.getElementById('email').value.trim(),
-                        password: document.getElementById('password').value,
-                        firstName: document.getElementById('firstName').value.trim(),
-                        lastName: document.getElementById('lastName').value.trim(),
-                        role: document.getElementById('roleSelect').value || 'parent',
-                        dob: document.getElementById('dob').value,
-                        phone: document.getElementById('phone').value.trim(),
-                        address: document.getElementById('address').value.trim(),
-                        newsletter: document.getElementById('newsletterCheck').checked
-                    };
-
-                    var originalText = submitBtn.textContent;
-                    submitBtn.textContent = "Processing...";
-                    submitBtn.disabled = true;
-
-                    handleAuth(mode, formData)
-                        .catch(function () { /* error shown inline */ })
-                        .finally(function () {
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
-                        });
-                });
-                console.log("Form submit listener attached successfully");
-            } else {
-                console.error("Auth form NOT found in DOM!");
-            }
+            });
         });
     </script>
+
+</body>
 
 </html>
