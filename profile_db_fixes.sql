@@ -178,6 +178,33 @@ DO $$ BEGIN
     END IF;
 END $$;
 
+-- Parents can read their own parent record
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Parents read own' AND tablename = 'parents') THEN
+        CREATE POLICY "Parents read own" ON public.parents
+            FOR SELECT TO authenticated
+            USING (user_id = auth.uid());
+    END IF;
+END $$;
+
+-- Users can insert their own user record (needed for ensureUserRecords)
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users insert own' AND tablename = 'users') THEN
+        CREATE POLICY "Users insert own" ON public.users
+            FOR INSERT TO authenticated
+            WITH CHECK (id = auth.uid());
+    END IF;
+END $$;
+
+-- Users can update their own user record
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users update own' AND tablename = 'users') THEN
+        CREATE POLICY "Users update own" ON public.users
+            FOR UPDATE TO authenticated
+            USING (id = auth.uid());
+    END IF;
+END $$;
+
 -- ──────────────────────────────────────────────
 -- DONE! All profile features should now work.
 -- ──────────────────────────────────────────────

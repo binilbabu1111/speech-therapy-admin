@@ -1409,12 +1409,83 @@
                 const { data: kids } = await supabase.from('students').select('*').eq('parent_id', parentRecord.id).order('created_at', { ascending: false });
                 loading.style.display = 'none';
                 if (!kids || kids.length === 0) { container.innerHTML = emptyState('👶', 'No children profiles found.<br>Your therapist will set up your child\'s profile.'); return; }
+
                 let h = '';
-                kids.forEach(k => {
+                for (const k of kids) {
                     const ini = (k.first_name?.charAt(0) || '') + (k.last_name?.charAt(0) || '');
-                    const sb = k.therapy_status === 'Active' ? 'badge-emerald' : k.therapy_status === 'Waiting' ? 'badge-amber' : 'badge-gray';
-                    h += `<div class="child-card"><div class="child-avatar">${ini.toUpperCase()}</div><div class="child-info"><div class="child-name">${k.first_name} ${k.last_name}</div><div class="child-details">${k.grade ? 'Grade: ' + k.grade + ' · ' : ''}${k.diagnosis || 'No diagnosis noted'}</div><div style="margin-top:0.5rem;"><span class="badge ${sb}">${k.therapy_status || 'Active'}</span></div></div></div>`;
-                });
+                    const sb = k.therapy_status === 'Active' ? 'badge-emerald' : k.therapy_status === 'Waiting' ? 'badge-amber' : k.therapy_status === 'Completed' ? 'badge-indigo' : 'badge-gray';
+
+                    // Calculate age from DOB
+                    let ageStr = '—';
+                    if (k.dob) {
+                        const dob = new Date(k.dob);
+                        const today = new Date();
+                        let age = today.getFullYear() - dob.getFullYear();
+                        const m = today.getMonth() - dob.getMonth();
+                        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+                        ageStr = age + ' years old';
+                    }
+                    const dobFormatted = k.dob ? new Date(k.dob).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : '—';
+                    const enrolled = k.created_at ? new Date(k.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
+
+                    // Fetch related counts
+                    const { data: upcoming } = await supabase.from('appointments').select('id').eq('student_id', k.id).eq('status', 'Scheduled');
+                    const { data: completed } = await supabase.from('appointments').select('id').eq('student_id', k.id).eq('status', 'Completed');
+                    const { data: plans } = await supabase.from('therapy_plans').select('id').eq('student_id', k.id);
+                    const upcomingCount = upcoming ? upcoming.length : 0;
+                    const completedCount = completed ? completed.length : 0;
+                    const planCount = plans ? plans.length : 0;
+
+                    h += `
+                    <div style="background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:16px;padding:1.75rem;margin-bottom:1.25rem;transition:all 0.3s;">
+                        <!-- Header row -->
+                        <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:1.5rem;">
+                            <div class="child-avatar" style="width:68px;height:68px;font-size:1.3rem;">${ini.toUpperCase()}</div>
+                            <div style="flex:1;">
+                                <div style="font-size:1.15rem;font-weight:800;color:var(--text-primary);margin-bottom:0.3rem;">${k.first_name} ${k.last_name}</div>
+                                <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
+                                    <span class="badge ${sb}">${k.therapy_status || 'Active'}</span>
+                                    ${k.dob ? `<span style="font-size:0.8rem;color:var(--text-muted);">${ageStr}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detail grid -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;">
+                            <div style="padding:0.85rem;background:rgba(255,255,255,0.03);border:1px solid var(--border-glass);border-radius:12px;">
+                                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:0.3rem;">📅 Date of Birth</div>
+                                <div style="font-size:0.9rem;font-weight:600;color:var(--text-primary);">${dobFormatted}</div>
+                            </div>
+                            <div style="padding:0.85rem;background:rgba(255,255,255,0.03);border:1px solid var(--border-glass);border-radius:12px;">
+                                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:0.3rem;">🎓 Grade</div>
+                                <div style="font-size:0.9rem;font-weight:600;color:var(--text-primary);">${k.grade || '—'}</div>
+                            </div>
+                            <div style="padding:0.85rem;background:rgba(255,255,255,0.03);border:1px solid var(--border-glass);border-radius:12px;grid-column:span 2;">
+                                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:0.3rem;">🩺 Diagnosis</div>
+                                <div style="font-size:0.9rem;font-weight:600;color:var(--text-primary);">${k.diagnosis || 'No diagnosis noted'}</div>
+                            </div>
+                        </div>
+
+                        <!-- Stats row -->
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1rem;">
+                            <div style="text-align:center;padding:0.75rem;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.12);border-radius:10px;">
+                                <div style="font-size:1.3rem;font-weight:800;color:var(--text-primary);">${upcomingCount}</div>
+                                <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.15rem;">Upcoming</div>
+                            </div>
+                            <div style="text-align:center;padding:0.75rem;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.12);border-radius:10px;">
+                                <div style="font-size:1.3rem;font-weight:800;color:var(--text-primary);">${completedCount}</div>
+                                <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.15rem;">Completed</div>
+                            </div>
+                            <div style="text-align:center;padding:0.75rem;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.12);border-radius:10px;">
+                                <div style="font-size:1.3rem;font-weight:800;color:var(--text-primary);">${planCount}</div>
+                                <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.15rem;">Plans</div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div style="font-size:0.75rem;color:var(--text-muted);opacity:0.7;">Enrolled: ${enrolled}</div>
+                    </div>`;
+                }
                 container.innerHTML = h;
             } catch (err) { loading.style.display = 'none'; container.innerHTML = emptyState('⚠️', 'Error loading data. Please try again.'); }
         }
