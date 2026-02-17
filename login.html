@@ -158,6 +158,11 @@
 
                 if (error) throw error;
 
+                // Auto-create public.users + public.parents records
+                if (userData) {
+                    await ensureUserRecords(userData, name, role || 'parent');
+                }
+
                 console.log("Auth success, redirecting...");
                 if (role === 'admin' || email.includes('admin')) {
                     window.location.href = 'admin.html';
@@ -168,6 +173,38 @@
             } catch (error) {
                 console.error("Auth Error:", error);
                 alert(error.message || "Authentication failed. Please try again.");
+            }
+        }
+
+        async function ensureUserRecords(user, displayName, role) {
+            try {
+                const uName = displayName || user.user_metadata?.full_name || user.email.split('@')[0];
+                const uRole = role || user.user_metadata?.role || 'parent';
+
+                // Upsert into public.users
+                await supabaseClient.from('users').upsert({
+                    id: user.id,
+                    email: user.email,
+                    display_name: uName,
+                    role: uRole,
+                    updated_at: new Date().toISOString()
+                }, { onConflict: 'id' });
+
+                // Auto-create parents record for parent-role users
+                if (uRole === 'parent' || uRole === 'user') {
+                    const { data: existing } = await supabaseClient
+                        .from('parents')
+                        .select('id')
+                        .eq('user_id', user.id)
+                        .maybeSingle();
+
+                    if (!existing) {
+                        await supabaseClient.from('parents').insert({ user_id: user.id });
+                        console.log("Created parent record for user:", user.id);
+                    }
+                }
+            } catch (err) {
+                console.warn("ensureUserRecords warning (non-blocking):", err);
             }
         }
 

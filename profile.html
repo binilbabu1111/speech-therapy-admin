@@ -1278,8 +1278,32 @@
             try {
                 const { data } = await supabase.from('parents')
                     .select('*').eq('user_id', currentUser.id).maybeSingle();
-                if (data) parentRecord = data;
-            } catch (err) { console.warn("No parent record:", err); }
+                if (data) {
+                    parentRecord = data;
+                } else {
+                    // Auto-create parent record if it doesn't exist
+                    console.log("No parent record found, creating one...");
+                    // Ensure users row exists first
+                    await supabase.from('users').upsert({
+                        id: currentUser.id,
+                        email: currentUser.email,
+                        display_name: currentUser.user_metadata?.full_name || currentUser.email.split('@')[0],
+                        role: 'parent',
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'id' });
+
+                    const { data: newParent, error } = await supabase.from('parents')
+                        .insert({ user_id: currentUser.id })
+                        .select()
+                        .single();
+                    if (!error && newParent) {
+                        parentRecord = newParent;
+                        console.log("Parent record created:", newParent.id);
+                    } else {
+                        console.warn("Could not create parent record:", error);
+                    }
+                }
+            } catch (err) { console.warn("Parent record error:", err); }
         }
 
         window.switchSection = (id, el) => {
@@ -1312,10 +1336,26 @@
             window.location.href = 'index.html';
         };
 
+        /* ═══ HELPER ═══ */
+        function emptyState(icon, text) {
+            return `<div class="empty-state"><div class="empty-icon">${icon}</div><p>${text}</p></div>`;
+        }
+
+        function noParentMsg(section) {
+            return emptyState('⏳', `Your ${section} will appear here once your profile is fully set up.<br>Please try refreshing the page or contact support.`);
+        }
+
         /* ═══ DATA LOADERS ═══ */
 
         async function loadDashboard() {
-            if (!parentRecord) return;
+            if (!parentRecord) {
+                document.getElementById('stat-children').textContent = '0';
+                document.getElementById('stat-appointments').textContent = '0';
+                document.getElementById('stat-progress').textContent = '--';
+                document.getElementById('stat-invoices').textContent = '0';
+                document.getElementById('dash-next-appointment').innerHTML = emptyState('📅', 'No upcoming appointments scheduled.');
+                return;
+            }
             try {
                 const { data: kids } = await supabase.from('students').select('id').eq('parent_id', parentRecord.id);
                 document.getElementById('stat-children').textContent = kids ? kids.length : 0;
@@ -1323,6 +1363,16 @@
                     const kidIds = kids.map(k => k.id);
                     const { data: appts } = await supabase.from('appointments').select('id').in('student_id', kidIds).eq('status', 'Scheduled');
                     document.getElementById('stat-appointments').textContent = appts ? appts.length : 0;
+
+                    // Calculate average progress from session notes
+                    const { data: notes } = await supabase.from('session_notes').select('progress_score').in('appointment_id',
+                        (await supabase.from('appointments').select('id').in('student_id', kidIds)).data?.map(a => a.id) || []
+                    );
+                    if (notes && notes.length > 0) {
+                        const scores = notes.filter(n => n.progress_score != null).map(n => n.progress_score);
+                        document.getElementById('stat-progress').textContent = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) + '%' : '--';
+                    }
+
                     const { data: next } = await supabase.from('appointments')
                         .select('*, student:student_id (first_name, last_name)')
                         .in('student_id', kidIds).eq('status', 'Scheduled')
@@ -1337,7 +1387,11 @@
                                 <div class="next-apt-detail">${dt.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })} · ${a.student?.first_name || 'Child'} ${a.student?.last_name || ''} · ${a.mode || 'In-Person'}</div>
                             </div>
                         </div>`;
+                    } else {
+                        c.innerHTML = emptyState('📅', 'No upcoming appointments scheduled.');
                     }
+                } else {
+                    document.getElementById('dash-next-appointment').innerHTML = emptyState('📅', 'No upcoming appointments scheduled.<br>Contact your therapist to schedule a session.');
                 }
             } catch (e) { console.warn("Dashboard err:", e); }
             try {
@@ -1349,12 +1403,12 @@
         async function loadChildren() {
             const container = document.getElementById('children-list');
             const loading = document.getElementById('loading-children');
-            if (!parentRecord) return;
+            if (!parentRecord) { container.innerHTML = noParentMsg('children profiles'); return; }
             loading.style.display = 'flex'; container.innerHTML = '';
             try {
                 const { data: kids } = await supabase.from('students').select('*').eq('parent_id', parentRecord.id).order('created_at', { ascending: false });
                 loading.style.display = 'none';
-                if (!kids || kids.length === 0) { container.innerHTML = `<div class="empty-state"><div class="empty-icon">👶</div><p>No children profiles found.<br>Your therapist will set up your child's profile.</p></div>`; return; }
+                if (!kids || kids.length === 0) { container.innerHTML = emptyState('👶', 'No children profiles found.<br>Your therapist will set up your child\'s profile.'); return; }
                 let h = '';
                 kids.forEach(k => {
                     const ini = (k.first_name?.charAt(0) || '') + (k.last_name?.charAt(0) || '');
@@ -1362,12 +1416,12 @@
                     h += `<div class="child-card"><div class="child-avatar">${ini.toUpperCase()}</div><div class="child-info"><div class="child-name">${k.first_name} ${k.last_name}</div><div class="child-details">${k.grade ? 'Grade: ' + k.grade + ' · ' : ''}${k.diagnosis || 'No diagnosis noted'}</div><div style="margin-top:0.5rem;"><span class="badge ${sb}">${k.therapy_status || 'Active'}</span></div></div></div>`;
                 });
                 container.innerHTML = h;
-            } catch (err) { loading.style.display = 'none'; container.innerHTML = `<div class="empty-state"><p>Error loading data.</p></div>`; }
+            } catch (err) { loading.style.display = 'none'; container.innerHTML = emptyState('⚠️', 'Error loading data. Please try again.'); }
         }
 
         async function loadAppointments() {
             const tbody = document.getElementById('appointments-tbody'), table = document.getElementById('appointments-table'), loading = document.getElementById('loading-appointments'), empty = document.getElementById('empty-appointments');
-            if (!parentRecord) return;
+            if (!parentRecord) { empty.innerHTML = noParentMsg('appointments'); empty.style.display = 'block'; return; }
             loading.style.display = 'flex'; table.style.display = 'none'; empty.style.display = 'none'; tbody.innerHTML = '';
             try {
                 const { data: kids } = await supabase.from('students').select('id').eq('parent_id', parentRecord.id);
@@ -1388,11 +1442,11 @@
 
         async function loadProgress() {
             const container = document.getElementById('progress-list'), loading = document.getElementById('loading-progress');
-            if (!parentRecord) return;
+            if (!parentRecord) { container.innerHTML = noParentMsg('therapy progress'); return; }
             loading.style.display = 'flex'; container.innerHTML = '';
             try {
                 const { data: kids } = await supabase.from('students').select('id, first_name, last_name').eq('parent_id', parentRecord.id);
-                if (!kids || kids.length === 0) { loading.style.display = 'none'; container.innerHTML = `<div class="empty-state"><div class="empty-icon">📈</div><p>No progress data yet.</p></div>`; return; }
+                if (!kids || kids.length === 0) { loading.style.display = 'none'; container.innerHTML = emptyState('📈', 'No progress data yet.<br>Progress reports appear after sessions are completed.'); return; }
                 let html = '';
                 for (const kid of kids) {
                     const { data: plans } = await supabase.from('therapy_plans').select('*').eq('student_id', kid.id);
@@ -1408,20 +1462,20 @@
                     </div>`;
                 }
                 loading.style.display = 'none';
-                container.innerHTML = html || `<div class="empty-state"><div class="empty-icon">📈</div><p>Progress data will appear once sessions complete.</p></div>`;
-            } catch (e) { loading.style.display = 'none'; container.innerHTML = `<div class="empty-state"><p>Error loading progress.</p></div>`; }
+                container.innerHTML = html || emptyState('📈', 'Progress data will appear once sessions complete.');
+            } catch (e) { loading.style.display = 'none'; container.innerHTML = emptyState('⚠️', 'Error loading progress. Please try again.'); }
         }
 
         async function loadDocuments() {
             const container = document.getElementById('documents-list'), loading = document.getElementById('loading-documents');
-            if (!parentRecord) return;
+            if (!parentRecord) { container.innerHTML = noParentMsg('documents'); return; }
             loading.style.display = 'flex'; container.innerHTML = '';
             try {
                 const { data: kids } = await supabase.from('students').select('id').eq('parent_id', parentRecord.id);
-                if (!kids || kids.length === 0) { loading.style.display = 'none'; container.innerHTML = `<div class="empty-state"><div class="empty-icon">📄</div><p>No documents found.</p></div>`; return; }
+                if (!kids || kids.length === 0) { loading.style.display = 'none'; container.innerHTML = emptyState('📄', 'No documents found.<br>Consent forms, evaluations, and IEPs will appear here.'); return; }
                 const { data: docs } = await supabase.from('documents').select('*, student:student_id (first_name, last_name)').in('student_id', kids.map(k => k.id)).order('uploaded_at', { ascending: false });
                 loading.style.display = 'none';
-                if (!docs || docs.length === 0) { container.innerHTML = `<div class="empty-state"><div class="empty-icon">📄</div><p>No documents yet.<br>Consent forms, evaluations, and IEPs will appear here.</p></div>`; return; }
+                if (!docs || docs.length === 0) { container.innerHTML = emptyState('📄', 'No documents yet.<br>Consent forms, evaluations, and IEPs will appear here.'); return; }
                 let h = '';
                 docs.forEach(d => {
                     const icons = { 'Consent': '📋', 'Evaluation': '🔍', 'IEP': '📝', 'Worksheet': '📓' };
@@ -1430,12 +1484,12 @@
                     h += `<div class="doc-item"><div class="doc-icon ${cls[d.type] || 'default'}">${icons[d.type] || '📄'}</div><div class="doc-info"><div class="doc-name">${d.type || 'Document'}</div><div class="doc-meta">${d.student?.first_name || ''} ${d.student?.last_name || ''}${date ? ' · ' + date : ''}</div></div>${d.file_url ? `<a href="${d.file_url}" target="_blank" class="doc-link">View ↗</a>` : ''}</div>`;
                 });
                 container.innerHTML = h;
-            } catch (e) { loading.style.display = 'none'; container.innerHTML = `<div class="empty-state"><p>Error loading documents.</p></div>`; }
+            } catch (e) { loading.style.display = 'none'; container.innerHTML = emptyState('⚠️', 'Error loading documents. Please try again.'); }
         }
 
         async function loadInvoices() {
             const tbody = document.getElementById('invoices-tbody'), table = document.getElementById('invoices-table'), loading = document.getElementById('loading-invoices'), empty = document.getElementById('empty-invoices');
-            if (!parentRecord) return;
+            if (!parentRecord) { empty.innerHTML = noParentMsg('invoices'); empty.style.display = 'block'; return; }
             loading.style.display = 'flex'; table.style.display = 'none'; empty.style.display = 'none'; tbody.innerHTML = '';
             try {
                 const { data: invoices } = await supabase.from('invoices').select('*').eq('parent_id', parentRecord.id).order('due_date', { ascending: false });
@@ -1459,7 +1513,13 @@
                     .select('*').or(`sender_id.eq.${currentUser.id},recipient_id.eq.${currentUser.id}`)
                     .order('created_at', { ascending: false }).limit(20);
                 loading.style.display = 'none';
-                if (error || !msgs || msgs.length === 0) { container.innerHTML = `<div class="empty-state"><div class="empty-icon">💬</div><p>No messages yet.<br>Messages from your therapist will appear here.</p></div>`; return; }
+                if (error) {
+                    // messages table might not exist yet
+                    console.warn("Messages query error:", error);
+                    container.innerHTML = emptyState('💬', 'No messages yet.<br>Messages from your therapist will appear here.');
+                    return;
+                }
+                if (!msgs || msgs.length === 0) { container.innerHTML = emptyState('💬', 'No messages yet.<br>Messages from your therapist will appear here.'); return; }
                 let h = '';
                 msgs.forEach(m => {
                     const isIn = m.recipient_id === currentUser.id;
@@ -1467,7 +1527,7 @@
                     h += `<div class="message-item ${m.read ? '' : 'unread'}"><div class="msg-avatar">${isIn ? '🧑‍⚕️' : '👤'}</div><div class="msg-content"><div class="msg-sender">${isIn ? 'Therapist' : 'You'}</div><div class="msg-preview">${m.content || ''}</div><div class="msg-time">${time}</div></div></div>`;
                 });
                 container.innerHTML = h;
-            } catch (e) { loading.style.display = 'none'; container.innerHTML = `<div class="empty-state"><div class="empty-icon">💬</div><p>No messages yet.<br>Messages from your therapist will appear here.</p></div>`; }
+            } catch (e) { loading.style.display = 'none'; container.innerHTML = emptyState('💬', 'No messages yet.<br>Messages from your therapist will appear here.'); }
         }
     </script>
 </body>
