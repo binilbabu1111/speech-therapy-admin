@@ -1,15 +1,183 @@
 
-console.log("Supabase config module loading...");
-// import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-const createClient = window.supabase.createClient;
+/**
+ * SUPABASE FETCH CLIENT (Workaround for library hangs)
+ * This mock implements the essential methods of the Supabase client
+ * using direct fetch calls to ensure performance and reliability.
+ */
 
-// TODO: Replace with your actual Supabase project URL and Anon Key
+console.log("Supabase config module loading (Fetch Mock)...");
+
 const supabaseUrl = 'https://hhrqjolqkuzwylypekhr.supabase.co';
 const supabaseKey = 'sb_publishable_2WZKcFYxtVP8qtdsoLj82w_Jc551SaB';
 
-// Configure client to use sessionStorage (cleared on tab close)
-export const supabase = createClient(supabaseUrl, supabaseKey, {
-    auth: {
-        storage: window.sessionStorage,
-    },
-});
+class SupabaseFetchClient {
+    constructor() {
+        this.url = supabaseUrl;
+        this.key = supabaseKey;
+        this.authListeners = [];
+        this.session = null;
+
+        // Try to recover session from storage
+        const stored = window.sessionStorage.getItem('supabase.auth.token');
+        if (stored) {
+            try { this.session = JSON.parse(stored); } catch (e) { }
+        }
+
+        this.auth = {
+            signInWithPassword: async ({ email, password }) => {
+                console.log("Mock Auth: signInWithPassword", email);
+                const res = await fetch(`${this.url}/auth/v1/token?grant_type=password`, {
+                    method: 'POST',
+                    headers: { 'apikey': this.key, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (!res.ok) return { data: { user: null }, error: data };
+
+                this._setSession(data);
+                return { data: { user: data.user }, error: null };
+            },
+
+            signUp: async ({ email, password, options }) => {
+                console.log("Mock Auth: signUp", email);
+                const res = await fetch(`${this.url}/auth/v1/signup`, {
+                    method: 'POST',
+                    headers: { 'apikey': this.key, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, data: options?.data || {} })
+                });
+                const data = await res.json();
+                if (!res.ok) return { data: { user: null }, error: data };
+
+                this._setSession(data);
+                return { data: { user: data.user }, error: null };
+            },
+
+            signOut: async () => {
+                this._setSession(null);
+                return { error: null };
+            },
+
+            getSession: async () => {
+                return { data: { session: this.session }, error: null };
+            },
+
+            onAuthStateChange: (callback) => {
+                this.authListeners.push(callback);
+                // Initial call
+                callback(this.session ? 'SIGNED_IN' : 'SIGNED_OUT', this.session);
+                return {
+                    data: {
+                        subscription: {
+                            unsubscribe: () => {
+                                this.authListeners = this.authListeners.filter(l => l !== callback);
+                            }
+                        }
+                    }
+                };
+            },
+
+            getUser: async () => {
+                if (!this.session) return { data: { user: null }, error: null };
+                return { data: { user: this.session.user }, error: null };
+            }
+        };
+    }
+
+    _setSession(session) {
+        this.session = session;
+        if (session) {
+            window.sessionStorage.setItem('supabase.auth.token', JSON.stringify(session));
+        } else {
+            window.sessionStorage.removeItem('supabase.auth.token');
+        }
+        this.authListeners.forEach(l => l(session ? 'SIGNED_IN' : 'SIGNED_OUT', session));
+    }
+
+    from(table) {
+        const _this = this;
+        return {
+            select: (columns = '*', options = {}) => {
+                let path = `${_this.url}/rest/v1/${table}?select=${columns}`;
+                return _this._dbRequest('GET', path);
+            },
+            insert: (values) => {
+                let path = `${_this.url}/rest/v1/${table}`;
+                return _this._dbRequest('POST', path, values);
+            },
+            upsert: (values, options = {}) => {
+                let path = `${_this.url}/rest/v1/${table}`;
+                // Supabase upsert via REST uses Prefer: resolution=merge-duplicates or specific headers
+                return _this._dbRequest('POST', path, values, { 'Prefer': 'resolution=merge-duplicates' });
+            },
+            update: (values) => {
+                return {
+                    eq: (column, value) => {
+                        let path = `${_this.url}/rest/v1/${table}?${column}=eq.${value}`;
+                        return _this._dbRequest('PATCH', path, values);
+                    }
+                };
+            },
+            delete: () => {
+                return {
+                    eq: (column, value) => {
+                        let path = `${_this.url}/rest/v1/${table}?${column}=eq.${value}`;
+                        return _this._dbRequest('DELETE', path);
+                    }
+                };
+            },
+            eq: (column, value) => {
+                // Return a combined object for chainable queries
+                const path = `${_this.url}/rest/v1/${table}?${column}=eq.${value}`;
+                return {
+                    select: (cols = '*') => _this._dbRequest('GET', `${path}&select=${cols}`),
+                    single: async () => {
+                        const res = await _this._dbRequest('GET', path, null, { 'Accept': 'application/vnd.pgrst.object+json' });
+                        return res;
+                    }
+                };
+            }
+        };
+    }
+
+    async _dbRequest(method, url, body = null, extraHeaders = {}) {
+        const headers = {
+            'apikey': this.key,
+            'Authorization': `Bearer ${this.session?.access_token || this.key}`,
+            'Content-Type': 'application/json',
+            ...extraHeaders
+        };
+
+        try {
+            const res = await fetch(url, {
+                method,
+                headers,
+                body: body ? JSON.stringify(body) : null
+            });
+
+            if (res.status === 204) return { data: null, error: null }; // No content usually means success for PATCH/DELETE
+
+            const data = await res.json();
+            if (!res.ok) return { data: null, error: data };
+            return { data, error: null };
+        } catch (e) {
+            console.error("Supabase Mock DB Error:", e);
+            return { data: null, error: e };
+        }
+    }
+}
+
+export const supabase = new SupabaseFetchClient();
+
+export async function verifySupabaseConnection() {
+    try {
+        const response = await fetch(`${supabaseUrl}/rest/v1/`, {
+            headers: { 'apikey': supabaseKey }
+        });
+        return response.ok;
+    } catch (e) {
+        console.error("Supabase Pre-flight Fetch Failed:", e);
+        return false;
+    }
+}
+
+console.log("Supabase config: Fetch Mock initialized.");

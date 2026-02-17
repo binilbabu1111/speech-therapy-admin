@@ -1,5 +1,14 @@
-import { supabase } from './supabase-config.js';
+console.log("auth.js module loading...");
+import { supabase, verifySupabaseConnection } from './supabase-config.js';
 import { upsertUser, completeRegistrationProfile } from './db-service.js';
+
+// Utility for Supabase library calls to prevent indefinite hangs
+const withTimeout = (promise, ms = 10000) => {
+    const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Connectivity Timeout: Please check your network or try again later.')), ms)
+    );
+    return Promise.race([promise, timeout]);
+};
 
 // State (kept if needed for internal logic, but largely unused now)
 let isLogin = true;
@@ -16,10 +25,14 @@ export async function handleAuth(mode, email, password, name, additionalInfo = {
         let userData;
 
         if (mode === 'login') {
-            const { data, error: signInError } = await supabase.auth.signInWithPassword({
+            // Pre-flight check
+            const isConnected = await verifySupabaseConnection();
+            if (!isConnected) throw new Error("Could not connect to Supabase. Check your internet connection.");
+
+            const { data, error: signInError } = await withTimeout(supabase.auth.signInWithPassword({
                 email,
                 password
-            });
+            }));
             error = signInError;
             userData = data.user;
 
@@ -28,7 +41,11 @@ export async function handleAuth(mode, email, password, name, additionalInfo = {
                 await upsertUser(userData);
             }
         } else {
-            const { data, error: signUpError } = await supabase.auth.signUp({
+            // Pre-flight check
+            const isConnected = await verifySupabaseConnection();
+            if (!isConnected) throw new Error("Could not connect to Supabase. Check your internet connection.");
+
+            const { data, error: signUpError } = await withTimeout(supabase.auth.signUp({
                 email,
                 password,
                 options: {
@@ -38,7 +55,7 @@ export async function handleAuth(mode, email, password, name, additionalInfo = {
                         ...additionalInfo // Store everything in metadata too
                     }
                 }
-            });
+            }));
             error = signUpError;
             userData = data.user;
 

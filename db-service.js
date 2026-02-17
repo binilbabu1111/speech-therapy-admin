@@ -13,7 +13,7 @@ export async function upsertUser(user, additionalData = {}) {
     const sanitizedUpdates = {
         id: user.id,
         email: user.email,
-        display_name: metadata.full_name || user.display_name || user.email.split('@')[0],
+        display_name: user.user_metadata?.full_name || user.display_name || user.email.split('@')[0],
         updated_at: new Date()
     };
 
