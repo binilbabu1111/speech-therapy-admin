@@ -31,8 +31,17 @@ class SupabaseFetchClient {
                     headers: { 'apikey': this.key, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
-                const data = await res.json();
-                if (!res.ok) return { data: { user: null }, error: data };
+
+                const text = await res.text();
+                let data = {};
+                if (text) {
+                    try { data = JSON.parse(text); } catch (e) { console.error("Auth Parse Error", e); }
+                }
+
+                if (!res.ok) {
+                    const errorMsg = data.message || data.msg || data.error_description || "Authentication failed";
+                    return { data: { user: null }, error: { message: errorMsg, ...data } };
+                }
 
                 this._setSession(data);
                 return { data: { user: data.user }, error: null };
@@ -45,8 +54,17 @@ class SupabaseFetchClient {
                     headers: { 'apikey': this.key, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password, data: options?.data || {} })
                 });
-                const data = await res.json();
-                if (!res.ok) return { data: { user: null }, error: data };
+
+                const text = await res.text();
+                let data = {};
+                if (text) {
+                    try { data = JSON.parse(text); } catch (e) { console.error("Signup Parse Error", e); }
+                }
+
+                if (!res.ok) {
+                    const errorMsg = data.message || data.msg || data.error_description || "Registration failed";
+                    return { data: { user: null }, error: { message: errorMsg, ...data } };
+                }
 
                 this._setSession(data);
                 return { data: { user: data.user }, error: null };
@@ -154,10 +172,20 @@ class SupabaseFetchClient {
                 body: body ? JSON.stringify(body) : null
             });
 
-            if (res.status === 204) return { data: null, error: null }; // No content usually means success for PATCH/DELETE
+            if (res.status === 204) return { data: null, error: null };
 
-            const data = await res.json();
-            if (!res.ok) return { data: null, error: data };
+            let data = null;
+            const text = await res.text();
+            if (text) {
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error("Supabase Mock JSON Parse Error:", e, "Raw text:", text);
+                    return { data: null, error: { message: "Invalid JSON response from server" } };
+                }
+            }
+
+            if (!res.ok) return { data: null, error: data || { message: "Request failed" } };
             return { data, error: null };
         } catch (e) {
             console.error("Supabase Mock DB Error:", e);
@@ -173,14 +201,14 @@ export async function verifySupabaseConnection() {
         const response = await fetch(`${supabaseUrl}/rest/v1/`, {
             headers: { 'apikey': supabaseKey }
         });
+        console.log("Supabase Pre-flight Status:", response.status);
         // If we get a response (even 401), the server is reachable.
         // A 401 often happens if the project requires specific headers or has RLS.
         if (response.status === 401 || response.ok) return true;
 
-        console.warn("Supabase Pre-flight Response Code:", response.status);
         return false;
     } catch (e) {
-        console.error("Supabase Pre-flight Fetch Failed:", e);
+        console.error("Supabase Pre-flight Fetch Error:", e);
         return false;
     }
 }

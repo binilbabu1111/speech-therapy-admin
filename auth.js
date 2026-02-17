@@ -1,5 +1,5 @@
-import { supabase, verifySupabaseConnection } from './supabase-fetch-client.js?v=3';
-import { upsertUser, completeRegistrationProfile } from './db-service.js?v=3';
+import { supabase, verifySupabaseConnection } from './supabase-fetch-client.js?v=5';
+import { upsertUser, completeRegistrationProfile } from './db-service.js?v=5';
 
 
 // Utility for Supabase library calls to prevent indefinite hangs

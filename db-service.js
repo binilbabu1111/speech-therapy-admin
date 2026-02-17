@@ -1,4 +1,4 @@
-import { supabase } from './supabase-fetch-client.js?v=3';
+import { supabase } from './supabase-fetch-client.js?v=5';
 
 /**
  * Creates or updates a user record in the 'users' table.
