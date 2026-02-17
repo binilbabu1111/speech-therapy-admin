@@ -1,5 +1,5 @@
 // script.js - Converted to Module
-import { supabase } from './supabase-config.js';
+import { supabase } from './supabase-fetch-client.js';
 import { submitAppointment } from './db-service.js';
 
 document.addEventListener('DOMContentLoaded', () => {

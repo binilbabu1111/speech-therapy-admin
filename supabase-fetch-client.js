@@ -173,7 +173,12 @@ export async function verifySupabaseConnection() {
         const response = await fetch(`${supabaseUrl}/rest/v1/`, {
             headers: { 'apikey': supabaseKey }
         });
-        return response.ok;
+        // If we get a response (even 401), the server is reachable.
+        // A 401 often happens if the project requires specific headers or has RLS.
+        if (response.status === 401 || response.ok) return true;
+
+        console.warn("Supabase Pre-flight Response Code:", response.status);
+        return false;
     } catch (e) {
         console.error("Supabase Pre-flight Fetch Failed:", e);
         return false;

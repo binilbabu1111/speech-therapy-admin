@@ -1,6 +1,6 @@
-console.log("auth.js module loading...");
-import { supabase, verifySupabaseConnection } from './supabase-config.js';
-import { upsertUser, completeRegistrationProfile } from './db-service.js';
+import { supabase, verifySupabaseConnection } from './supabase-fetch-client.js?v=3';
+import { upsertUser, completeRegistrationProfile } from './db-service.js?v=3';
+
 
 // Utility for Supabase library calls to prevent indefinite hangs
 const withTimeout = (promise, ms = 10000) => {

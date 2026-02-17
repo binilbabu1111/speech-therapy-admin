@@ -699,11 +699,8 @@
 
     <!-- ════════ AUTH LOGIC ════════ -->
     <script type="module">
-        console.log("Login module: Starting initialization...");
-        import { handleAuth, handleGoogleLogin } from './auth.js';
-        console.log("Login module: auth.js imported.");
-        import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js';
-        console.log("Login module: validation.js imported.");
+        import { handleAuth, handleGoogleLogin } from './auth.js?v=3';
+        import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js?v=3';
 
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');

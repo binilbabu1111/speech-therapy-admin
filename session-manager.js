@@ -1,4 +1,4 @@
-import { supabase } from './supabase-config.js';
+import { supabase } from './supabase-fetch-client.js';
 
 const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutes
 let inactivityTimer;

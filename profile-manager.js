@@ -1,4 +1,4 @@
-import { supabase } from './supabase-config.js';
+import { supabase } from './supabase-fetch-client.js';
 import { upsertUser } from './db-service.js';
 
 // DOM Elements
