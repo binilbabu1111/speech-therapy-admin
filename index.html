@@ -660,7 +660,8 @@
                                 style="font-family:&#x27;Nunito&#x27;, sans-serif">Request an Appointment</h3>
                             <div class="grid sm:grid-cols-2 gap-4">
                                 <div><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Parent / Guardian
-                                        Name</label><input type="text" id="parent-name" required
+                                        Name</label><input type="text" id="parent-name" required minlength="2"
+                                        maxlength="100"
                                         class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 focus:ring-[#C4A484]/30 focus:border-[#C4A484] transition-all"
                                         placeholder="Your name" /></div>
                                 <div><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Child&#x27;s
@@ -689,7 +690,7 @@
                                     <option>8 – 12 years</option>
                                 </select></div>
                             <div class="mt-4"><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Concerns /
-                                    Message</label><textarea rows="4" id="message"
+                                    Message</label><textarea rows="4" id="message" maxlength="500"
                                     class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 focus:ring-[#C4A484]/30 focus:border-[#C4A484] transition-all resize-none"
                                     placeholder="Tell us about your child&#x27;s speech or language concerns..."></textarea>
                             </div><button type="submit"
@@ -815,7 +816,8 @@
             <form id="modal-appointment-form" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-[#5C5C5C] mb-1">Parent's Name</label>
-                    <input type="text" name="parent_name" required placeholder="Your Full Name"
+                    <input type="text" name="parent_name" required minlength="2" maxlength="100"
+                        placeholder="Your Full Name"
                         class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#C4A484] focus:border-transparent outline-none transition-all">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -844,7 +846,8 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#5C5C5C] mb-1">What are your concerns?</label>
-                    <textarea name="message" rows="3" placeholder="Tell us a little about your child's speech needs..."
+                    <textarea name="message" rows="3" maxlength="500"
+                        placeholder="Tell us a little about your child's speech needs..."
                         class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#C4A484] focus:border-transparent outline-none transition-all"></textarea>
                 </div>
                 <button type="submit"

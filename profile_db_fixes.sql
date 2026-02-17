@@ -199,6 +199,24 @@ DO $$ BEGIN
     END IF;
 END $$;
 
+-- Parents can add their own children
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Parents insert own students' AND tablename = 'students') THEN
+        CREATE POLICY "Parents insert own students" ON public.students
+            FOR INSERT TO authenticated
+            WITH CHECK (parent_id IN (SELECT id FROM public.parents WHERE user_id = auth.uid()));
+    END IF;
+END $$;
+
+-- Parents can update their own children
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Parents update own students' AND tablename = 'students') THEN
+        CREATE POLICY "Parents update own students" ON public.students
+            FOR UPDATE TO authenticated
+            USING (parent_id IN (SELECT id FROM public.parents WHERE user_id = auth.uid()));
+    END IF;
+END $$;
+
 -- === APPOINTMENTS TABLE (now has student_id after ALTER above) ===
 DO $$ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Parents read own appointments' AND tablename = 'appointments') THEN
