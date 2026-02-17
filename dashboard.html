@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | JisWorld Speech Therapy</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Quicksand:wght@500;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="bg-secondary">
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo text-white">
+                    <span class="logo-text">Jis</span><span class="logo-highlight">World</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">📊 Overview</a>
+                <a href="#" class="nav-item">📝 Daily Activities</a>
+                <a href="#" class="nav-item">🎯 My Goals</a>
+                <a href="#" class="nav-item">💡 General Knowledge</a>
+                <a href="#" class="nav-item">⚙️ Settings</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">Log Out 🚪</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <h2 id="welcomeMsg">Hello, Super Parent! 👋</h2>
+                <div class="user-profile">
+                    <div class="avatar">JP</div>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <!-- Progress Section -->
+                <div class="card progress-card-dash">
+                    <h3>📢 Weekly Progress</h3>
+                    <div class="chart-container">
+                        <!-- Simulated Chart Bars -->
+                        <div class="bar-group">
+                            <span>Mon</span>
+                            <div class="bar" style="height: 40%"></div>
+                        </div>
+                        <div class="bar-group">
+                            <span>Tue</span>
+                            <div class="bar" style="height: 60%"></div>
+                        </div>
+                        <div class="bar-group">
+                            <span>Wed</span>
+                            <div class="bar" style="height: 30%"></div>
+                        </div>
+                        <div class="bar-group">
+                            <span>Thu</span>
+                            <div class="bar" style="height: 80%"></div>
+                        </div>
+                        <div class="bar-group">
+                            <span>Fri</span>
+                            <div class="bar" style="height: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Activities Checklist -->
+                <div class="card activities-card">
+                    <h3>✅ Daily Missions</h3>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <input type="checkbox" id="task1">
+                            <label for="task1">Practice 'R' sounds (5 mins)</label>
+                        </li>
+                        <li class="task-item">
+                            <input type="checkbox" id="task2">
+                            <label for="task2">Read a bedtime story together</label>
+                        </li>
+                        <li class="task-item">
+                            <input type="checkbox" id="task3">
+                            <label for="task3">Play "I Spy" describing colors</label>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- GK Categories -->
+                <div class="card gk-card full-width">
+                    <h3>🌍 General Knowledge World</h3>
+                    <div class="gk-grid">
+                        <div class="gk-item">
+                            <span class="gk-icon">🦁</span>
+                            <h4>Animals</h4>
+                        </div>
+                        <div class="gk-item">
+                            <span class="gk-icon">🚀</span>
+                            <h4>Space</h4>
+                        </div>
+                        <div class="gk-item">
+                            <span class="gk-icon">🦕</span>
+                            <h4>Dinosaurs</h4>
+                        </div>
+                        <div class="gk-item">
+                            <span class="gk-icon">🎨</span>
+                            <h4>Colors</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

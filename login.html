@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | JisWorld Speech Therapy</title>
+    <link rel="stylesheet" href="style.css?v=login-redesign">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Quicksand:wght@500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="bg-secondary flex-center min-h-screen">
+
+    <div class="login-split-container">
+        <!-- Left Side: Image/Brand -->
+        <div class="login-image-side">
+            <div class="brand-overlay">
+                <h1>JisWorld</h1>
+                <p>Helping children find their voice.</p>
+            </div>
+        </div>
+
+        <!-- Right Side: Form -->
+        <div class="login-form-side">
+            <div class="form-wrapper">
+                <div class="login-header text-center mb-6">
+                    <a href="index.html" class="logo mb-4 inline-block md:hidden">
+                        <span class="logo-text">Jis</span><span class="logo-highlight">World</span>
+                        <span class="logo-icon">🎈</span>
+                    </a>
+                    <h2 id="auth-title">Welcome Back!</h2>
+                    <p id="auth-subtitle" class="text-gray">Please log in to access your dashboard.</p>
+                </div>
+
+                <div class="login-tabs mb-6">
+                    <button class="tab-btn active text-[#2D2D2D] border-b-2 border-[#C4A484]"
+                        onclick="switchAuthMode('login')">Login</button>
+                    <button class="tab-btn text-gray-400 hover:text-[#C4A484]"
+                        onclick="switchAuthMode('register')">Register</button>
+                </div>
+
+                <!-- Social Auth Buttons -->
+                <div class="social-auth mb-6 space-y-3">
+                    <button id="googleBtn"
+                        class="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors bg-white text-gray-700 font-medium">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
+                        <span class="btn-text">Google</span>
+                    </button>
+                </div>
+
+                <div class="relative mb-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or email</span>
+                    </div>
+                </div>
+
+                <form id="authForm">
+                    <div id="nameField" class="form-group hidden mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="fullName"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
+                            placeholder="John Doe">
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="email"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
+                            placeholder="name@example.com" required>
+                    </div>
+
+                    <div class="form-group mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="password"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all"
+                            placeholder="••••••••" required>
+                    </div>
+
+                    <div id="roleField" class="hidden mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">I am a...</label>
+                        <select id="roleSelect"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#C4A484] focus:border-[#C4A484] outline-none transition-all">
+                            <option value="parent">Parent / Guardian</option>
+                            <option value="therapist">Therapist</option>
+                            <option value="reception">Receptionist</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" id="submitBtn"
+                        class="w-full py-3 bg-[#2D2D2D] hover:bg-[#1a1a1a] text-white font-semibold rounded-lg transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        Log In
+                    </button>
+                </form>
+
+                <div class="text-center mt-6 text-sm">
+                    <a href="index.html" class="text-gray-400 hover:text-[#C4A484]">← Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log("Login Script Loading...");
+
+        // Create a proper Supabase CLIENT instance (not just the library reference)
+        // window.supabase is the CDN library object with createClient method
+        const SUPABASE_URL = 'https://hhrqjolqkuzwylypekhr.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_2WZKcFYxtVP8qtdsoLj82w_Jc551SaB';
+
+        let supabaseClient = null;
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+                auth: { storage: window.sessionStorage }
+            });
+            console.log("Supabase client created successfully");
+        } catch (e) {
+            console.error("Failed to create Supabase client:", e);
+        }
+
+        async function handleAuth(mode, email, password, name, role) {
+            console.log("handleAuth called:", mode, email, role);
+            if (!supabaseClient) {
+                alert("System Error: Supabase client not initialized.");
+                return;
+            }
+
+            try {
+                let error;
+                let userData;
+
+                if (mode === 'login') {
+                    const result = await supabaseClient.auth.signInWithPassword({ email, password });
+                    error = result.error;
+                    userData = result.data ? result.data.user : null;
+                } else {
+                    const result = await supabaseClient.auth.signUp({
+                        email,
+                        password,
+                        options: {
+                            data: { full_name: name, role: role }
+                        }
+                    });
+                    error = result.error;
+                    userData = result.data ? result.data.user : null;
+
+                    if (!error && userData) {
+                        alert("Registration successful! Please check your email.");
+                    }
+                }
+
+                if (error) throw error;
+
+                console.log("Auth success, redirecting...");
+                if (role === 'admin' || email.includes('admin')) {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'profile.html';
+                }
+
+            } catch (error) {
+                console.error("Auth Error:", error);
+                alert(error.message || "Authentication failed. Please try again.");
+            }
+        }
+
+        async function handleGoogleLogin() {
+            console.log("Google login clicked");
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: { redirectTo: window.location.origin + '/profile.html' }
+                });
+                if (error) throw error;
+            } catch (error) {
+                console.error("Google Auth Error:", error);
+                alert(error.message);
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM Ready - attaching event listeners");
+
+            // Google login button
+            var googleBtn = document.getElementById('googleBtn');
+            if (googleBtn) {
+                googleBtn.addEventListener('click', handleGoogleLogin);
+            }
+
+            // Tab switching (exposed globally for onclick handlers)
+            window.switchAuthMode = function (mode) {
+                console.log("Switching mode:", mode);
+                var title = document.getElementById('auth-title');
+                var submitBtn = document.getElementById('submitBtn');
+                var nameField = document.getElementById('nameField');
+                var roleField = document.getElementById('roleField');
+                var tabs = document.querySelectorAll('.tab-btn');
+
+                if (mode === 'register') {
+                    title.textContent = "Create Account";
+                    submitBtn.textContent = "Sign Up";
+                    nameField.classList.remove('hidden');
+                    roleField.classList.remove('hidden');
+                    tabs[0].classList.remove('active', 'text-[#2D2D2D]', 'border-b-2', 'border-[#C4A484]');
+                    tabs[0].classList.add('text-gray-400');
+                    tabs[1].classList.add('active', 'text-[#2D2D2D]', 'border-b-2', 'border-[#C4A484]');
+                    tabs[1].classList.remove('text-gray-400');
+                } else {
+                    title.textContent = "Welcome Back!";
+                    submitBtn.textContent = "Log In";
+                    nameField.classList.add('hidden');
+                    roleField.classList.add('hidden');
+                    tabs[1].classList.remove('active', 'text-[#2D2D2D]', 'border-b-2', 'border-[#C4A484]');
+                    tabs[1].classList.add('text-gray-400');
+                    tabs[0].classList.add('active', 'text-[#2D2D2D]', 'border-b-2', 'border-[#C4A484]');
+                    tabs[0].classList.remove('text-gray-400');
+                }
+            };
+
+            // Form submit handler
+            var authForm = document.getElementById('authForm');
+            if (authForm) {
+                authForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    console.log("Form submit triggered");
+
+                    var submitBtn = document.getElementById('submitBtn');
+                    var mode = submitBtn.textContent.indexOf('Sign Up') !== -1 ? 'register' : 'login';
+                    var email = document.getElementById('email').value;
+                    var password = document.getElementById('password').value;
+                    var name = document.getElementById('fullName').value;
+                    var role = document.getElementById('roleSelect').value || 'parent';
+
+                    var originalText = submitBtn.textContent;
+                    submitBtn.textContent = "Processing...";
+                    submitBtn.disabled = true;
+
+                    handleAuth(mode, email, password, name, role)
+                        .catch(function () { /* alert already shown */ })
+                        .finally(function () {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+                });
+                console.log("Form submit listener attached successfully");
+            } else {
+                console.error("Auth form NOT found in DOM!");
+            }
+        });
+    </script>
+
+</html>
