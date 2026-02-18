@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Seeding User</title>
+</head>
+
+<body>
+    <div id="status">Seeding...</div>
+    <script type="module">
+        import { supabase } from './supabase-fetch-client.js?v=99';
+        async function seed() {
+            const status = document.getElementById('status');
+            try {
+                // Try sign up
+                const { data, error } = await supabase.auth.signUp({
+                    email: 'testadmin@example.com',
+                    password: 'Password123!',
+                    options: { data: { full_name: 'Test Admin' } }
+                });
+
+                if (error) {
+                    if (error.message.includes('already registered')) {
+                        status.innerHTML = 'User already exists. Redirecting...';
+                        setTimeout(() => window.location.href = 'admin.html', 1000);
+                        return;
+                    }
+                    throw error;
+                }
+
+                status.innerHTML = 'User created! Redirecting to Admin Portal...';
+                setTimeout(() => window.location.href = 'admin.html', 1500);
+            } catch (err) {
+                status.innerHTML = 'Error: ' + err.message;
+                console.error(err);
+            }
+        }
+        seed();
+    </script>
+</body>
+
+</html>
