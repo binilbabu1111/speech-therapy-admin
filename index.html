@@ -5,6 +5,30 @@
     <meta charSet="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Open+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        jisworld: {
+                            blue: '#1e90ff',
+                            'blue-hover': '#1c86ee',
+                        }
+                    },
+                    fontFamily: {
+                        nunito: ['Nunito', 'sans-serif'],
+                        sans: ['Open Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         .field-error {
             color: #FF5252;
@@ -349,8 +373,7 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-[#2D2D2D]"
-                                       >Evidence-Based Therapy</h3>
+                                    <h3 class="font-bold text-[#2D2D2D]">Evidence-Based Therapy</h3>
                                     <p class="text-sm text-[#718096] mt-1 leading-relaxed">Every treatment plan is
                                         grounded in the latest research and clinical best practices recommended by ASHA.
                                     </p>
@@ -369,8 +392,7 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-[#2D2D2D]"
-                                       >Individualized Treatment
+                                    <h3 class="font-bold text-[#2D2D2D]">Individualized Treatment
                                         Plans</h3>
                                     <p class="text-sm text-[#718096] mt-1 leading-relaxed">We assess each child
                                         holistically and create personalized goals that fit their strengths, needs, and
@@ -388,8 +410,7 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-[#2D2D2D]"
-                                       >Parent Involvement &amp;
+                                    <h3 class="font-bold text-[#2D2D2D]">Parent Involvement &amp;
                                         Progress Tracking</h3>
                                     <p class="text-sm text-[#718096] mt-1 leading-relaxed">Regular updates, home
                                         practice strategies, and collaborative goal-setting keep parents involved and
@@ -406,8 +427,7 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-[#2D2D2D]"
-                                       >California &amp; ASHA
+                                    <h3 class="font-bold text-[#2D2D2D]">California &amp; ASHA
                                         Compliance</h3>
                                     <p class="text-sm text-[#718096] mt-1 leading-relaxed">We follow all California
                                         Speech-Language Pathology and Hearing Board guidelines and ASHA Code of Ethics.
@@ -586,8 +606,7 @@
                                 </path>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-bold text-[#2D2D2D] mb-2"
-                           >Child-Friendly Environment</h3>
+                        <h3 class="text-lg font-bold text-[#2D2D2D] mb-2">Child-Friendly Environment</h3>
                         <p class="text-sm text-[#718096] leading-relaxed">A warm, playful space designed to make
                             children feel comfortable and engaged.</p>
                     </div>
@@ -599,8 +618,7 @@
                                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-bold text-[#2D2D2D] mb-2"
-                           >Experienced Licensed Therapists</h3>
+                        <h3 class="text-lg font-bold text-[#2D2D2D] mb-2">Experienced Licensed Therapists</h3>
                         <p class="text-sm text-[#718096] leading-relaxed">Our SLP-CCC therapists bring years of
                             pediatric experience and specialized training.</p>
                     </div>
@@ -614,8 +632,7 @@
                                 </polygon>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-bold text-[#2D2D2D] mb-2"
-                           >School-Readiness Focus</h3>
+                        <h3 class="text-lg font-bold text-[#2D2D2D] mb-2">School-Readiness Focus</h3>
                         <p class="text-sm text-[#718096] leading-relaxed">We prepare children for academic success by
                             building the communication skills they need to thrive in school.</p>
                     </div>
@@ -626,16 +643,14 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="max-w-3xl mx-auto text-center mb-12 sm:mb-16"><span
                         class="text-sm font-semibold uppercase tracking-wider text-[#1e90ff]">Contact</span>
-                    <h2 class="mt-3 text-3xl sm:text-4xl font-bold text-[#2D2D2D]"
-                       >Get in Touch</h2>
+                    <h2 class="mt-3 text-3xl sm:text-4xl font-bold text-[#2D2D2D]">Get in Touch</h2>
                     <p class="mt-4 text-lg text-[#718096] leading-relaxed">Ready to take the first step? Reach out to
                         schedule an evaluation or learn more about our services.</p>
                 </div>
                 <div class="grid lg:grid-cols-5 gap-10">
                     <div class="lg:col-span-2 space-y-6">
                         <div class="bg-[#FAFBFD] rounded-2xl p-6 border border-[#E2E8F0]">
-                            <h3 class="font-bold text-[#2D2D2D] mb-4"
-                               >Contact Information</h3>
+                            <h3 class="font-bold text-[#2D2D2D] mb-4">Contact Information</h3>
                             <div class="space-y-4">
                                 <div class="flex items-start gap-3"><svg class="w-5 h-5 text-[#1e90ff] mt-0.5 shrink-0"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -690,8 +705,7 @@
                     </div>
                     <div class="lg:col-span-3">
                         <form id="appointment-form" class="bg-[#FAFBFD] rounded-2xl p-6 sm:p-8 border border-[#E2E8F0]">
-                            <h3 class="font-bold text-[#2D2D2D] mb-6"
-                               >Request an Appointment</h3>
+                            <h3 class="font-bold text-[#2D2D2D] mb-6">Request an Appointment</h3>
                             <div class="grid sm:grid-cols-2 gap-4">
                                 <div><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Parent / Guardian
                                         Name</label><input type="text" id="parent-name" required minlength="2"
