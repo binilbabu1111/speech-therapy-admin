@@ -72,10 +72,11 @@
 
 <body>
     <div class="container">
-        <h1>Therapist Seeder <span style="font-size: 0.5em; color: #888;">v3.1</span></h1>
-        <p>This script will register and promote 5 therapist accounts. <br><b style="color:red">IMPORTANT: Apply the SQL
-                Fix first (v3.1), then REFRESH this page!</b></p>
-        <button id="seed-btn">Run Therapist Seeder (v3.1)</button>
+        <h1>Therapist Seeder <span style="font-size: 0.5em; color: #888;">v3.5</span></h1>
+        <p>This script will register and promote 5 therapist accounts. <br><b style="color:red">IMPORTANT: Apply the
+                Master
+                Sync SQL (sync_users_rls.sql) first, then REFRESH this page!</b></p>
+        <button id="seed-btn">Run Therapist Seeder (v3.5)</button>
         <div id="output"></div>
     </div>
 
@@ -95,8 +96,8 @@
 
         btn.onclick = async () => {
             btn.disabled = true;
-            output.innerHTML = '<b>Seeding started (v3.4)...</b><br>';
-            log("Version 3.4 active. Recursion fix and secondary table bypass applied...");
+            output.innerHTML = '<b>Seeding started (v3.5)...</b><br>';
+            log("Version 3.5 active. Master Sync triggers enabled...");
 
             const therapists = [
                 { email: 'sarah.miller@example.com', name: 'Sarah Miller' },
@@ -154,24 +155,13 @@
 
                         if (pErr) {
                             if (pErr.message.includes('recursion')) {
-                                log(`CRITICAL ERROR: Infinite recursion detected. Please run Version 3.0+ of the SQL script!`, "error");
+                                log(`CRITICAL ERROR: Infinite recursion detected. Please run Version 3.5+ of the SQL script!`, "error");
                             } else {
                                 log(`Promotion failed: ${pErr.message}`, "error");
                             }
                         } else {
                             log(`SUCCESS: Role updated to therapist in users table.`, "success");
-
-                            // 3. Create entry in secondary therapists table
-                            const { data: { user } } = await supabase.auth.getUser();
-                            log(`Current Auth UID: ${user?.id}. Creating profile in secondary table...`);
-                            const { error: tErr } = await supabase.from('therapists').upsert({
-                                user_id: userId,
-                                specialization: i === 0 ? 'Speech Language Pathology' : 'Occupational Therapy',
-                                license_number: `SLP-${Math.floor(10000 + Math.random() * 90000)}`
-                            });
-
-                            if (tErr) log(`Secondary Table Error: ${tErr.message}`, "error");
-                            else log(`SUCCESS: Therapist profile created in secondary table!`, "success");
+                            log(`Master Sync Trigger will now create the clinical profile automatically.`, "info");
                         }
                     } else {
                         log(`Failed to obtain ID for ${t.name}`, "error");

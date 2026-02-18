@@ -35,6 +35,41 @@ export async function upsertUser(user, additionalData = {}) {
 }
 
 /**
+ * Unified update for user profiles.
+ * Updates the 'users' table; database triggers handle sync to therapists/parents.
+ */
+export async function updateUserProfile(userId, profileData) {
+    if (!userId) return;
+
+    // Filter only valid columns for public.users
+    const validUserColumns = ['display_name', 'phone', 'avatar_url', 'status'];
+    const userUpdates = {};
+
+    Object.keys(profileData).forEach(key => {
+        if (validUserColumns.includes(key)) {
+            userUpdates[key] = profileData[key];
+        }
+    });
+
+    if (Object.keys(userUpdates).length === 0) return;
+
+    userUpdates.updated_at = new Date().toISOString();
+
+    const { error } = await supabase
+        .from('users')
+        .update(userUpdates)
+        .eq('id', userId);
+
+    if (error) {
+        console.error('Error updating user profile:', error);
+        throw error;
+    }
+
+    // Role-specific sync is handled via DB triggers (sync_users_rls.sql)
+    console.log(`User profile updated for ${userId}. DB triggers will handle specialized sync.`);
+}
+
+/**
  * Completes the registration profile by creating parent and student records.
  * @param {string} userId - The user ID from auth.
  * @param {object} additionalInfo - Form data.
@@ -268,9 +303,10 @@ export async function getStudents() {
         .select(`
             *,
             parents (
+                id,
                 address,
                 emergency_contact,
-                users (name, email, phone)
+                users:user_id (display_name, email, phone)
             )
         `)
         .order('created_at', { ascending: false });

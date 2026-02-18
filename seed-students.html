@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed Students & Parents (v1.0)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            line-height: 1.5;
+            background: #f0f2f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+
+        .error {
+            color: #721c24;
+            background: #f8d7da;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+
+        .info {
+            color: #0c5460;
+            background: #d1ecf1;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+
+        button {
+            background: #5BA4CF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:disabled {
+            background: #ccc;
+        }
+
+        #output {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Student & Parent Seeder <span style="font-size: 0.5em; color: #888;">v1.0</span></h1>
+        <p>This script will register 3 parents and create 3 student profiles. <br>
+            <b style="color:red">IMPORTANT: Apply sync_users_rls.sql first!</b>
+        </p>
+        <button id="seed-btn">Run Seeder</button>
+        <div id="output"></div>
+    </div>
+
+    <script type="module">
+        import { supabase } from './supabase-fetch-client.js';
+        import { completeRegistrationProfile } from './db-service.js';
+
+        const btn = document.getElementById('seed-btn');
+        const output = document.getElementById('output');
+
+        function log(msg, type = '') {
+            const div = document.createElement('div');
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            if (type) div.className = type;
+            output.appendChild(div);
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        btn.onclick = async () => {
+            btn.disabled = true;
+            output.innerHTML = '<b>Seeding started...</b><br>';
+
+            const data = [
+                { email: 'parent1@example.com', name: 'John Doe', child: 'Jimmy Doe', dob: '2018-05-20', needs: 'Speech delay' },
+                { email: 'parent2@example.com', name: 'Jane Smith', child: 'Sarah Smith', dob: '2019-11-12', needs: 'Articulation' },
+                { email: 'parent3@example.com', name: 'Bob Brown', child: 'Billy Brown', dob: '2017-03-05', needs: 'Fluency' }
+            ];
+
+            for (const item of data) {
+                try {
+                    log(`Processing ${item.name}...`);
+
+                    // 1. Sign Up
+                    const { data: authData, error: authErr } = await supabase.auth.signUp({
+                        email: item.email,
+                        password: 'Password123!',
+                        options: { data: { full_name: item.name } }
+                    });
+
+                    let userId = authData?.user?.id;
+
+                    if (authErr) {
+                        if (authErr.message.includes('already registered')) {
+                            log(`User ${item.email} exists. Signing in...`, "info");
+                            const { data: sData, error: sErr } = await supabase.auth.signInWithPassword({
+                                email: item.email,
+                                password: 'Password123!'
+                            });
+                            userId = sData?.user?.id;
+                        } else {
+                            throw authErr;
+                        }
+                    }
+
+                    if (userId) {
+                        log(`Authenticated: ${userId}`, "success");
+
+                        // 2. Ensure user record exists with role 'parent'
+                        await supabase.from('users').upsert({
+                            id: userId,
+                            email: item.email,
+                            display_name: item.name,
+                            role: 'parent',
+                            status: 'active'
+                        });
+
+                        // 3. Complete Profile (Create Parent & Student)
+                        log(`Creating clinical profile for ${item.child}...`);
+                        await completeRegistrationProfile(userId, {
+                            child_name: item.child,
+                            child_dob: item.dob,
+                            therapy_needs: item.needs,
+                            phone: '555-0100'
+                        });
+
+                        log(`SUCCESS: Parent and Student records created!`, "success");
+                    }
+                } catch (err) {
+                    log(`Error: ${err.message}`, "error");
+                }
+                log("---");
+            }
+
+            log("<b>Seeding Finished.</b>");
+            btn.disabled = false;
+        };
+    </script>
+</body>
+
+</html>
