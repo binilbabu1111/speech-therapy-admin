@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | JisWorld Speech Therapy</title>
     <!-- Use existing styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <style>
         body {
@@ -178,6 +179,146 @@
         .form-error.visible {
             display: block;
         }
+
+        /* Robust Admin Layout Styles */
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f3f4f6;
+        }
+
+        .admin-sidebar {
+            width: 260px;
+            background-color: #111827;
+            color: #d1d5db;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 40;
+        }
+
+        .admin-nav {
+            flex: 1;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            color: #d1d5db;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.9375rem;
+        }
+
+        .nav-item:hover {
+            background-color: #1f2937;
+            color: white;
+        }
+
+        .nav-item.active {
+            background-color: #374151;
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .admin-main {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .admin-topbar {
+            height: 64px;
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+
+        .admin-content {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* Fix SVG sizes */
+        svg {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .admin-sidebar svg,
+        .admin-topbar svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .admin-brand {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid #1f2937;
+        }
     </style>
 </head>
 
@@ -241,35 +382,35 @@
                 <a href="#" class="nav-item" onclick="switchSection('users', this)">
                     <span class="nav-icon">👥</span> User Management
                 </a>
-                <a href="#" class="nav-item">
-                    <span class="nav-icon">📩</span> Inquiries <span
-                        class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full ml-auto">3</span>
+                <a href="#" class="nav-item" onclick="switchSection('inquiries', this)">
+                    <span class="nav-icon">📩</span> Inquiries <span id="sidebar-inquiry-count"
+                        class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full ml-auto hidden">0</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" onclick="switchSection('appointments', this)">
                     <span class="nav-icon">📅</span> Appointments
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" onclick="switchSection('plans', this)">
                     <span class="nav-icon">📝</span> Therapy Plans
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" onclick="switchSection('assessments', this)">
                     <span class="nav-icon">📋</span> Assessments
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" onclick="switchSection('invoices', this)">
                     <span class="nav-icon">💳</span> Billing
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" onclick="switchSection('documents', this)">
                     <span class="nav-icon">📂</span> Documents
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" onclick="switchSection('cms', this)">
                     <span class="nav-icon">🖥️</span> CMS
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" onclick="switchSection('notifications', this)">
                     <span class="nav-icon">🔔</span> Notifications
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" onclick="switchSection('reports', this)">
                     <span class="nav-icon">📈</span> Reports
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" onclick="switchSection('settings', this)">
                     <span class="nav-icon">⚙️</span> Settings
                 </a>
             </nav>
@@ -318,28 +459,28 @@
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div>
-                                <div class="stat-value">24</div>
-                                <div class="stat-label">Total Students</div>
+                                <div id="total-users-stat" class="stat-value">...</div>
+                                <div class="stat-label">Total Users</div>
                             </div>
                             <div class="stat-icon bg-blue-100 text-blue-600">🎓</div>
                         </div>
                         <div class="stat-card">
                             <div>
-                                <div class="stat-value">3</div>
-                                <div class="stat-label">New Inquiries</div>
+                                <div id="new-inquiries-stat" class="stat-value">...</div>
+                                <div class="stat-label">Inquiries</div>
                             </div>
                             <div class="stat-icon bg-yellow-100 text-yellow-600">📩</div>
                         </div>
                         <div class="stat-card">
                             <div>
-                                <div class="stat-value">12</div>
-                                <div class="stat-label">Appointments Today</div>
+                                <div id="appointments-today-stat" class="stat-value">...</div>
+                                <div class="stat-label">Appointments</div>
                             </div>
                             <div class="stat-icon bg-green-100 text-green-600">📅</div>
                         </div>
                         <div class="stat-card">
                             <div>
-                                <div class="stat-value">$4.2k</div>
+                                <div id="pending-payments-stat" class="stat-value">...</div>
                                 <div class="stat-label">Pending Payments</div>
                             </div>
                             <div class="stat-icon bg-red-100 text-red-600">💰</div>
@@ -547,7 +688,8 @@
                                 <button class="px-4 py-2 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
                                     onclick="alert('Calendar View coming soon')">Calendar View</button>
                                 <button class="px-4 py-2 text-sm bg-[#8F9779] text-white rounded-lg hover:bg-[#7A8268]"
-                                    onclick="alert('Add Session Modal coming soon')">+ New Session</button>
+                                    onclick="document.getElementById('appointment-modal').classList.remove('hidden'); loadAppointmentDropdowns();">+
+                                    New Session</button>
                             </div>
                         </div>
 
@@ -1062,8 +1204,35 @@
                     // DASHBOARD MODULE
                     // ---------------------------------------------------------
                     async function loadDashboardStats() {
-                        // Mock Data for now - replace with real DB counts later
-                        // document.getElementById('total-users-count').textContent = '...';
+                        try {
+                            const users = await getAllUsers();
+                            const { getInquiries, getAppointments, getInvoices } = await import('./db-service.js');
+                            const inquiries = await getInquiries();
+                            const appointments = await getAppointments();
+                            const invoices = await getInvoices();
+
+                            // Update Sidebar Badges
+                            const newInquiries = inquiries.filter(i => (i.status || 'New').toLowerCase() === 'new').length;
+                            const inquiryBadge = document.getElementById('sidebar-inquiry-count');
+                            if (inquiryBadge) {
+                                inquiryBadge.textContent = newInquiries;
+                                inquiryBadge.classList.toggle('hidden', newInquiries === 0);
+                            }
+
+                            // Update Stat Cards
+                            const studentCount = users.filter(u => u.role === 'student' || u.role === 'parent').length; // Heuristic
+                            document.getElementById('total-users-stat').textContent = users.length;
+                            document.getElementById('new-inquiries-stat').textContent = inquiries.length;
+                            document.getElementById('appointments-today-stat').textContent = appointments.length;
+
+                            const pendingTotal = invoices
+                                .filter(inv => inv.status === 'Pending')
+                                .reduce((sum, inv) => sum + (parseFloat(inv.amount) || 0), 0);
+                            document.getElementById('pending-payments-stat').textContent = '$' + pendingTotal.toLocaleString();
+
+                        } catch (err) {
+                            console.error("Dashboard Stats Error:", err);
+                        }
                     }
 
                     // ---------------------------------------------------------
@@ -1366,7 +1535,14 @@
                                 'inquiries': 'Inquiry Management',
                                 'appointments': 'Session Calendar',
                                 'students': 'Student Management',
-                                'invoices': 'Billing & Invoices'
+                                'invoices': 'Billing & Invoices',
+                                'plans': 'Therapy Plans',
+                                'assessments': 'Assessments',
+                                'documents': 'Documents',
+                                'cms': 'CMS',
+                                'notifications': 'Notifications',
+                                'reports': 'Reports',
+                                'settings': 'Settings'
                             };
                             titleEl.textContent = titles[sectionId] || 'Admin';
                         }
