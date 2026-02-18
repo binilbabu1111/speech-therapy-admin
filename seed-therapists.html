@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed Therapists</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            line-height: 1.5;
+            background: #f0f2f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+
+        .error {
+            color: #721c24;
+            background: #f8d7da;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+
+        button {
+            background: #5BA4CF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:disabled {
+            background: #ccc;
+        }
+
+        #output {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Seed 5 Therapists</h1>
+        <p>This script will register and promote 5 therapist accounts.</p>
+        <button id="seed-btn">Run Therapist Seeder</button>
+        <div id="output"></div>
+    </div>
+
+    <script type="module">
+        import { supabase } from './supabase-fetch-client.js';
+
+        const btn = document.getElementById('seed-btn');
+        const output = document.getElementById('output');
+
+        function log(msg, type = '') {
+            const div = document.createElement('div');
+            div.textContent = msg;
+            if (type) div.className = type;
+            output.appendChild(div);
+        }
+
+        btn.onclick = async () => {
+            btn.disabled = true;
+            output.innerHTML = '<b>Seeding started...</b><br>';
+
+            const therapists = [
+                { email: 'sarah.miller@example.com', name: 'Sarah Miller' },
+                { email: 'james.wilson@example.com', name: 'James Wilson' },
+                { email: 'emily.chen@example.com', name: 'Emily Chen' },
+                { email: 'michael.ross@example.com', name: 'Michael Ross' },
+                { email: 'lisa.ann@example.com', name: 'Lisa Ann' }
+            ];
+
+            for (const t of therapists) {
+                try {
+                    log(`Processing ${t.name}...`);
+
+                    // 1. Sign Up
+                    const { data, error: authErr } = await supabase.auth.signUp({
+                        email: t.email,
+                        password: 'Password123!',
+                        options: { data: { full_name: t.name } }
+                    });
+
+                    let userId = data?.user?.id;
+
+                    if (authErr) {
+                        if (authErr.message.includes('already registered')) {
+                            log(`User ${t.email} already exists in Auth. Fetching ID...`);
+                            // Try to get existing user ID from public.users
+                            const { data: existingUser } = await supabase.from('users').select('id').eq('email', t.email).single();
+                            userId = existingUser?.id;
+                        } else {
+                            log(`Auth Error for ${t.name}: ${authErr.message}`, "error");
+                        }
+                    }
+
+                    if (userId) {
+                        // 2. Promote to Therapist in public.users
+                        const { error: pErr } = await supabase.from('users').upsert({
+                            id: userId,
+                            email: t.email,
+                            display_name: t.name,
+                            role: 'therapist',
+                            status: 'active'
+                        });
+
+                        if (pErr) log(`RLS/DB Error promoting ${t.name}: ${pErr.message}`, "error");
+                        else log(`Success: ${t.name} is now a therapist!`, "success");
+                    } else {
+                        log(`Failed to get ID for ${t.name}`, "error");
+                    }
+                } catch (err) {
+                    log(`Fatal error for ${t.name}: ${err.message}`, "error");
+                }
+            }
+
+            log("<b>Seeding completed.</b>");
+            btn.disabled = false;
+        };
+    </script>
+</body>
+
+</html>
