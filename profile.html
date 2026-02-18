@@ -10,31 +10,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0e1a;
-            --bg-secondary: #111827;
-            --bg-card: rgba(17, 24, 39, 0.7);
-            --bg-card-hover: rgba(30, 41, 59, 0.8);
-            --bg-glass: rgba(255, 255, 255, 0.04);
-            --border-glass: rgba(255, 255, 255, 0.08);
-            --accent-1: #6366f1;
-            /* Indigo */
-            --accent-2: #8b5cf6;
-            /* Violet */
-            --accent-3: #06b6d4;
-            /* Cyan */
-            --accent-4: #10b981;
-            /* Emerald */
-            --accent-5: #f59e0b;
-            /* Amber */
-            --accent-6: #ec4899;
-            /* Pink */
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --glow-indigo: 0 0 20px rgba(99, 102, 241, 0.3);
-            --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
-            --color-error: #ff5252;
-            --bg-error: rgba(255, 82, 82, 0.1);
+            /* Playful & Professional Palette */
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-sidebar: #ffffff;
+
+            /* Logo Colors */
+            --logo-blue: #1e90ff;
+            --logo-orange: #ff9800;
+            --logo-pink: #f06292;
+            --logo-green: #4caf50;
+            --logo-yellow: #ffeb3b;
+
+            /* Accent Mapping */
+            --accent-1: var(--logo-blue);
+            --accent-2: var(--logo-pink);
+            --accent-3: #00bcd4;
+            --accent-4: var(--logo-green);
+            --accent-5: var(--logo-orange);
+            --accent-6: #9c27b0;
+
+            /* Text */
+            --text-primary: #334155;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+
+            /* UI Elements */
+            --border-light: #e2e8f0;
+            --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --radius-large: 24px;
+            --radius-medium: 16px;
+
+            --color-error: #ef4444;
+            --bg-error: rgba(239, 68, 68, 0.1);
         }
 
         .field-error {
@@ -80,7 +90,7 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Nunito', 'Inter', -apple-system, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
@@ -95,10 +105,10 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
-            animation: bgShift 20s ease-in-out infinite alternate;
+            background: radial-gradient(ellipse at 20% 30%, rgba(30, 144, 255, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 10%, rgba(240, 98, 146, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 90%, rgba(76, 175, 80, 0.04) 0%, transparent 60%);
+            animation: bgShift 30s ease-in-out infinite alternate;
             z-index: 0;
             pointer-events: none;
         }
@@ -124,9 +134,8 @@
         /* ── Sidebar ── */
         .sidebar {
             width: 270px;
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--border-glass);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-light);
             display: flex;
             flex-direction: column;
             position: fixed;
@@ -135,27 +144,27 @@
             bottom: 0;
             z-index: 40;
             transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
         }
 
         .sidebar-brand {
-            padding: 1.5rem 1.25rem;
+            padding: 2rem 1.5rem;
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            border-bottom: 1px solid var(--border-glass);
+            border-bottom: 1px solid var(--border-light);
         }
 
         .brand-icon {
-            width: 42px;
-            height: 42px;
-            background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
-            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--logo-blue), var(--logo-green));
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: var(--glow-indigo);
-            animation: iconPulse 3s ease-in-out infinite;
+            font-size: 1.4rem;
+            box-shadow: 0 8px 16px rgba(30, 144, 255, 0.2);
         }
 
         @keyframes iconPulse {
@@ -171,11 +180,9 @@
         }
 
         .sidebar-brand span {
-            font-size: 1.15rem;
+            font-size: 1.25rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #e2e8f0, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--text-primary);
             letter-spacing: -0.03em;
         }
 
@@ -221,9 +228,9 @@
         }
 
         .nav-link.active {
-            color: #c7d2fe;
-            border-left-color: var(--accent-1);
-            background: linear-gradient(90deg, rgba(99, 102, 241, 0.1), transparent);
+            color: var(--accent-1);
+            border-left: 4px solid var(--accent-1);
+            background: rgba(30, 144, 255, 0.06);
         }
 
         .nav-link .nav-icon {
@@ -300,24 +307,23 @@
         }
 
         .top-bar {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(16px);
-            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 1.25rem 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid var(--border-glass);
+            border-bottom: 1px solid var(--border-light);
             position: sticky;
             top: 0;
             z-index: 30;
         }
 
         .top-bar h1 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
         }
 
         .top-bar .mobile-menu-btn {
@@ -377,17 +383,18 @@
         /* ── Glass Cards ── */
         .card {
             background: var(--bg-card);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border-glass);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.25rem;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-large);
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .card:hover {
-            border-color: rgba(99, 102, 241, 0.2);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(30, 144, 255, 0.1);
         }
 
         .card-title {
@@ -410,38 +417,20 @@
 
         .stat-card {
             background: var(--bg-card);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border-glass);
-            border-radius: 16px;
-            padding: 1.25rem;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-medium);
+            padding: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.25rem;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            filter: blur(30px);
-            opacity: 0.15;
-            transition: opacity 0.3s;
+            box-shadow: var(--shadow-soft);
         }
 
         .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(99, 102, 241, 0.25);
-        }
-
-        .stat-card:hover::after {
-            opacity: 0.3;
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(30, 144, 255, 0.1);
         }
 
         .stat-card:nth-child(1)::after {
@@ -504,11 +493,11 @@
 
         /* ── Welcome Banner ── */
         .welcome-banner {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(6, 182, 212, 0.15) 50%, rgba(139, 92, 246, 0.1) 100%);
-            border: 1px solid rgba(99, 102, 241, 0.15);
-            border-radius: 20px;
-            padding: 2rem 2.5rem;
-            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, rgba(30, 144, 255, 0.1) 0%, rgba(240, 98, 146, 0.05) 50%, rgba(76, 175, 80, 0.08) 100%);
+            border: 2px dashed rgba(30, 144, 255, 0.2);
+            border-radius: var(--radius-large);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -541,12 +530,10 @@
         }
 
         .welcome-banner h2 {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: 800;
-            margin-bottom: 0.4rem;
-            background: linear-gradient(135deg, #e2e8f0, #c7d2fe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
         }
 
         .welcome-banner p {
@@ -624,27 +611,27 @@
         }
 
         .badge-indigo {
-            background: rgba(99, 102, 241, 0.15);
-            color: #a5b4fc;
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            background: rgba(30, 144, 255, 0.1);
+            color: var(--logo-blue);
+            border: 1px solid rgba(30, 144, 255, 0.15);
         }
 
         .badge-emerald {
-            background: rgba(16, 185, 129, 0.15);
-            color: #6ee7b7;
-            border: 1px solid rgba(16, 185, 129, 0.2);
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--logo-green);
+            border: 1px solid rgba(76, 175, 80, 0.15);
         }
 
         .badge-amber {
-            background: rgba(245, 158, 11, 0.15);
-            color: #fcd34d;
-            border: 1px solid rgba(245, 158, 11, 0.2);
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--logo-orange);
+            border: 1px solid rgba(255, 152, 0, 0.15);
         }
 
         .badge-red {
-            background: rgba(239, 68, 68, 0.15);
-            color: #fca5a5;
-            border: 1px solid rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+            border: 1px solid rgba(239, 68, 68, 0.15);
         }
 
         .badge-gray {
@@ -1057,30 +1044,29 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-brand">
-                <div class="brand-icon">🌟</div>
-                <span>JisWorld</span>
+                <img src="logo.png" alt="JisWorld Logo" style="height: 60px; object-fit: contain;">
             </div>
             <nav class="sidebar-nav">
                 <a class="nav-link active" onclick="switchSection('dashboard', this)">
-                    <span class="nav-icon">📊</span> Dashboard
+                    <span class="nav-icon" style="color: var(--logo-blue);">●</span> Dashboard
                 </a>
                 <a class="nav-link" onclick="switchSection('children', this)">
-                    <span class="nav-icon">👶</span> My Child Profile
+                    <span class="nav-icon" style="color: var(--logo-pink);">●</span> My Child Profile
                 </a>
                 <a class="nav-link" onclick="switchSection('appointments', this)">
-                    <span class="nav-icon">📅</span> Upcoming Appointments
+                    <span class="nav-icon" style="color: var(--logo-green);">●</span> Appointments
                 </a>
                 <a class="nav-link" onclick="switchSection('progress', this)">
-                    <span class="nav-icon">📈</span> Therapy Progress
+                    <span class="nav-icon" style="color: var(--logo-orange);">●</span> Progress
                 </a>
                 <a class="nav-link" onclick="switchSection('documents', this)">
-                    <span class="nav-icon">📄</span> Documents
+                    <span class="nav-icon" style="color: var(--logo-blue);">●</span> Documents
                 </a>
                 <a class="nav-link" onclick="switchSection('invoices', this)">
-                    <span class="nav-icon">💳</span> Invoices
+                    <span class="nav-icon" style="color: var(--logo-pink);">●</span> Invoices
                 </a>
                 <a class="nav-link" onclick="switchSection('messages', this)">
-                    <span class="nav-icon">💬</span> Messages
+                    <span class="nav-icon" style="color: var(--logo-yellow);">●</span> Messages
                 </a>
             </nav>
             <div class="sidebar-footer">
