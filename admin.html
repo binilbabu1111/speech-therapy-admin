@@ -876,8 +876,8 @@
                 <script type="module" src="session-manager.js"></script>
                 <script type="module">
                     import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js';
-                    import { supabase } from './supabase-fetch-client.js';
-                    import { getAllUsers, checkAdminStatus, upsertUser, updateUserStatus } from './db-service.js';
+                    import { supabase } from './supabase-fetch-client.js?v=2';
+                    import { getAllUsers, checkAdminStatus, upsertUser, updateUserStatus } from './db-service.js?v=2';
 
                     // Admin Key for client-side check
                     const ADMIN_KEY_HASH = '123456';

@@ -639,164 +639,164 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- ════════ AUTH LOGIC ════════ -->
-    <script type="module">
-        import { handleAuth, handleGoogleLogin } from './auth.js?v=5';
-        import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js?v=5';
+        <!-- ════════ AUTH LOGIC ════════ -->
+        <script type="module">
+            import { supabase, verifySupabaseConnection } from './supabase-fetch-client.js?v=2';
+            import { handleAuth, handleGoogleLogin } from './auth.js?v=5';
+            import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js?v=2';
 
-        const signUpButton = document.getElementById('signUp');
-        const signInButton = document.getElementById('signIn');
-        const authCard = document.getElementById('authCard');
-        const signInPanel = document.querySelector('.sign-in-container');
-        const signUpPanel = document.querySelector('.sign-up-container');
+            const signUpButton = document.getElementById('signUp');
+            const signInButton = document.getElementById('signIn');
+            const authCard = document.getElementById('authCard');
+            const signInPanel = document.querySelector('.sign-in-container');
+            const signUpPanel = document.querySelector('.sign-up-container');
 
-        // Layout Toggles (Desktop)
-        signUpButton.addEventListener('click', () => {
-            authCard.classList.add("right-panel-active");
-        });
+            // Layout Toggles (Desktop)
+            signUpButton.addEventListener('click', () => {
+                authCard.classList.add("right-panel-active");
+            });
 
-        signInButton.addEventListener('click', () => {
-            authCard.classList.remove("right-panel-active");
-        });
+            signInButton.addEventListener('click', () => {
+                authCard.classList.remove("right-panel-active");
+            });
 
-        // Layout Toggles (Mobile)
-        window.toggleMobileMode = (mode) => {
-            if (mode === 'register') {
-                signInPanel.classList.remove('active');
-                signUpPanel.classList.add('active');
-            } else {
-                signUpPanel.classList.remove('active');
-                signInPanel.classList.add('active');
-            }
-        };
-
-        // Initialize real-time validation
-        initRealTimeValidation('#authCard');
-
-        // Set max DOB to today on page load
-        (function () {
-            const today = new Date().toISOString().split('T')[0];
-            document.querySelectorAll('.max-today').forEach(el => el.setAttribute('max', today));
-        })();
-
-        console.log("Login module: Initialization complete, listeners attached.");
-
-        // Form Submissions
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const errorMsg = document.getElementById('login-error-msg');
-            const submitBtn = document.getElementById('loginBtn');
-
-            let hasError = false;
-            if (!toggleError('loginEmail', "Email is required", validators.isRequired(email))) hasError = true;
-            else if (!toggleError('loginEmail', "Invalid email format", validators.isEmail(email))) hasError = true;
-
-            if (!toggleError('loginPassword', "Password is required", validators.isRequired(password))) hasError = true;
-
-            if (hasError) return;
-
-            submitBtn.textContent = 'Verifying...';
-            submitBtn.disabled = true;
-            errorMsg.classList.remove('visible');
-
-            try {
-                await handleAuth('login', email, password);
-            } catch (error) {
-                errorMsg.textContent = error.message;
-                errorMsg.classList.add('visible');
-                submitBtn.textContent = 'Sign In';
-                submitBtn.disabled = false;
-            }
-        });
-
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const errorMsg = document.getElementById('reg-error-msg');
-            const submitBtn = document.getElementById('registerBtn');
-
-            // Reset UI
-            clearAllErrors('.sign-up-container');
-
-            // Fields capture
-            const fields = {
-                firstName: document.getElementById('firstName').value.trim(),
-                lastName: document.getElementById('lastName').value.trim(),
-                email: document.getElementById('regEmail').value.trim(),
-                phone: document.getElementById('regPhone').value.trim(),
-                dob: document.getElementById('regDob').value,
-                address: document.getElementById('regAddress').value.trim(),
-                password: document.getElementById('regPassword').value,
-                confirmPassword: document.getElementById('confirmPassword').value,
-                childName: document.getElementById('childName').value.trim(),
-                childDob: document.getElementById('childDob').value,
-                therapyNeeds: document.getElementById('therapyNeeds').value.trim(),
-                terms: document.getElementById('terms').checked,
-                newsletter: document.getElementById('newsletter').checked
+            // Layout Toggles (Mobile)
+            window.toggleMobileMode = (mode) => {
+                if (mode === 'register') {
+                    signInPanel.classList.remove('active');
+                    signUpPanel.classList.add('active');
+                } else {
+                    signUpPanel.classList.remove('active');
+                    signInPanel.classList.add('active');
+                }
             };
 
-            // Validation Suite
-            let hasError = false;
+            // Initialize real-time validation
+            initRealTimeValidation('#authCard');
 
-            if (!toggleError('firstName', "Required", validators.isRequired(fields.firstName))) hasError = true;
-            if (!toggleError('lastName', "Required", validators.isRequired(fields.lastName))) hasError = true;
+            // Set max DOB to today on page load
+            (function () {
+                const today = new Date().toISOString().split('T')[0];
+                document.querySelectorAll('.max-today').forEach(el => el.setAttribute('max', today));
+            })();
 
-            if (!toggleError('regEmail', "Required", validators.isRequired(fields.email))) hasError = true;
-            else if (!toggleError('regEmail', "Invalid format", validators.isEmail(fields.email))) hasError = true;
+            console.log("Login module: Initialization complete, listeners attached.");
 
-            if (fields.phone && !toggleError('regPhone', "Invalid phone", validators.isPhone(fields.phone))) hasError = true;
-            if (!toggleError('regDob', "Birth date required", validators.isRequired(fields.dob))) hasError = true;
+            // Form Submissions
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const errorMsg = document.getElementById('login-error-msg');
+                const submitBtn = document.getElementById('loginBtn');
 
-            if (!toggleError('regPassword', "Password required", validators.isRequired(fields.password))) hasError = true;
-            else if (!toggleError('regPassword', "Min 8 characters", validators.isMinLength(fields.password, 8))) hasError = true;
+                let hasError = false;
+                if (!toggleError('loginEmail', "Email is required", validators.isRequired(email))) hasError = true;
+                else if (!toggleError('loginEmail', "Invalid email format", validators.isEmail(email))) hasError = true;
 
-            if (!toggleError('confirmPassword', "Passwords don't match", validators.passwordsMatch(fields.password, fields.confirmPassword))) hasError = true;
+                if (!toggleError('loginPassword', "Password is required", validators.isRequired(password))) hasError = true;
 
-            if (!toggleError('childName', "Required", validators.isRequired(fields.childName))) hasError = true;
-            if (!toggleError('childDob', "Child's birth date required", validators.isRequired(fields.childDob))) hasError = true;
+                if (hasError) return;
 
-            if (!fields.terms) {
-                errorMsg.textContent = "Please agree to the Terms & Conditions";
-                errorMsg.classList.add('visible');
-                hasError = true;
-            }
+                submitBtn.textContent = 'Verifying...';
+                submitBtn.disabled = true;
+                errorMsg.classList.remove('visible');
 
-            if (hasError) {
-                document.querySelector('.form-content').scrollTop = 0;
-                return;
-            }
+                try {
+                    await handleAuth('login', email, password);
+                } catch (error) {
+                    errorMsg.textContent = error.message;
+                    errorMsg.classList.add('visible');
+                    submitBtn.textContent = 'Sign In';
+                    submitBtn.disabled = false;
+                }
+            });
 
-            submitBtn.textContent = 'Creating Account...';
-            submitBtn.disabled = true;
+            document.getElementById('registerForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const errorMsg = document.getElementById('reg-error-msg');
+                const submitBtn = document.getElementById('registerBtn');
 
-            const additionalInfo = {
-                phone: fields.phone,
-                dob: fields.dob,
-                address: fields.address,
-                child_name: fields.childName,
-                child_dob: fields.childDob,
-                therapy_needs: fields.therapyNeeds,
-                newsletter_subscribed: fields.newsletter,
-                role: 'parent'
-            };
+                // Reset UI
+                clearAllErrors('.sign-up-container');
 
-            try {
-                await handleAuth('signup', fields.email, fields.password, `${fields.firstName} ${fields.lastName}`, additionalInfo);
-            } catch (error) {
-                errorMsg.textContent = error.message;
-                errorMsg.classList.add('visible');
-                submitBtn.textContent = 'Create Account';
-                submitBtn.disabled = false;
-            }
-        });
+                // Fields capture
+                const fields = {
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    email: document.getElementById('regEmail').value.trim(),
+                    phone: document.getElementById('regPhone').value.trim(),
+                    dob: document.getElementById('regDob').value,
+                    address: document.getElementById('regAddress').value.trim(),
+                    password: document.getElementById('regPassword').value,
+                    confirmPassword: document.getElementById('confirmPassword').value,
+                    childName: document.getElementById('childName').value.trim(),
+                    childDob: document.getElementById('childDob').value,
+                    therapyNeeds: document.getElementById('therapyNeeds').value.trim(),
+                    terms: document.getElementById('terms').checked,
+                    newsletter: document.getElementById('newsletter').checked
+                };
 
-        // Google Auth
-        document.getElementById('googleBtn').addEventListener('click', handleGoogleLogin);
-        document.getElementById('googleBtnReg').addEventListener('click', handleGoogleLogin);
-    </script>
+                // Validation Suite
+                let hasError = false;
+
+                if (!toggleError('firstName', "Required", validators.isRequired(fields.firstName))) hasError = true;
+                if (!toggleError('lastName', "Required", validators.isRequired(fields.lastName))) hasError = true;
+
+                if (!toggleError('regEmail', "Required", validators.isRequired(fields.email))) hasError = true;
+                else if (!toggleError('regEmail', "Invalid format", validators.isEmail(fields.email))) hasError = true;
+
+                if (fields.phone && !toggleError('regPhone', "Invalid phone", validators.isPhone(fields.phone))) hasError = true;
+                if (!toggleError('regDob', "Birth date required", validators.isRequired(fields.dob))) hasError = true;
+
+                if (!toggleError('regPassword', "Password required", validators.isRequired(fields.password))) hasError = true;
+                else if (!toggleError('regPassword', "Min 8 characters", validators.isMinLength(fields.password, 8))) hasError = true;
+
+                if (!toggleError('confirmPassword', "Passwords don't match", validators.passwordsMatch(fields.password, fields.confirmPassword))) hasError = true;
+
+                if (!toggleError('childName', "Required", validators.isRequired(fields.childName))) hasError = true;
+                if (!toggleError('childDob', "Child's birth date required", validators.isRequired(fields.childDob))) hasError = true;
+
+                if (!fields.terms) {
+                    errorMsg.textContent = "Please agree to the Terms & Conditions";
+                    errorMsg.classList.add('visible');
+                    hasError = true;
+                }
+
+                if (hasError) {
+                    document.querySelector('.form-content').scrollTop = 0;
+                    return;
+                }
+
+                submitBtn.textContent = 'Creating Account...';
+                submitBtn.disabled = true;
+
+                const additionalInfo = {
+                    phone: fields.phone,
+                    dob: fields.dob,
+                    address: fields.address,
+                    child_name: fields.childName,
+                    child_dob: fields.childDob,
+                    therapy_needs: fields.therapyNeeds,
+                    newsletter_subscribed: fields.newsletter,
+                    role: 'parent'
+                };
+
+                try {
+                    await handleAuth('signup', fields.email, fields.password, `${fields.firstName} ${fields.lastName}`, additionalInfo);
+                } catch (error) {
+                    errorMsg.textContent = error.message;
+                    errorMsg.classList.add('visible');
+                    submitBtn.textContent = 'Create Account';
+                    submitBtn.disabled = false;
+                }
+            });
+
+            // Google Auth
+            document.getElementById('googleBtn').addEventListener('click', handleGoogleLogin);
+            document.getElementById('googleBtnReg').addEventListener('click', handleGoogleLogin);
+        </script>
 </body>
 
 </html>

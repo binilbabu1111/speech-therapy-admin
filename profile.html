@@ -1272,7 +1272,7 @@
 
     <!-- Scripts -->
     <script type="module">
-        import { supabase } from './supabase-fetch-client.js';
+        import { supabase } from './supabase-fetch-client.js?v=2';
 
         let currentUser = null;
         let parentRecord = null;
@@ -1884,7 +1884,7 @@
         </div>
     </div>
     <script type="module">
-        import { initRealTimeValidation } from './validation.js';
+        import { initRealTimeValidation } from './validation.js?v=2';
         window.addEventListener('load', () => {
             initRealTimeValidation('#add-child-form');
             initRealTimeValidation('#edit-child-form');

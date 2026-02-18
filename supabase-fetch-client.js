@@ -112,6 +112,7 @@ class SupabaseFetchClient {
     }
 
     from(table) {
+        console.log("Mock Supabase: from", table);
         const _this = this;
 
         // Internal state for the current query chain
@@ -120,35 +121,61 @@ class SupabaseFetchClient {
             select: '*',
             filters: [],
             order: null,
+            limit: null,
             isSingle: false
         };
 
         const builder = {
             select: (columns = '*') => {
+                console.log("Mock Supabase: select", columns);
                 query.select = columns;
                 return builder;
             },
             eq: (column, value) => {
+                console.log("Mock Supabase: eq", column, value);
                 query.filters.push(`${column}=eq.${value}`);
+                return builder;
+            },
+            in: (column, values) => {
+                console.log("Mock Supabase: in", column, values);
+                const valStr = values.map(v => typeof v === 'string' ? `"${v}"` : v).join(',');
+                query.filters.push(`${column}=in.(${valStr})`);
+                return builder;
+            },
+            or: (filterString) => {
+                query.filters.push(`or=(${filterString})`);
                 return builder;
             },
             order: (column, { ascending = true } = {}) => {
                 query.order = `${column}.${ascending ? 'asc' : 'desc'}`;
                 return builder;
             },
+            limit: (count) => {
+                query.limit = count;
+                return builder;
+            },
             single: () => {
+                console.log("Mock Supabase: single");
                 query.isSingle = true;
-                // Since this is a terminal call in Supabase, we execute it
+                return builder.execute();
+            },
+            maybeSingle: () => {
+                console.log("Mock Supabase: maybeSingle");
+                query.isSingle = true;
                 return builder.execute();
             },
             // Terminal method to actually run the fetch
             execute: async () => {
+                console.log("Mock Supabase: executing", query);
                 let path = `${_this.url}/rest/v1/${query.table}?select=${query.select}`;
                 if (query.filters.length > 0) {
                     path += `&${query.filters.join('&')}`;
                 }
                 if (query.order) {
                     path += `&order=${query.order}`;
+                }
+                if (query.limit) {
+                    path += `&limit=${query.limit}`;
                 }
 
                 const headers = {};
