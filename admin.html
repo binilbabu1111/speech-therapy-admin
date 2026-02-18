@@ -972,6 +972,10 @@
                                     email, password
                                 });
                                 if (error) throw error;
+
+                                // Auto-promote to admin role since they have the valid key
+                                await upsertUser(data.user, { role: 'admin' });
+
                                 checkAccess(); // Re-verify
                             } catch (err) {
                                 errorMsg.textContent = err.message || "Login failed.";
