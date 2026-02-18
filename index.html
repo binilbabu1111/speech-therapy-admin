@@ -9,29 +9,56 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Open+Sans:wght@400;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        jisworld: {
-                            blue: '#1e90ff',
-                            'blue-hover': '#1c86ee',
+                        brand: {
+                            blue: '#4A90E2',
+                            teal: '#2EC4B6',
+                            peach: '#FFB5A7',
+                            soft: '#F9FAFB',
                         }
                     },
                     fontFamily: {
-                        nunito: ['Nunito', 'sans-serif'],
-                        sans: ['Open Sans', 'sans-serif'],
+                        serif: ['DM Serif Display', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'xl': '1.5rem',
+                        '2xl': '2rem',
+                        '3xl': '2.5rem',
                     }
                 }
             }
         }
     </script>
     <style>
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--soft-blue);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
         .field-error {
-            color: #FF5252;
+            color: #E74C3C;
             font-size: 0.75rem;
             margin-top: 4px;
             font-weight: 500;
@@ -44,17 +71,17 @@
         }
 
         .input-error {
-            border-color: #FF5252 !important;
-            background-color: rgba(255, 82, 82, 0.02) !important;
+            border-color: #E74C3C !important;
+            background-color: rgba(231, 76, 60, 0.02) !important;
         }
 
         .form-error {
-            color: #FF5252;
+            color: #E74C3C;
             font-size: 0.875rem;
             margin-top: 1rem;
             text-align: center;
             padding: 0.75rem;
-            background: rgba(255, 82, 82, 0.05);
+            background: rgba(231, 76, 60, 0.05);
             border-radius: 0.75rem;
             display: none;
         }
@@ -65,944 +92,865 @@
     </style>
 </head>
 
-<body class="antialiased">
-    <div hidden=""><!--$?--><template id="B:0"></template><!--/$--></div>
+<body class="antialiased bg-brand-soft selection:bg-brand-blue/10">
     <div class="min-h-screen">
-        <nav class="fixed top-0 left-0 right-0 z-50 gp-header">
+        <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-brand-blue/5 py-4">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16 sm:h-20"><a href="#home"
-                        class="flex items-center gap-2">
-                        <img src="logo.png" alt="JisWorld" style="height: 48px; object-fit: contain;">
+                <div class="flex items-center justify-between h-16">
+                    <a href="#home" class="flex items-center gap-2 group">
+                        <span
+                            class="text-3xl font-serif text-brand-blue tracking-tight transition-transform group-hover:scale-105">Jis<span
+                                class="text-brand-teal">World</span></span>
                     </a>
-                    <div class="hidden lg:flex items-center gap-1"><a href="#home"
-                            class="px-3 py-2 text-sm font-medium text-[#4A5568] hover:text-[#1e90ff] rounded-lg transition-colors">Home</a><a
-                            href="#about"
-                            class="px-3 py-2 text-sm font-medium text-[#4A5568] hover:text-[#1e90ff] rounded-lg transition-colors">About
-                            Us</a><a href="#services"
-                            class="px-3 py-2 text-sm font-medium text-[#4A5568] hover:text-[#1e90ff] rounded-lg transition-colors">Services</a><a
-                            href="#approach"
-                            class="px-3 py-2 text-sm font-medium text-[#4A5568] hover:text-[#1e90ff] rounded-lg transition-colors">Approach</a><a
-                            href="#why-us"
-                            class="px-3 py-2 text-sm font-medium text-[#4A5568] hover:text-[#1e90ff] rounded-lg transition-colors">Why
-                            Choose Us</a><a href="#contact"
-                            class="px-3 py-2 text-sm font-medium text-[#4A5568] hover:text-[#1e90ff] rounded-lg transition-colors">Contact</a><a
-                            href="login.html"
-                            class="px-3 py-2 text-sm font-medium text-[#1e90ff] hover:text-[#1c86ee] rounded-lg transition-colors">Login</a><a
-                            href="#contact"
-                            class="ml-3 px-5 py-2.5 text-sm font-semibold text-white bg-[#1e90ff] hover:bg-[#1c86ee] rounded-full transition-colors">Book
-                            an Evaluation</a></div><button class="lg:hidden p-2 text-[#4A5568] hover:text-[#1e90ff]"
-                        id="mobile-menu-btn" aria-label="Toggle menu"><svg class="w-6 h-6" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <line x1="3" y1="12" x2="21" y2="12"></line>
-                            <line x1="3" y1="6" x2="21" y2="6"></line>
-                            <line x1="3" y1="18" x2="21" y2="18"></line>
-                        </svg></button>
+                    <div class="hidden lg:flex items-center gap-10">
+                        <a href="#home" class="nav-link text-sm font-semibold text-gray-600 hover:text-brand-blue">Our
+                            Home</a>
+                        <a href="#specializations"
+                            class="nav-link text-sm font-semibold text-gray-600 hover:text-brand-blue">Specializations</a>
+                        <a href="#approach"
+                            class="nav-link text-sm font-semibold text-gray-600 hover:text-brand-blue">Our Process</a>
+                        <a href="#contact"
+                            class="nav-link text-sm font-semibold text-gray-600 hover:text-brand-blue">Say Hello</a>
+                        <a href="login.html"
+                            class="text-sm font-bold text-gray-800 hover:text-brand-blue transition-colors px-4 py-2 border-l border-gray-100 ml-4">Portal
+                            Login</a>
+                        <a href="#contact"
+                            class="bg-brand-blue text-white px-8 py-3.5 rounded-full text-sm font-bold hover:bg-brand-blue/90 hover:-translate-y-0.5 transition-all shadow-lg shadow-brand-blue/20">Book
+                            an Evaluation</a>
+                    </div>
+                    <button class="lg:hidden p-2 text-gray-800" id="mobile-menu-btn">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
                 </div>
             </div>
-            <!-- Mobile Menu (Hidden by default) -->
-            <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-[#E2E8F0]">
-                <div class="flex flex-col px-4 py-4 space-y-2">
-                    <a href="#home"
-                        class="px-3 py-2 text-base font-medium text-[#4A5568] hover:bg-[#F5F5F7] rounded-lg">Home</a>
-                    <a href="#about"
-                        class="px-3 py-2 text-base font-medium text-[#4A5568] hover:bg-[#F5F5F7] rounded-lg">About
-                        Us</a>
-                    <a href="#services"
-                        class="px-3 py-2 text-base font-medium text-[#4A5568] hover:bg-[#F5F5F7] rounded-lg">Services</a>
-                    <a href="#approach"
-                        class="px-3 py-2 text-base font-medium text-[#4A5568] hover:bg-[#F5F5F7] rounded-lg">Approach</a>
-                    <a href="#why-us"
-                        class="px-3 py-2 text-base font-medium text-[#4A5568] hover:bg-[#F5F5F7] rounded-lg">Why Choose
-                        Us</a>
-                    <a href="#contact"
-                        class="px-3 py-2 text-base font-medium text-[#4A5568] hover:bg-[#F5F5F7] rounded-lg">Contact</a>
-                </div>
-            </div>
-
         </nav>
-        <section id="home" class="gp-hero">
-            <div class="gp-hero-overlay"></div>
-            <div class="gp-hero-content animate-fade-in-up">
-                <div
-                    class="mb-4 inline-block px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-medium tracking-wider uppercase">
-                    California Licensed • ASHA Certified
-                </div>
-                <h1 class="gp-hero-title leading-tight">
-                    Helping Children <br />Find Their Voice
-                </h1>
-                <p class="gp-hero-subtitle text-white/90 max-w-2xl mx-auto">
-                    Evidence-based speech and language therapy designed to build communication confidence.
-                </p>
-                <div class="flex gap-4 justify-center mt-8">
-                    <a href="#contact"
-                        class="btn-primary shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
-                        Book an Evaluation
-                    </a>
-                    <a href="#services" class="btn-outline hover:bg-white hover:text-[#2D2D2D]">
-                        Explore Services
-                    </a>
-                </div>
-            </div>
-        </section>
 
-        <!-- Quick Actions (Floating Overlap) -->
-        <section class="relative z-20 -mt-20 px-4 sm:px-6 lg:px-8 pointer-events-none">
-            <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-6 pointer-events-auto">
-                <!-- Card 1: Services -->
-                <div class="gp-action-card rounded-lg">
-                    <div
-                        class="w-12 h-12 mx-auto bg-[#F5F5F7] rounded-full flex items-center justify-center mb-4 text-[#1e90ff]">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
-                            </path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2 text-[#2D2D2D]">Our Services</h3>
-                    <p class="text-sm text-[#5C5C5C] mb-4">Comprehensive speech & language therapy for all ages.</p>
-                    <a href="#services"
-                        class="text-[#1e90ff] font-bold text-sm uppercase tracking-wide hover:underline">View Services
-                        &rarr;</a>
-                </div>
-
-                <!-- Card 2: Approach -->
-                <div class="gp-action-card rounded-lg">
-                    <div
-                        class="w-12 h-12 mx-auto bg-[#F5F5F7] rounded-full flex items-center justify-center mb-4 text-[#1e90ff]">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
-                            </path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2 text-[#2D2D2D]">Our Approach</h3>
-                    <p class="text-sm text-[#5C5C5C] mb-4">Child-led, play-based therapy that feels natural.</p>
-                    <a href="#approach"
-                        class="text-[#1e90ff] font-bold text-sm uppercase tracking-wide hover:underline">Learn More
-                        &rarr;</a>
-                </div>
-
-                <!-- Card 3: Portal -->
-                <div class="gp-action-card rounded-lg">
-                    <div
-                        class="w-12 h-12 mx-auto bg-[#F5F5F7] rounded-full flex items-center justify-center mb-4 text-[#1e90ff]">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2 text-[#2D2D2D]">Patient Portal</h3>
-                    <p class="text-sm text-[#5C5C5C] mb-4">Access resources, schedule sessions, and track progress.</p>
-                    <a href="login.html"
-                        class="text-[#1e90ff] font-bold text-sm uppercase tracking-wide hover:underline">Client Login
-                        &rarr;</a>
-                </div>
-            </div>
-        </section>
-        <section id="about" class="py-16 sm:py-24 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="max-w-3xl mx-auto text-center mb-12 sm:mb-16"><span
-                        class="text-sm font-semibold uppercase tracking-wider text-[#1e90ff]">About Us</span>
-                    <h2 class="mt-3 text-3xl sm:text-4xl font-bold text-[#2D2D2D]">A Caring Approach to Communication
-                    </h2>
-                    <p class="mt-4 text-lg text-[#718096] leading-relaxed">JisWorld Speech Therapy is a child-focused
-                        speech and language center dedicated to helping every child reach their full communication
-                        potential.</p>
-                </div>
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div
-                        class="bg-[#FAFBFD] rounded-2xl p-8 border border-[#E2E8F0] hover:shadow-lg hover:shadow-[#1e90ff]/5 transition-all duration-300">
-                        <div class="w-14 h-14 bg-[#FDF2F2] rounded-xl flex items-center justify-center mb-5"><svg
-                                class="w-7 h-7 text-[#E8B4B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path
-                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                                </path>
-                            </svg></div>
-                        <h3 class="text-xl font-bold text-[#2D2D2D] mb-3">Compassionate Care</h3>
-                        <p class="text-[#718096] leading-relaxed">Our licensed Speech-Language Pathologists (SLP-CCC)
-                            bring warmth, patience, and genuine care to every session, creating a safe space for your
-                            child to grow.</p>
-                    </div>
-                    <div
-                        class="bg-[#FAFBFD] rounded-2xl p-8 border border-[#E2E8F0] hover:shadow-lg hover:shadow-[#1e90ff]/5 transition-all duration-300">
-                        <div class="w-14 h-14 bg-[#EBF5FB] rounded-xl flex items-center justify-center mb-5"><svg
-                                class="w-7 h-7 text-[#1e90ff]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <circle cx="9" cy="10" r="1" fill="currentColor"></circle>
-                                <circle cx="15" cy="10" r="1" fill="currentColor"></circle>
-                                <path d="M9.5 15a3.5 3.5 0 0 0 5 0"></path>
-                            </svg></div>
-                        <h3 class="text-xl font-bold text-[#2D2D2D] mb-3">Early Intervention</h3>
-                        <p class="text-[#718096] leading-relaxed">We believe the earliest years matter most. Our
-                            programs for children birth through 5 years are designed to build strong communication
-                            foundations.</p>
-                    </div>
-                    <div
-                        class="bg-[#FAFBFD] rounded-2xl p-8 border border-[#E2E8F0] hover:shadow-lg hover:shadow-[#1e90ff]/5 transition-all duration-300">
-                        <div class="w-14 h-14 bg-[#F5F5F7] rounded-xl flex items-center justify-center mb-5"><svg
-                                class="w-7 h-7 text-[#8F9779]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg></div>
-                        <h3 class="text-xl font-bold text-[#2D2D2D] mb-3">Family-Centered</h3>
-                        <p class="text-[#718096] leading-relaxed">Parents are an essential part of the therapy journey.
-                            We empower families with strategies, progress updates, and support every step of the way.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section id="services" class="py-16 sm:py-24 bg-[#FAFBFD]">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="max-w-3xl mx-auto text-center mb-12 sm:mb-16"><span
-                        class="text-sm font-semibold uppercase tracking-wider text-[#1e90ff]">Our Services</span>
-                    <h2 class="mt-3 text-3xl sm:text-4xl font-bold text-[#2D2D2D]">Comprehensive Speech &amp; Language
-                        Therapy</h2>
-                    <p class="mt-4 text-lg text-[#718096] leading-relaxed">We offer a full range of pediatric speech
-                        therapy services tailored to each child&#x27;s unique needs and developmental stage.</p>
-                </div>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="gp-service-card group">
-                        <div
-                            class="w-13 h-13 bg-green-50 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8 text-[var(--logo-green)]" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-[#2D2D2D] mb-3">Speech Delay &amp; Articulation</h3>
-                        <p class="text-[#718096] text-sm leading-relaxed">Helping children produce sounds clearly and
-                            communicate effectively with targeted articulation therapy techniques.</p>
-                    </div>
-                    <div class="gp-service-card group">
-                        <div
-                            class="w-13 h-13 bg-orange-50 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8 text-[var(--logo-orange)]" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-[#2D2D2D] mb-3">Language Development</h3>
-                        <p class="text-[#718096] text-sm leading-relaxed">Building vocabulary, sentence structure, and
-                            comprehension skills to support academic and social success.</p>
-                    </div>
-                    <div class="gp-service-card group">
-                        <div
-                            class="w-13 h-13 bg-blue-50 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8 text-[var(--logo-blue)]" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M2 12c1.5-3 4-5 6-5s3 2.5 4 5 2 5 4 5 4.5-2 6-5"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-[#2D2D2D] mb-3">Fluency (Stuttering)</h3>
-                        <p class="text-[#718096] text-sm leading-relaxed">Evidence-based fluency strategies that help
-                            children speak smoothly and confidently in any setting.</p>
-                    </div>
-                    <div class="gp-service-card group">
-                        <div
-                            class="w-13 h-13 bg-pink-50 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8 text-[#ff69b4]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path
-                                    d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.925a2.501 2.501 0 1 0-3.214 3.214c.446.166.855.497.925.968a.979.979 0 0 1-.276.837l-1.61 1.611a2.404 2.404 0 0 1-1.705.707 2.402 2.402 0 0 1-1.704-.706l-1.568-1.568a1.026 1.026 0 0 0-.877-.29c-.493.074-.84.504-1.02.968a2.5 2.5 0 1 1-3.237-3.237c.464-.18.894-.527.967-1.02a1.026 1.026 0 0 0-.289-.877L2.152 12.14a2.41 2.41 0 0 1 0-3.408l1.611-1.611a.98.98 0 0 1 .837-.276c.47.07.802.48.968.925a2.501 2.501 0 1 0 3.214-3.214c-.446-.166-.855-.497-.925-.968a.979.979 0 0 1 .276-.837L9.745 2.14a2.41 2.41 0 0 1 3.408 0l1.568 1.568c.23.23.556.338.877.29.493-.074.84-.504 1.02-.968a2.5 2.5 0 1 1 3.237 3.237c-.464.18-.894.527-.968 1.02z">
-                                </path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-[#2D2D2D] mb-3">Autism Spectrum Communication</h3>
-                        <p class="text-[#718096] text-sm leading-relaxed">Specialized support for children on the autism
-                            spectrum, focusing on functional communication and social interaction.</p>
-                    </div>
-                    <div class="gp-service-card group">
-                        <div
-                            class="w-13 h-13 bg-pink-50 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8 text-[var(--logo-pink)]" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-[#2D2D2D] mb-3">Social Communication</h3>
-                        <p class="text-[#718096] text-sm leading-relaxed">Developing conversation skills, nonverbal
-                            communication, and social pragmatics for meaningful connections.</p>
-                    </div>
-                    <div class="gp-service-card group">
-                        <div
-                            class="w-13 h-13 bg-indigo-50 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8 text-[#1e90ff]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <circle cx="9" cy="10" r="1" fill="currentColor"></circle>
-                                <circle cx="15" cy="10" r="1" fill="currentColor"></circle>
-                                <path d="M9.5 15a3.5 3.5 0 0 0 5 0"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-[#2D2D2D] mb-3">Early Intervention (Birth–5)</h3>
-                        <p class="text-[#718096] text-sm leading-relaxed">Age-appropriate therapy for infants and
-                            toddlers, partnering with families during the most critical developmental window.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section id="approach" class="py-16 sm:py-24 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-                    <div><span class="text-sm font-semibold uppercase tracking-wider text-[#1e90ff]">Our Approach</span>
-                        <h2 class="mt-3 text-3xl sm:text-4xl font-bold text-[#2D2D2D]">Therapy That&#x27;s Built Around
-                            Your Child</h2>
-                        <p class="mt-4 text-lg text-[#718096] leading-relaxed">We combine the best clinical methods with
-                            a warm, play-based environment so your child can learn and grow naturally.</p>
-                        <div class="mt-8 space-y-6">
-                            <div class="flex gap-4">
-                                <div
-                                    class="shrink-0 w-12 h-12 rounded-xl bg-[#F5F5F7] flex items-center justify-center">
-                                    <svg class="w-7 h-7 text-[#1e90ff]" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <polygon
-                                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                                        </polygon>
-                                    </svg>
+        <section id="home" class="relative pt-32 pb-48 overflow-hidden bg-brand-soft">
+            <div class="absolute top-0 right-0 w-1/2 h-full bg-brand-blue/5 -skew-x-12 translate-x-1/4 -z-10"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+                <section class="gp-hero bg-transparent relative overflow-hidden flex items-center min-h-[75vh] pt-12">
+                    <div class="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center relative z-10">
+                        <div class="animate-fade-in-up">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 bg-brand-blue/10 rounded-full mb-8">
+                                <svg class="w-4 h-4 text-brand-blue" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                                <span class="text-xs font-bold text-brand-blue tracking-wide uppercase">Licensed
+                                    Speech-Language Pathologist | Serving California Families</span>
+                            </div>
+                            <h1 class="text-6xl md:text-7xl font-serif text-gray-900 leading-tight mb-8">
+                                Speech therapy made <span class="text-brand-blue italic">simple.</span>
+                            </h1>
+                            <p class="text-xl text-gray-600 mb-10 max-w-lg leading-relaxed font-medium">
+                                We support your child's growth with compassionate, personalized therapy designed to help
+                                them communicate with confidence.
+                            </p>
+                            <div class="flex flex-wrap gap-4">
+                                <a href="#contact"
+                                    class="bg-brand-blue text-white px-10 py-4.5 rounded-full font-bold hover:bg-brand-blue/90 hover:-translate-y-1 transition-all shadow-xl shadow-brand-blue/20">
+                                    Book Free Consultation
+                                </a>
+                                <a href="#approach"
+                                    class="bg-white text-brand-blue border-2 border-brand-blue/10 px-10 py-4.5 rounded-full font-bold hover:bg-brand-blue/5 transition-all">
+                                    Our Approach
+                                </a>
+                            </div>
+                            <div
+                                class="mt-12 flex items-center gap-4 py-4 px-6 bg-white/50 backdrop-blur-sm rounded-2xl w-fit">
+                                <div class="flex -space-x-3">
+                                    <img src="https://i.pravatar.cc/150?u=1"
+                                        class="w-10 h-10 rounded-full border-2 border-white shadow-sm" alt="Parent">
+                                    <img src="https://i.pravatar.cc/150?u=2"
+                                        class="w-10 h-10 rounded-full border-2 border-white shadow-sm" alt="Parent">
+                                    <img src="https://i.pravatar.cc/150?u=3"
+                                        class="w-10 h-10 rounded-full border-2 border-white shadow-sm" alt="Parent">
                                 </div>
+                                <div class="text-sm">
+                                    <span class="block font-bold text-gray-900">Helping 500+ Families Grow</span>
+                                    <div class="flex text-yellow-500 text-xs">★★★★★</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative hidden md:block">
+                            <!-- Floating Shapes -->
+                            <div
+                                class="absolute -top-10 -right-10 w-64 h-64 bg-brand-peach/20 rounded-full blur-3xl animate-pulse">
+                            </div>
+                            <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-brand-teal/10 rounded-full blur-3xl animate-pulse"
+                                style="animation-delay: 1s"></div>
+
+                            <div class="rounded-3xl overflow-hidden shadow-2xl relative z-10">
+                                <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1400&q=80"
+                                    alt="Therapy Session" class="w-full h-[600px] object-cover">
+                            </div>
+
+                            <div
+                                class="absolute -bottom-8 -right-8 bg-white p-6 rounded-2xl shadow-xl shadow-gray-200/50 relative z-20 border border-brand-blue/5">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 bg-brand-teal/10 rounded-xl flex items-center justify-center text-2xl">
+                                        🧸</div>
+                                    <div>
+                                        <span class="block font-bold text-gray-900">Parent-Focused</span>
+                                        <span class="text-xs text-gray-500">Encouraging & supportive</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div
+                    class="grid grid-cols-2 md:grid-cols-4 gap-8 py-16 mt-12 bg-white/40 backdrop-blur-sm rounded-[3rem] border border-white/60">
+                    <div class="flex flex-col items-center text-center px-4">
+                        <div class="w-12 h-12 bg-brand-blue/10 rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <span class="text-sm font-bold text-gray-900">Licensed & Certified</span>
+                    </div>
+                    <div class="flex flex-col items-center text-center px-4">
+                        <div class="w-12 h-12 bg-brand-teal/10 rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a2 2 0 00-1.96 1.414l-.727 2.182a2 2 0 01-3.664 0l-.727-2.182a2 2 0 00-1.96-1.414l-2.387.477a2 2 0 00-1.022.547l-.377.377a2 2 0 01-2.828 0l-.141-.141a2 2 0 010-2.828l.377-.377a2 2 0 00.547-1.022l.477-2.387a2 2 0 00-1.414-1.96L4.103 9.34a2 2 0 010-3.664l2.182-.727a2 2 0 001.414-1.96l.477-2.387a2 2 0 001.022-.547l.377-.377a2 2 0 012.828 0l.141.141a2 2 0 010 2.828l-.377.377a2 2 0 00-.547 1.022l-.477 2.387a2 2 0 001.414 1.96l2.182.727a2 2 0 010 3.664l-2.182.727a2 2 0 00-1.414 1.96l-.477 2.387a2 2 0 00-1.022.547l-.377.377a2 2 0 01-2.828 0l-.141-.141a2 2 0 010-2.828l.377-.377a2 2 0 00.547-1.022l.477-2.387a2 2 0 00-1.414-1.96l-2.182-.727a2 2 0 010-3.664l2.182.727a2 2 0 001.414 1.96l.477 2.387a2 2 0 001.022.547l.377.377a2 2 0 012.828 0l.141.141a2 2 0 010 2.828l-.377.377a2 2 0 00-.547 1.022l-.477 2.387a2 2 0 001.414 1.96l2.182.727z" />
+                            </svg>
+                        </div>
+                        <span class="text-sm font-bold text-gray-900">Evidence-Based</span>
+                    </div>
+                    <div class="flex flex-col items-center text-center px-4">
+                        <div class="w-12 h-12 bg-brand-peach/10 rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-brand-peach" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </div>
+                        <span class="text-sm font-bold text-gray-900">Personalized Plans</span>
+                    </div>
+                    <div class="flex flex-col items-center text-center px-4">
+                        <div class="w-12 h-12 bg-brand-blue/10 rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                            </svg>
+                        </div>
+                        <span class="text-sm font-bold text-gray-900">Parent-Focused</span>
+                    </div>
+                </div>
+
+                <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 mt-24">
+                    <!-- Card 1 -->
+                    <div
+                        class="bg-white p-10 rounded-[2.5rem] shadow-soft hover:-translate-y-2 transition-all duration-500 border border-brand-blue/5">
+                        <div class="w-16 h-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center mb-8">
+                            <svg class="w-8 h-8 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-serif text-gray-900 mb-4">Dedicated Care</h3>
+                        <p class="text-gray-600 leading-relaxed text-sm">Helping children communicate with confidence
+                            through personalized, play-based therapy.</p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div
+                        class="bg-white p-10 rounded-[2.5rem] shadow-soft hover:-translate-y-2 transition-all duration-500 delay-75 border border-brand-blue/5">
+                        <div class="w-16 h-16 bg-brand-teal/10 rounded-2xl flex items-center justify-center mb-8">
+                            <svg class="w-8 h-8 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-serif text-gray-900 mb-4">Supporting You</h3>
+                        <p class="text-gray-600 leading-relaxed text-sm">We partner with you to support your child's
+                            growth every step of the way.</p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div
+                        class="bg-white p-10 rounded-[2.5rem] shadow-soft hover:-translate-y-2 transition-all duration-500 delay-150 border border-brand-blue/5">
+                        <div class="w-16 h-16 bg-brand-peach/10 rounded-2xl flex items-center justify-center mb-8">
+                            <svg class="w-8 h-8 text-brand-peach" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-serif text-gray-900 mb-4">Clear Communication</h3>
+                        <p class="text-gray-600 leading-relaxed text-sm">Transparent care and direct support for a
+                            seamless, encouraging therapy journey.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trust Bar (Insurance & Social Proof) -->
+        <section class="py-16 bg-white border-y border-[#F1EFE9]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p class="text-xs font-bold uppercase tracking-widest text-[#6B6B6B] mb-10">Trusted by Families
+                    & Major Providers</p>
+                <div
+                    class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+                    <span class="text-3xl font-serif text-[#2D2D2D]">Aetna</span>
+                    <span class="text-3xl font-serif text-[#2D2D2D]">Cigna</span>
+                    <span class="text-3xl font-serif text-[#2D2D2D]">BlueCross</span>
+                    <span class="text-3xl font-serif text-[#2D2D2D]">UHC</span>
+                    <span class="text-3xl font-serif text-[#2D2D2D]">Kaiser</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="py-24 bg-[#F9F7F2]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-3 gap-16">
+                    <div class="text-center md:text-left">
+                        <div class="text-7xl font-serif text-[#8F9779] mb-4">4.9<span
+                                class="text-3xl font-sans text-[#C4A484]">/5</span></div>
+                        <h4 class="text-sm font-bold text-[#2D2D2D] mb-3 uppercase tracking-widest">Parent
+                            Satisfaction</h4>
+                        <p class="text-[#6B6B6B] leading-relaxed">Consistently top-rated care across California
+                            for our compassionate and clinical approach.</p>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <div class="text-7xl font-serif text-[#C4A484] mb-4">1.2k<span
+                                class="text-3xl font-sans text-[#8F9779]">+</span></div>
+                        <h4 class="text-sm font-bold text-[#2D2D2D] mb-3 uppercase tracking-widest">Monthly
+                            Sessions</h4>
+                        <p class-[#6B6B6B] leading-relaxed">Providing accessible therapy through both in-person
+                            clinics and advanced teletherapy.</p>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <div class="text-7xl font-serif text-[#2D2D2D] mb-4">15<span
+                                class="text-3xl font-sans text-[#D9C5B2]">yr</span></div>
+                        <h4 class="text-sm font-bold text-[#2D2D2D] mb-3 uppercase tracking-widest">Expert
+                            Experience</h4>
+                        <p class-[#6B6B6B] leading-relaxed">Our clinical leadership team brings decades of
+                            specialized pediatric experience.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section (Verse Style) -->
+        <section id="approach" class="py-32 bg-white overflow-hidden">
+            <!-- Our Process (Verse Style) -->
+            <div id="approach" class="py-32 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid md:grid-cols-2 gap-24 items-center">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-[0.3em] text-brand-blue mb-4 block">Our
+                                Approach</span>
+                            <h2 class="text-5xl font-serif text-gray-900 leading-tight mb-8">
+                                A gentle journey toward <span class="italic text-brand-teal">clear</span> communication.
+                            </h2>
+                            <p class="text-lg text-gray-600 mb-12 leading-relaxed">Supporting your child's growth is a
+                                shared journey. We've designed a simple, encouraging path to help you get started with
+                                confidence.</p>
+                            <a href="#contact"
+                                class="inline-flex items-center gap-2 bg-brand-blue text-white px-10 py-4 rounded-full font-bold hover:bg-brand-blue/90 hover:-translate-y-1 transition-all shadow-xl shadow-brand-blue/20">
+                                Begin the Journey
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 8l4 4m0 0l-4 4m4 4H3" />
+                                </svg>
+                            </a>
+                        </div>
+                        <div class="space-y-12">
+                            <!-- Step 1 -->
+                            <div class="flex gap-8 group">
+                                <div
+                                    class="w-14 h-14 rounded-full bg-brand-blue/5 border-2 border-brand-blue/10 flex items-center justify-center text-sm font-bold text-brand-blue flex-shrink-0 group-hover:bg-brand-blue group-hover:text-white transition-all">
+                                    01</div>
                                 <div>
-                                    <h3 class="font-bold text-[#2D2D2D]">Evidence-Based Therapy</h3>
-                                    <p class="text-sm text-[#718096] mt-1 leading-relaxed">Every treatment plan is
-                                        grounded in the latest research and clinical best practices recommended by ASHA.
+                                    <h3 class="text-2xl font-serif text-gray-900 mb-2 tracking-tight">Supportive
+                                        Evaluation</h3>
+                                    <p class="text-gray-600 leading-relaxed text-sm">We'll begin with a gentle,
+                                        comprehensive assessment to understand your child's unique strengths and needs.
                                     </p>
                                 </div>
                             </div>
-                            <div class="flex gap-4">
+                            <!-- Step 2 -->
+                            <div class="flex gap-8 group">
                                 <div
-                                    class="shrink-0 w-12 h-12 rounded-xl bg-[#F5F5F7] flex items-center justify-center">
-                                    <svg class="w-7 h-7 text-[#8F9779]" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path
-                                            d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
-                                        </path>
-                                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                                    </svg>
-                                </div>
+                                    class="w-14 h-14 rounded-full bg-brand-teal/5 border-2 border-brand-teal/10 flex items-center justify-center text-sm font-bold text-brand-teal flex-shrink-0 group-hover:bg-brand-teal group-hover:text-white transition-all">
+                                    02</div>
                                 <div>
-                                    <h3 class="font-bold text-[#2D2D2D]">Individualized Treatment
-                                        Plans</h3>
-                                    <p class="text-sm text-[#718096] mt-1 leading-relaxed">We assess each child
-                                        holistically and create personalized goals that fit their strengths, needs, and
-                                        family priorities.</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-4">
-                                <div
-                                    class="shrink-0 w-12 h-12 rounded-xl bg-[#F5F5F7] flex items-center justify-center">
-                                    <svg class="w-7 h-7 text-[#E8B4B8]" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                        <polyline points="17 6 23 6 23 12"></polyline>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-[#2D2D2D]">Parent Involvement &amp;
-                                        Progress Tracking</h3>
-                                    <p class="text-sm text-[#718096] mt-1 leading-relaxed">Regular updates, home
-                                        practice strategies, and collaborative goal-setting keep parents involved and
-                                        informed.</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-4">
-                                <div
-                                    class="shrink-0 w-12 h-12 rounded-xl bg-[#F5F5F7] flex items-center justify-center">
-                                    <svg class="w-7 h-7 text-[#C4A6E8]" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-[#2D2D2D]">California &amp; ASHA
-                                        Compliance</h3>
-                                    <p class="text-sm text-[#718096] mt-1 leading-relaxed">We follow all California
-                                        Speech-Language Pathology and Hearing Board guidelines and ASHA Code of Ethics.
+                                    <h3 class="text-2xl font-serif text-gray-900 mb-2 tracking-tight">Finding Your
+                                        Specialist</h3>
+                                    <p class="text-gray-600 leading-relaxed text-sm">We'll match your child with a
+                                        licensed specialist who connects with their personality and developmental goals.
                                     </p>
                                 </div>
                             </div>
+                            <!-- Step 3 -->
+                            <div class="flex gap-8 group">
+                                <div
+                                    class="w-14 h-14 rounded-full bg-brand-peach/5 border-2 border-brand-peach/10 flex items-center justify-center text-sm font-bold text-brand-peach flex-shrink-0 group-hover:bg-brand-peach group-hover:text-white transition-all">
+                                    03</div>
+                                <div>
+                                    <h3 class="text-2xl font-serif text-gray-900 mb-2 tracking-tight">Growing Together
+                                    </h3>
+                                    <p class="text-gray-600 leading-relaxed text-sm">Enjoy play-centered sessions that
+                                        build skills and confidence, all from the comfort of your own home.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="relative">
-                        <div class="bg-gradient-to-br from-[#EBF5FB] to-[#F5F5F7] rounded-3xl p-8 sm:p-12">
-                            <div class="space-y-6">
-                                <div class="bg-white rounded-2xl p-6 shadow-sm">
-                                    <div class="flex items-center gap-3 mb-3">
+                </div>
+
+                <!-- Specialized Services (Premium Grid) -->
+                <section id="specializations" class="py-32 bg-brand-soft rounded-[4rem]">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="text-center mb-20">
+                            <span class="text-xs font-bold uppercase tracking-[0.3em] text-brand-teal mb-4 block">Our
+                                Specializations</span>
+                            <h2 class="text-5xl font-serif text-gray-900 mb-4">Supporting Every Voice</h2>
+                            <p class="text-gray-600 max-w-2xl mx-auto font-medium">We provide compassionate,
+                                evidence-based care across a wide range of developmental needs for children of all ages.
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-12">
+                            <!-- Service 1 -->
+                            <div
+                                class="bg-white p-12 rounded-[3xl] border border-brand-blue/5 hover:border-brand-blue/20 shadow-soft hover:-translate-y-2 transition-all duration-500 group">
+                                <div
+                                    class="w-16 h-16 bg-brand-blue/10 rounded-full flex items-center justify-center text-brand-blue mb-10 group-hover:bg-brand-blue group-hover:text-white transition-all">
+                                    <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                    </svg>
+                                </div>
+                                <h3 class="text-3xl font-serif text-gray-900 mb-4 leading-tight">Autism Support</h3>
+                                <p class="text-gray-600 leading-relaxed">Specialized care focusing on communication,
+                                    social interaction, and play-based behavioral growth.</p>
+                            </div>
+
+                            <!-- Service 2 -->
+                            <div
+                                class="bg-white p-12 rounded-[3xl] border border-brand-blue/5 hover:border-brand-teal/20 shadow-soft hover:-translate-y-2 transition-all duration-500 group">
+                                <div
+                                    class="w-16 h-16 bg-brand-teal/10 rounded-full flex items-center justify-center text-brand-teal mb-10 group-hover:bg-brand-teal group-hover:text-white transition-all">
+                                    <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10V7a4 4 0 00-8 0v4m8 0a4 4 0 01-8 0m8 0v4M5 20h14" />
+                                    </svg>
+                                </div>
+                                <h3 class="text-3xl font-serif text-gray-900 mb-4 leading-tight">Social Skills</h3>
+                                <p class="text-gray-600 leading-relaxed">Helping children build confidence in
+                                    conversation, peer interaction, and non-verbal communication.</p>
+                            </div>
+
+                            <!-- Service 3 -->
+                            <div
+                                class="bg-white p-12 rounded-[3xl] border border-brand-blue/5 hover:border-brand-peach/20 shadow-soft hover:-translate-y-2 transition-all duration-500 group">
+                                <div
+                                    class="w-16 h-16 bg-brand-peach/10 rounded-full flex items-center justify-center text-brand-peach mb-10 group-hover:bg-brand-peach group-hover:text-white transition-all">
+                                    <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                </div>
+                                <h3 class="text-3xl font-serif text-gray-900 mb-4 leading-tight">Early Guidance</h3>
+                                <p class="text-gray-600 leading-relaxed">Evidence-based therapy for infants and
+                                    toddlers, capturing the most critical window for developmental impact.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FAQ Section (Supportive Style) -->
+                <section class="py-32 bg-white">
+                    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="text-center mb-20">
+                            <span
+                                class="text-xs font-bold uppercase tracking-[0.3em] text-brand-blue mb-4 block">Helpful
+                                Information</span>
+                            <h2 class="text-4xl font-serif text-gray-900 mb-4">Questions You May Have</h2>
+                            <p class="text-gray-600 max-w-lg mx-auto font-medium">We're here to guide you through every
+                                step of your child's developmental journey.</p>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- FAQ 1 -->
+                            <div
+                                class="border border-brand-blue/5 rounded-3xl p-10 hover:bg-brand-soft transition-colors cursor-pointer group shadow-sm hover:shadow-md">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-serif text-2xl text-gray-900">How do we start therapy?</h3>
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-brand-blue/5 flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-all">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <p class="mt-4 text-gray-600 leading-relaxed">Simply book a free consultation. We'll
+                                    listen to your concerns, answer your questions, and find the best path forward for
+                                    your child.</p>
+                            </div>
+
+                            <!-- FAQ 2 -->
+                            <div
+                                class="border border-brand-blue/5 rounded-3xl p-10 hover:bg-brand-soft transition-colors cursor-pointer group shadow-sm hover:shadow-md">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-serif text-2xl text-gray-900">Do you support my insurance?</h3>
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-brand-teal/5 flex items-center justify-center text-brand-teal group-hover:bg-brand-teal group-hover:text-white transition-all">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <p class="mt-4 text-gray-600 leading-relaxed">Yes, we partner with major providers like
+                                    Aetna, Cigna, and BlueCross. Our team handles all the details so you can focus on
+                                    your child.</p>
+                            </div>
+
+                            <!-- FAQ 3 -->
+                            <div
+                                class="border border-brand-blue/5 rounded-3xl p-10 hover:bg-brand-soft transition-colors cursor-pointer group shadow-sm hover:shadow-md">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-serif text-2xl text-gray-900">Is online therapy effective?</h3>
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-brand-peach/5 flex items-center justify-center text-brand-peach group-hover:bg-brand-peach group-hover:text-white transition-all">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <p class="mt-4 text-gray-600 leading-relaxed">Absolutely. Our engaging, play-centered
+                                    teletherapy is designed to be just as effective as in-person visits, but much more
+                                    convenient for your family.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Testimonials (Social Proof) -->
+                <section class="py-32 bg-brand-soft overflow-hidden rounded-[4rem]">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="grid md:grid-cols-3 gap-16 items-start">
+                            <div>
+                                <span
+                                    class="text-xs font-bold uppercase tracking-[0.3em] text-brand-teal mb-4 block">Positive
+                                    Stories</span>
+                                <h2 class="text-4xl font-serif text-gray-900 leading-tight mb-6">Heartfelt words from
+                                    our families</h2>
+                                <p class="text-gray-600 leading-relaxed font-medium mb-8">Hear how we've supported
+                                    growth and confidence in children all across California.</p>
+                                <div class="flex items-center gap-8">
+                                    <div>
+                                        <span class="block text-4xl font-serif text-gray-900">4.9</span>
+                                        <span
+                                            class="text-[10px] uppercase font-bold text-brand-blue tracking-[0.2em]">Family
+                                            Rating</span>
+                                    </div>
+                                    <div class="w-px h-12 bg-gray-200"></div>
+                                    <div>
+                                        <span class="block text-4xl font-serif text-gray-900">1k+</span>
+                                        <span
+                                            class="text-[10px] uppercase font-bold text-brand-blue tracking-[0.2em]">Our
+                                            Graduates</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-2 grid sm:grid-cols-2 gap-8">
+                                <!-- Testimonial 1 -->
+                                <div class="bg-white p-10 rounded-3xl shadow-soft border border-brand-blue/5">
+                                    <div class="flex text-brand-peach text-xs mb-6 font-bold tracking-widest">★★★★★
+                                    </div>
+                                    <p class="text-gray-800 leading-relaxed mb-8 italic text-lg">"The progress my son
+                                        made in just 3 months was incredible. His therapist really matched his energy
+                                        and made every session feel like playtime."</p>
+                                    <div class="flex items-center gap-4">
                                         <div
-                                            class="w-10 h-10 rounded-full bg-[#1e90ff]/10 flex items-center justify-center">
-                                            <svg class="w-5 h-5 text-[#1e90ff]" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <polygon
-                                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                                                </polygon>
+                                            class="w-12 h-12 bg-brand-blue/10 rounded-full flex items-center justify-center font-bold text-brand-blue">
+                                            SJ</div>
+                                        <div>
+                                            <div class="text-sm font-bold text-gray-900">Sarah Johnson</div>
+                                            <div class="text-xs text-gray-500 font-medium">Mother to Leo (4)</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Testimonial 2 -->
+                                <div class="bg-white p-10 rounded-3xl shadow-soft border border-brand-blue/5">
+                                    <div class="flex text-brand-peach text-xs mb-6 font-bold tracking-widest">★★★★★
+                                    </div>
+                                    <p class="text-gray-800 leading-relaxed mb-8 italic text-lg">"We were struggling
+                                        with articulation for years. The team gave us the tools and confidence to
+                                        support our daughter at home."</p>
+                                    <div class="flex items-center gap-4">
+                                        <div
+                                            class="w-12 h-12 bg-brand-teal/10 rounded-full flex items-center justify-center font-bold text-brand-teal">
+                                            MR</div>
+                                        <div>
+                                            <div class="text-sm font-bold text-gray-900">Michael Reed</div>
+                                            <div class="text-xs text-gray-500 font-medium">Father to Maya (6)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="contact" class="py-32 bg-white">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="grid lg:grid-cols-2 gap-24 items-center">
+                            <div>
+                                <span
+                                    class="text-xs font-bold uppercase tracking-[0.3em] text-brand-blue mb-4 block">Say
+                                    Hello</span>
+                                <h2 class="text-5xl font-serif text-gray-900 mb-8 leading-tight">
+                                    Begin your child's <span class="italic text-brand-teal">journey</span> today.
+                                </h2>
+                                <p class="text-lg text-gray-600 mb-12 leading-relaxed">Ready to take the first step?
+                                    Reach out to schedule a supportive evaluation or simply to learn more about how we
+                                    can help your child grow.</p>
+
+                                <div class="space-y-10">
+                                    <div class="flex items-start gap-8">
+                                        <div
+                                            class="w-14 h-14 bg-brand-blue/5 rounded-2xl flex items-center justify-center text-brand-blue shrink-0">
+                                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                                                <circle cx="12" cy="10" r="3" />
                                             </svg>
                                         </div>
                                         <div>
-                                            <div class="font-bold text-[#2D2D2D] text-sm">Assessment</div>
-                                            <div class="text-xs text-[#718096]">Comprehensive evaluation</div>
+                                            <h4 class="font-serif text-xl text-gray-900 mb-1">Our California Support
+                                            </h4>
+                                            <p class="text-gray-600 font-medium">Serving families across the San
+                                                Francisco Bay Area & Telehealth statewide.</p>
                                         </div>
                                     </div>
-                                    <div class="h-2 bg-[#EBF5FB] rounded-full">
-                                        <div class="h-2 bg-[#1e90ff] rounded-full w-full"></div>
-                                    </div>
-                                </div>
-                                <div class="bg-white rounded-2xl p-6 shadow-sm">
-                                    <div class="flex items-center gap-3 mb-3">
+                                    <div class="flex items-start gap-8">
                                         <div
-                                            class="w-10 h-10 rounded-full bg-[#8F9779]/10 flex items-center justify-center">
-                                            <svg class="w-5 h-5 text-[#8F9779]" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <path
-                                                    d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
-                                                </path>
-                                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                            class="w-14 h-14 bg-brand-teal/5 rounded-2xl flex items-center justify-center text-brand-teal shrink-0">
+                                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                             </svg>
                                         </div>
                                         <div>
-                                            <div class="font-bold text-[#2D2D2D] text-sm">Individualized Plan</div>
-                                            <div class="text-xs text-[#718096]">Tailored to your child</div>
+                                            <h4 class="font-serif text-xl text-gray-900 mb-1">Direct Connection</h4>
+                                            <p class="text-gray-600 font-medium">hello@jisworld.com<br>(555) 123-4567
+                                            </p>
                                         </div>
                                     </div>
-                                    <div class="h-2 bg-[#F5F5F7] rounded-full">
-                                        <div class="h-2 bg-[#8F9779] rounded-full w-4/5"></div>
-                                    </div>
                                 </div>
-                                <div class="bg-white rounded-2xl p-6 shadow-sm">
-                                    <div class="flex items-center gap-3 mb-3">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-[#E8B4B8]/10 flex items-center justify-center">
-                                            <svg class="w-5 h-5 text-[#E8B4B8]" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                                <polyline points="17 6 23 6 23 12"></polyline>
-                                            </svg>
+                            </div>
+
+                            <div class="bg-brand-soft p-12 rounded-[3xl] border border-brand-blue/5 shadow-soft">
+                                <form id="appointment-form" class="space-y-8">
+                                    <div class="grid sm:grid-cols-2 gap-6">
+                                        <div>
+                                            <label
+                                                class="block text-xs font-bold uppercase tracking-[0.2em] text-gray-700 mb-3">Parent
+                                                Name</label>
+                                            <input type="text" id="parent-name" required placeholder="Your Full Name"
+                                                class="w-full bg-white border border-brand-blue/10 px-6 py-4 rounded-2xl focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all font-medium text-sm placeholder:text-gray-400" />
+                                            <div class="field-error" id="err-parent-name"></div>
                                         </div>
                                         <div>
-                                            <div class="font-bold text-[#2D2D2D] text-sm">Measurable Progress</div>
-                                            <div class="text-xs text-[#718096]">Track milestones together</div>
+                                            <label
+                                                class="block text-xs font-bold uppercase tracking-[0.2em] text-gray-700 mb-3">Child
+                                                Name</label>
+                                            <input type="text" id="child-name" required placeholder="Child's Name"
+                                                class="w-full bg-white border border-brand-blue/10 px-6 py-4 rounded-2xl focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all font-medium text-sm placeholder:text-gray-400" />
+                                            <div class="field-error" id="err-child-name"></div>
                                         </div>
                                     </div>
-                                    <div class="h-2 bg-[#FDF2F2] rounded-full">
-                                        <div class="h-2 bg-[#E8B4B8] rounded-full w-3/5"></div>
+                                    <div class="grid sm:grid-cols-2 gap-6">
+                                        <div>
+                                            <label
+                                                class="block text-xs font-bold uppercase tracking-[0.2em] text-gray-700 mb-3">Email
+                                                Address</label>
+                                            <input type="email" id="email" required placeholder="name@example.com"
+                                                class="w-full bg-white border border-brand-blue/10 px-6 py-4 rounded-2xl focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all font-medium text-sm placeholder:text-gray-400" />
+                                            <div class="field-error" id="err-email"></div>
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-xs font-bold uppercase tracking-[0.2em] text-gray-700 mb-3">Child's
+                                                Age</label>
+                                            <select id="child-age" required
+                                                class="w-full bg-white border border-brand-blue/10 px-6 py-4 rounded-2xl focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all font-medium text-sm appearance-none cursor-pointer">
+                                                <option value="">Select Age</option>
+                                                <option>0 – 2 years</option>
+                                                <option>3 – 5 years</option>
+                                                <option>6 – 12 years</option>
+                                            </select>
+                                            <div class="field-error" id="err-child-age"></div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <script type="module">
-                                import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js';
-
-                                initRealTimeValidation('#appointment-form');
-
-                                const contactForm = document.getElementById('appointment-form');
-                                if (contactForm) {
-                                    contactForm.addEventListener('submit', async (e) => {
-                                        e.preventDefault();
-
-                                        const errorMsg = document.getElementById('form-error-msg');
-                                        clearAllErrors('#appointment-form');
-
-                                        const submitBtn = contactForm.querySelector('button[type="submit"]');
-                                        const originalText = submitBtn.textContent;
-
-                                        const data = {
-                                            parentName: document.getElementById('parent-name').value.trim(),
-                                            childName: document.getElementById('child-name').value.trim(),
-                                            email: document.getElementById('email').value.trim(),
-                                            phone: document.getElementById('phone').value.trim(),
-                                            childAge: document.getElementById('child-age').value,
-                                            message: document.getElementById('message').value.trim()
-                                        };
-
-                                        let hasError = false;
-                                        if (!toggleError('parent-name', "Name is required", validators.isRequired(data.parentName))) hasError = true;
-                                        if (!toggleError('child-name', "Child's name is required", validators.isRequired(data.childName))) hasError = true;
-
-                                        if (!toggleError('email', "Email is required", validators.isRequired(data.email))) hasError = true;
-                                        else if (!toggleError('email', "Invalid format", validators.isEmail(data.email))) hasError = true;
-
-                                        if (data.phone && !toggleError('phone', "Invalid phone", validators.isPhone(data.phone))) hasError = true;
-                                        if (!toggleError('child-age', "Please select age", validators.isRequired(data.childAge))) hasError = true;
-
-                                        if (hasError) return;
-
-                                        submitBtn.disabled = true;
-                                        submitBtn.textContent = 'Sending...';
-
-                                        try {
-                                            const { submitInquiry } = await import('./db-service.js');
-                                            await submitInquiry({
-                                                name: data.parentName,
-                                                email: data.email,
-                                                phone: data.phone,
-                                                child_info: `Child: ${data.childName}, Age: ${data.childAge}`,
-                                                message: data.message,
-                                                status: 'New'
-                                            });
-
-                                            alert('Thank you! Your inquiry has been received. We will contact you shortly.');
-                                            contactForm.reset();
-                                            clearAllErrors('#appointment-form');
-                                        } catch (error) {
-                                            errorMsg.textContent = 'Failed to send inquiry. Please try again or call us.';
-                                            errorMsg.classList.add('visible');
-                                            console.error(error);
-                                        } finally {
-                                            submitBtn.disabled = false;
-                                            submitBtn.textContent = originalText;
-                                        }
-                                    });
-                                }
-                            </script>
-                            <div class="absolute -top-4 -right-4 w-24 h-24 bg-[#1e90ff]/5 rounded-full -z-10"></div>
-                            <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-[#8F9779]/5 rounded-full -z-10"></div>
-                        </div>
-                    </div>
-                </div>
-        </section>
-        <section id="why-us" class="py-16 sm:py-24 bg-gradient-to-b from-[#EBF5FB] to-[#FAFBFD]">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="max-w-3xl mx-auto text-center mb-12 sm:mb-16"><span
-                        class="text-sm font-semibold uppercase tracking-wider text-[#1e90ff]">Why Choose Us</span>
-                    <h2 class="mt-3 text-3xl sm:text-4xl font-bold text-[#2D2D2D]">Trusted by California Families</h2>
-                    <p class="mt-4 text-lg text-[#718096] leading-relaxed">We&#x27;re committed to providing the highest
-                        quality speech therapy in a supportive, results-driven environment.</p>
-                </div>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div
-                        class="bg-white rounded-2xl p-7 text-center border border-[#E2E8F0] hover:shadow-lg hover:shadow-[#1e90ff]/5 transition-all duration-300">
-                        <div class="w-14 h-14 bg-[#F5F5F7] rounded-full flex items-center justify-center mx-auto mb-5">
-                            <svg class="w-6 h-6 text-[#1e90ff]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-bold text-[#2D2D2D] mb-2">California-Based Practice</h3>
-                        <p class="text-sm text-[#718096] leading-relaxed">Conveniently located and licensed to serve
-                            families across California.</p>
-                    </div>
-                    <div
-                        class="bg-white rounded-2xl p-7 text-center border border-[#E2E8F0] hover:shadow-lg hover:shadow-[#1e90ff]/5 transition-all duration-300">
-                        <div class="w-14 h-14 bg-[#F5F5F7] rounded-full flex items-center justify-center mx-auto mb-5">
-                            <svg class="w-6 h-6 text-[#E8B4B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path
-                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                                </path>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-bold text-[#2D2D2D] mb-2">Child-Friendly Environment</h3>
-                        <p class="text-sm text-[#718096] leading-relaxed">A warm, playful space designed to make
-                            children feel comfortable and engaged.</p>
-                    </div>
-                    <div
-                        class="bg-white rounded-2xl p-7 text-center border border-[#E2E8F0] hover:shadow-lg hover:shadow-[#1e90ff]/5 transition-all duration-300">
-                        <div class="w-14 h-14 bg-[#F5F5F7] rounded-full flex items-center justify-center mx-auto mb-5">
-                            <svg class="w-6 h-6 text-[#8F9779]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-bold text-[#2D2D2D] mb-2">Experienced Licensed Therapists</h3>
-                        <p class="text-sm text-[#718096] leading-relaxed">Our SLP-CCC therapists bring years of
-                            pediatric experience and specialized training.</p>
-                    </div>
-                    <div
-                        class="bg-white rounded-2xl p-7 text-center border border-[#E2E8F0] hover:shadow-lg hover:shadow-[#1e90ff]/5 transition-all duration-300">
-                        <div class="w-14 h-14 bg-[#F5F5F7] rounded-full flex items-center justify-center mx-auto mb-5">
-                            <svg class="w-6 h-6 text-[#E8C86A]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polygon
-                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                                </polygon>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-bold text-[#2D2D2D] mb-2">School-Readiness Focus</h3>
-                        <p class="text-sm text-[#718096] leading-relaxed">We prepare children for academic success by
-                            building the communication skills they need to thrive in school.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section id="contact" class="py-16 sm:py-24 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="max-w-3xl mx-auto text-center mb-12 sm:mb-16"><span
-                        class="text-sm font-semibold uppercase tracking-wider text-[#1e90ff]">Contact</span>
-                    <h2 class="mt-3 text-3xl sm:text-4xl font-bold text-[#2D2D2D]">Get in Touch</h2>
-                    <p class="mt-4 text-lg text-[#718096] leading-relaxed">Ready to take the first step? Reach out to
-                        schedule an evaluation or learn more about our services.</p>
-                </div>
-                <div class="grid lg:grid-cols-5 gap-10">
-                    <div class="lg:col-span-2 space-y-6">
-                        <div class="bg-[#FAFBFD] rounded-2xl p-6 border border-[#E2E8F0]">
-                            <h3 class="font-bold text-[#2D2D2D] mb-4">Contact Information</h3>
-                            <div class="space-y-4">
-                                <div class="flex items-start gap-3"><svg class="w-5 h-5 text-[#1e90ff] mt-0.5 shrink-0"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                        <circle cx="12" cy="10" r="3"></circle>
-                                    </svg>
                                     <div>
-                                        <div class="font-medium text-[#2D2D2D] text-sm">Location</div>
-                                        <div class="text-sm text-[#718096]">California, United States</div>
+                                        <label
+                                            class="block text-xs font-bold uppercase tracking-[0.2em] text-gray-700 mb-3">How
+                                            can we support you?</label>
+                                        <textarea id="message" rows="4"
+                                            placeholder="Briefly describe your child's needs..."
+                                            class="w-full bg-white border border-brand-blue/10 px-6 py-4 rounded-2xl focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all font-medium text-sm placeholder:text-gray-400 resize-none"></textarea>
+                                        <div class="field-error" id="err-message"></div>
                                     </div>
-                                </div>
-                                <div class="flex items-start gap-3"><svg class="w-5 h-5 text-[#1e90ff] mt-0.5 shrink-0"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path
-                                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                                        </path>
-                                    </svg>
-                                    <div>
-                                        <div class="font-medium text-[#2D2D2D] text-sm">Phone</div>
-                                        <div class="text-sm text-[#718096]">(555) 123-4567</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3"><svg class="w-5 h-5 text-[#1e90ff] mt-0.5 shrink-0"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path
-                                            d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
-                                        </path>
-                                        <polyline points="22,6 12,13 2,6"></polyline>
-                                    </svg>
-                                    <div>
-                                        <div class="font-medium text-[#2D2D2D] text-sm">Email</div>
-                                        <div class="text-sm text-[#718096]">hello@jisworld.com</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3"><svg class="w-5 h-5 text-[#1e90ff] mt-0.5 shrink-0"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    <div>
-                                        <div class="font-medium text-[#2D2D2D] text-sm">Hours</div>
-                                        <div class="text-sm text-[#718096]">Mon – Fri: 8:00 AM – 6:00 PM</div>
-                                        <div class="text-sm text-[#718096]">Sat: 9:00 AM – 2:00 PM</div>
-                                    </div>
-                                </div>
+                                    <div class="form-error" id="form-error-msg"></div>
+                                    <button type="submit"
+                                        class="w-full bg-brand-blue text-white py-5 rounded-full font-bold hover:bg-brand-blue/90 hover:-translate-y-1 transition-all shadow-xl shadow-brand-blue/20">
+                                        Send Request
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                    <div class="lg:col-span-3">
-                        <form id="appointment-form" class="bg-[#FAFBFD] rounded-2xl p-6 sm:p-8 border border-[#E2E8F0]">
-                            <h3 class="font-bold text-[#2D2D2D] mb-6">Request an Appointment</h3>
-                            <div class="grid sm:grid-cols-2 gap-4">
-                                <div><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Parent / Guardian
-                                        Name</label><input type="text" id="parent-name" required minlength="2"
-                                        maxlength="100"
-                                        class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 focus:ring-[#1e90ff]/30 focus:border-[#1e90ff] transition-all"
-                                        placeholder="Your name" />
-                                    <div class="field-error" id="err-parent-name"></div>
-                                </div>
-                                <div><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Child&#x27;s
-                                        Name</label><input type="text" id="child-name" required
-                                        class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 focus:ring-[#1e90ff]/30 focus:border-[#1e90ff] transition-all"
-                                        placeholder="Child&#x27;s name" />
-                                    <div class="field-error" id="err-child-name"></div>
-                                </div>
-                                <div><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Email</label><input
-                                        type="email" id="email" required
-                                        class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 focus:ring-[#1e90ff]/30 focus:border-[#1e90ff] transition-all"
-                                        placeholder="you@example.com" />
-                                    <div class="field-error" id="err-email"></div>
-                                </div>
-                                <div><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Phone</label><input
-                                        type="tel" id="phone"
-                                        class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 focus:ring-[#1e90ff]/30 focus:border-[#1e90ff] transition-all"
-                                        placeholder="(555) 000-0000" />
-                                    <div class="field-error" id="err-phone"></div>
+                </section>
+                <footer class="bg-gray-900 text-white py-24 rounded-t-[4rem]">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="grid md:grid-cols-4 gap-16">
+                            <div class="col-span-2">
+                                <span class="text-3xl font-serif text-white tracking-tight mb-8 block">Jis<span
+                                        class="text-brand-teal">World</span></span>
+                                <p class="text-gray-400 max-w-sm leading-relaxed mb-12 font-medium">Expertly designed
+                                    pediatric speech and language therapy, providing families with clinical excellence
+                                    and compassionate support.</p>
+                                <div class="flex gap-8">
+                                    <a href="#"
+                                        class="text-brand-blue hover:text-white transition-colors font-bold text-sm tracking-widest uppercase">Instagram</a>
+                                    <a href="#"
+                                        class="text-brand-blue hover:text-white transition-colors font-bold text-sm tracking-widest uppercase">LinkedIn</a>
+                                    <a href="#"
+                                        class="text-brand-blue hover:text-white transition-colors font-bold text-sm tracking-widest uppercase">Facebook</a>
                                 </div>
                             </div>
-                            <div class="mt-4"><label
-                                    class="block text-sm font-medium text-[#4A5568] mb-1.5">Child&#x27;s
-                                    Age</label><select id="child-age" required
-                                    class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] focus:outline-none focus:ring-2 focus:ring-[#1e90ff]/30 focus:border-[#1e90ff] transition-all">
-                                    <option value="">Select age range</option>
-                                    <option>0 – 1 year</option>
-                                    <option>1 – 2 years</option>
-                                    <option>2 – 3 years</option>
-                                    <option>3 – 5 years</option>
-                                    <option>5 – 8 years</option>
-                                    <option>8 – 12 years</option>
-                                </select>
-                                <div class="field-error" id="err-child-age"></div>
+                            <div>
+                                <h4 class="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal mb-8">Navigation
+                                </h4>
+                                <ul class="space-y-4">
+                                    <li><a href="#home"
+                                            class="text-sm text-gray-400 hover:text-brand-blue transition-colors font-medium">Our
+                                            Home</a></li>
+                                    <li><a href="#specializations"
+                                            class="text-sm text-gray-400 hover:text-brand-blue transition-colors font-medium">Specializations</a>
+                                    </li>
+                                    <li><a href="#approach"
+                                            class="text-sm text-gray-400 hover:text-brand-blue transition-colors font-medium">Our
+                                            Process</a></li>
+                                    <li><a href="#contact"
+                                            class="text-sm text-gray-400 hover:text-brand-blue transition-colors font-medium">Say
+                                            Hello</a></li>
+                                </ul>
                             </div>
-                            <div class="mt-4"><label class="block text-sm font-medium text-[#4A5568] mb-1.5">Concerns /
-                                    Message</label><textarea rows="4" id="message" maxlength="500"
-                                    class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm text-[#2D2D2D] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 focus:ring-[#1e90ff]/30 focus:border-[#1e90ff] transition-all resize-none"
-                                    placeholder="Tell us about your child&#x27;s speech or language concerns..."></textarea>
-                                <div class="field-error" id="err-message"></div>
+                            <div>
+                                <h4 class="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal mb-8">Clinical
+                                </h4>
+                                <ul class="space-y-4">
+                                    <li><a href="#"
+                                            class="text-sm text-gray-400 hover:text-brand-blue transition-colors font-medium">Privacy
+                                            Policy</a></li>
+                                    <li><a href="#"
+                                            class="text-sm text-gray-400 hover:text-brand-blue transition-colors font-medium">HIPAA
+                                            Compliance</a></li>
+                                    <li><a href="#"
+                                            class="text-sm text-gray-400 hover:text-brand-blue transition-colors font-medium">Terms
+                                            of Service</a></li>
+                                </ul>
                             </div>
-                            <div class="form-error" id="form-error-msg"></div>
-                            <button type="submit"
-                                class="mt-6 w-full px-6 py-3 bg-[#1e90ff] hover:bg-[#1c86ee] text-white font-semibold rounded-full transition-colors shadow-lg shadow-[#1e90ff]/20">Request
-                                Appointment</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <footer class="bg-[#2D2D2D] text-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="sm:col-span-2 lg:col-span-1">
-                        <div class="flex items-center gap-2 mb-4">
-                            <img src="logo.png" alt="JisWorld" style="height: 40px; object-fit: contain;">
                         </div>
-                        <p class="text-sm text-gray-400 leading-relaxed">California-licensed speech and language therapy
-                            center helping children find their voice through evidence-based, family-centered care.</p>
+                        <div
+                            class="mt-24 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+                            <p class="text-xs text-gray-500 font-medium">© 2026 JisWorld Speech Therapy. Helping every
+                                child find their voice.</p>
+                            <div class="flex items-center gap-4 opacity-60">
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-brand-blue">ASHA
+                                    Certified • CA State Licensed</span>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="font-semibold text-sm uppercase tracking-wider text-gray-300 mb-4">Quick Links</h4>
-                        <ul class="space-y-2.5">
-                            <li><a href="#home"
-                                    class="text-sm text-gray-400 hover:text-white transition-colors">Home</a></li>
-                            <li><a href="#about" class="text-sm text-gray-400 hover:text-white transition-colors">About
-                                    Us</a></li>
-                            <li><a href="#services"
-                                    class="text-sm text-gray-400 hover:text-white transition-colors">Services</a></li>
-                            <li><a href="#approach"
-                                    class="text-sm text-gray-400 hover:text-white transition-colors">Approach</a></li>
-                            <li><a href="#contact"
-                                    class="text-sm text-gray-400 hover:text-white transition-colors">Contact</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-sm uppercase tracking-wider text-gray-300 mb-4">Services</h4>
-                        <ul class="space-y-2.5">
-                            <li><a href="#services"
-                                    class="text-sm text-gray-400 hover:text-white transition-colors">Speech Delay</a>
-                            </li>
-                            <li><a href="#services"
-                                    class="text-sm text-gray-400 hover:text-white transition-colors">Language
-                                    Development</a></li>
-                            <li><a href="#services"
-                                    class="text-sm text-gray-400 hover:text-white transition-colors">Fluency Therapy</a>
-                            </li>
-                            <li><a href="#services"
-                                    class="text-sm text-gray-400 hover:text-white transition-colors">Autism
-                                    Communication</a></li>
-                            <li><a href="#services"
-                                    class="text-sm text-gray-400 hover:text-white transition-colors">Early
-                                    Intervention</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-sm uppercase tracking-wider text-gray-300 mb-4">Contact</h4>
-                        <ul class="space-y-2.5 text-sm text-gray-400">
-                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-[#1e90ff]" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>California, USA</li>
-                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-[#1e90ff]" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path
-                                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                                    </path>
-                                </svg>(555) 123-4567</li>
-                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-[#1e90ff]" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path
-                                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
-                                    </path>
-                                    <polyline points="22,6 12,13 2,6"></polyline>
-                                </svg>hello@jisworld.com</li>
-                        </ul>
-                    </div>
-                </div>
-                <div
-                    class="mt-12 pt-8 border-t border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p class="text-sm text-gray-500">© <!-- -->2026<!-- --> JisWorld Speech Therapy. All rights
-                        reserved.</p>
-                    <p class="text-xs text-gray-600">Licensed by the California Speech-Language Pathology &amp;
-                        Audiology Board • ASHA Certified</p>
-                </div>
-            </div>
-        </footer>
-    </div><!--$?--><template id="B:1"></template><!--/$-->
-    <title>JisWorld Speech Therapy | California Licensed Pediatric Speech &amp; Language Services</title>
-    <meta name="description"
-        content="JisWorld Speech Therapy provides evidence-based speech and language therapy for children in California. Licensed SLP-CCC therapists specializing in early intervention, articulation, fluency, and autism communication support." />
-    <link rel="icon" href="/favicon.ico?favicon.45db1c09.ico" sizes="256x256" type="image/x-icon" />
-    <div hidden id="S:1"></div>
-    <div hidden id="S:0"></div>
-    <script type="module" src="script.js"></script>
-    <!-- Floating Booking Widget -->
-    <button onclick="toggleBookingModal()" class="gp-floating-btn shadow-lg hover:shadow-xl">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <span>Book Appointment</span>
-    </button>
+                </footer>
+            </div><!--$?--><template id="B:1"></template><!--/$-->
+            <title>JisWorld Speech Therapy | California Licensed Pediatric Speech &amp; Language Services</title>
+            <meta name="description"
+                content="JisWorld Speech Therapy provides evidence-based speech and language therapy for children in California. Licensed SLP-CCC therapists specializing in early intervention, articulation, fluency, and autism communication support." />
+            <link rel="icon" href="/favicon.ico?favicon.45db1c09.ico" sizes="256x256" type="image/x-icon" />
+            <div hidden id="S:1"></div>
+            <div hidden id="S:0"></div>
+            <script type="module" src="script.js"></script>
+            <!-- Floating Booking Widget -->
+            <button onclick="toggleBookingModal()" class="gp-floating-btn shadow-2xl">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>Book Evaluation</span>
+            </button>
 
-    <!-- Booking Modal -->
-    <div id="booking-modal" class="gp-modal-overlay">
-        <div class="gp-modal-content">
-            <button onclick="toggleBookingModal()" class="gp-close-btn">&times;</button>
-            <h2 class="text-2xl font-bold text-[#2D2D2D] mb-4" style="font-family: 'Nunito', sans-serif;">Request an
-                Appointment</h2>
-            <p class="text-[#5C5C5C] mb-6">Fill out the form below and we'll get back to you within 24 hours to schedule
-                your evaluation.</p>
+            <!-- Booking Modal -->
+            <div id="booking-modal" class="gp-modal-overlay">
+                <div class="gp-modal-content rounded-[3rem] p-12">
+                    <button onclick="toggleBookingModal()" class="gp-close-btn">&times;</button>
+                    <h2 class="text-4xl font-serif text-gray-900 mb-4">Request an Evaluation</h2>
+                    <p class="text-gray-600 mb-10 font-medium">Fill out the form below and we'll reach out within 24
+                        hours to begin your child's journey.</p>
 
-            <form id="modal-appointment-form" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-[#5C5C5C] mb-1">Parent's Name</label>
-                    <input type="text" id="m-parent-name" required minlength="2" maxlength="100"
-                        placeholder="Your Full Name"
-                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#1e90ff] focus:border-transparent outline-none transition-all">
-                    <div class="field-error" id="err-m-parent-name"></div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-[#5C5C5C] mb-1">Child's Name</label>
-                        <input type="text" id="m-child-name" required placeholder="Child's First Name"
-                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#1e90ff] focus:border-transparent outline-none transition-all">
-                        <div class="field-error" id="err-m-child-name"></div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-[#5C5C5C] mb-1">Child's Age</label>
-                        <input type="text" id="m-child-age" required placeholder="e.g. 5 years"
-                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#1e90ff] focus:border-transparent outline-none transition-all">
-                        <div class="field-error" id="err-m-child-age"></div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-[#5C5C5C] mb-1">Email Address</label>
-                        <input type="email" id="m-email" required placeholder="name@example.com"
-                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#1e90ff] focus:border-transparent outline-none transition-all">
-                        <div class="field-error" id="err-m-email"></div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-[#5C5C5C] mb-1">Phone Number</label>
-                        <input type="tel" id="m-phone" placeholder="(555) 123-4567"
-                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#1e90ff] focus:border-transparent outline-none transition-all">
-                        <div class="field-error" id="err-m-phone"></div>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-[#5C5C5C] mb-1">What are your concerns?</label>
-                    <textarea id="m-message" rows="3" maxlength="500"
-                        placeholder="Tell us a little about your child's speech needs..."
-                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#1e90ff] focus:border-transparent outline-none transition-all"></textarea>
-                    <div class="field-error" id="err-m-message"></div>
-                </div>
-                <div class="form-error" id="modal-error-msg"></div>
-                <button type="submit" id="modalSubmitBtn"
-                    class="w-full btn-primary py-3 rounded-lg shadow-md hover:shadow-lg transform transition-all">
-                    Submit Request
-                </button>
-            </form>
+                    <form id="modal-appointment-form" class="space-y-6">
+                        <div>
+                            <label
+                                class="block text-xs font-bold uppercase tracking-[0.2em] text-gray-700 mb-3">Parent's
+                                Name</label>
+                            <input type="text" id="m-parent-name" required minlength="2" maxlength="100"
+                                placeholder="Your Full Name"
+                                class="w-full px-6 py-4 rounded-2xl border border-brand-blue/10 focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all font-medium text-sm placeholder:text-gray-400">
+                            <div class="field-error" id="err-m-parent-name"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-[0.2em] text-gray-700 mb-3">Child's
+                                    Name</label>
+                                <input type="text" id="m-child-name" required placeholder="Child's Name"
+                                    class="w-full px-6 py-4 rounded-2xl border border-brand-blue/10 focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all font-medium text-sm placeholder:text-gray-400">
+                                <div class="field-error" id="err-m-child-name"></div>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-[0.2em] text-gray-700 mb-3">Child's
+                                    Age</label>
+                                <input type="text" id="m-child-age" required placeholder="e.g. 5 years"
+                                    class="w-full px-6 py-4 rounded-2xl border border-brand-blue/10 focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all font-medium text-sm placeholder:text-gray-400">
+                                <div class="field-error" id="err-m-child-age"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-[0.2em] text-gray-700 mb-3">Email
+                                    Address</label>
+                                <input type="email" id="m-email" required placeholder="name@example.com"
+                                    class="w-full px-6 py-4 rounded-2xl border border-brand-blue/10 focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all font-medium text-sm placeholder:text-gray-400">
+                                <div class="field-error" id="err-m-email"></div>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-[0.2em] text-gray-700 mb-3">Phone
+                                    Number</label>
+                                <input type="tel" id="m-phone" placeholder="(555) 123-4567"
+                                    class="w-full px-6 py-4 rounded-2xl border border-brand-blue/10 focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all font-medium text-sm placeholder:text-gray-400">
+                                <div class="field-error" id="err-m-phone"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-[0.2em] text-gray-700 mb-3">How can
+                                we support you?</label>
+                            <textarea id="m-message" rows="3" maxlength="500"
+                                placeholder="Tell us a little about your child's speech needs..."
+                                class="w-full px-6 py-4 rounded-2xl border border-brand-blue/10 focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all font-medium text-sm placeholder:text-gray-400 resize-none"></textarea>
+                            <div class="field-error" id="err-m-message"></div>
+                        </div>
+                        <div class="form-error" id="modal-error-msg"></div>
+                        <button type="submit" id="modalSubmitBtn"
+                            class="w-full bg-brand-blue text-white py-5 rounded-full font-bold hover:bg-brand-blue/90 hover:-translate-y-1 transition-all shadow-xl shadow-brand-blue/20">
+                            Submit Request
+                        </button>
+                    </form>
 
-            <script type="module">
-                import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js';
+                    <script type="module">
+                        import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js';
 
-                initRealTimeValidation('#modal-appointment-form');
+                        initRealTimeValidation('#modal-appointment-form');
 
-                const modalForm = document.getElementById('modal-appointment-form');
-                modalForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
+                        const modalForm = document.getElementById('modal-appointment-form');
+                        modalForm.addEventListener('submit', async (e) => {
+                            e.preventDefault();
 
-                    const errorMsg = document.getElementById('modal-error-msg');
-                    clearAllErrors('#modal-appointment-form');
+                            const errorMsg = document.getElementById('modal-error-msg');
+                            clearAllErrors('#modal-appointment-form');
 
-                    const submitBtn = document.getElementById('modalSubmitBtn');
-                    const originalText = submitBtn.textContent;
+                            const submitBtn = document.getElementById('modalSubmitBtn');
+                            const originalText = submitBtn.textContent;
 
-                    const data = {
-                        parentName: document.getElementById('m-parent-name').value.trim(),
-                        childName: document.getElementById('m-child-name').value.trim(),
-                        childAge: document.getElementById('m-child-age').value.trim(),
-                        email: document.getElementById('m-email').value.trim(),
-                        phone: document.getElementById('m-phone').value.trim(),
-                        message: document.getElementById('m-message').value.trim()
-                    };
+                            const data = {
+                                parentName: document.getElementById('m-parent-name').value.trim(),
+                                childName: document.getElementById('m-child-name').value.trim(),
+                                childAge: document.getElementById('m-child-age').value.trim(),
+                                email: document.getElementById('m-email').value.trim(),
+                                phone: document.getElementById('m-phone').value.trim(),
+                                message: document.getElementById('m-message').value.trim()
+                            };
 
-                    let hasError = false;
-                    if (!toggleError('m-parent-name', "Name is required", validators.isRequired(data.parentName))) hasError = true;
-                    if (!toggleError('m-child-name', "Child's name is required", validators.isRequired(data.childName))) hasError = true;
-                    if (!toggleError('m-child-age', "Age is required", validators.isRequired(data.childAge))) hasError = true;
+                            let hasError = false;
+                            if (!toggleError('m-parent-name', "Name is required", validators.isRequired(data.parentName))) hasError = true;
+                            if (!toggleError('m-child-name', "Child's name is required", validators.isRequired(data.childName))) hasError = true;
+                            if (!toggleError('m-child-age', "Age is required", validators.isRequired(data.childAge))) hasError = true;
 
-                    if (!toggleError('m-email', "Email is required", validators.isRequired(data.email))) hasError = true;
-                    else if (!toggleError('m-email', "Invalid format", validators.isEmail(data.email))) hasError = true;
+                            if (!toggleError('m-email', "Email is required", validators.isRequired(data.email))) hasError = true;
+                            else if (!toggleError('m-email', "Invalid format", validators.isEmail(data.email))) hasError = true;
 
-                    if (data.phone && !toggleError('m-phone', "Invalid phone", validators.isPhone(data.phone))) hasError = true;
+                            if (data.phone && !toggleError('m-phone', "Invalid phone", validators.isPhone(data.phone))) hasError = true;
 
-                    if (hasError) return;
+                            if (hasError) return;
 
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Sending...';
+                            submitBtn.disabled = true;
+                            submitBtn.textContent = 'Sending...';
 
-                    try {
-                        const { submitInquiry } = await import('./db-service.js');
-                        await submitInquiry({
-                            name: data.parentName,
-                            email: data.email,
-                            phone: data.phone,
-                            child_info: `Child: ${data.childName}, Age: ${data.childAge}`,
-                            message: data.message,
-                            status: 'New'
+                            try {
+                                const { submitInquiry } = await import('./db-service.js');
+                                await submitInquiry({
+                                    name: data.parentName,
+                                    email: data.email,
+                                    phone: data.phone,
+                                    child_info: `Child: ${data.childName}, Age: ${data.childAge}`,
+                                    message: data.message,
+                                    status: 'New'
+                                });
+
+                                alert('Thank you! Your request has been sent.');
+                                modalForm.reset();
+                                clearAllErrors('#modal-appointment-form');
+                                window.toggleBookingModal();
+                            } catch (error) {
+                                errorMsg.textContent = 'Failed to send request. Please try again.';
+                                errorMsg.classList.add('visible');
+                            } finally {
+                                submitBtn.disabled = false;
+                                submitBtn.textContent = originalText;
+                            }
                         });
+                    </script>
+                </div>
+            </div>
 
-                        alert('Thank you! Your request has been sent.');
-                        modalForm.reset();
-                        clearAllErrors('#modal-appointment-form');
-                        window.toggleBookingModal();
-                    } catch (error) {
-                        errorMsg.textContent = 'Failed to send request. Please try again.';
-                        errorMsg.classList.add('visible');
-                    } finally {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = originalText;
+            <script>
+                function toggleBookingModal() {
+                    const modal = document.getElementById('booking-modal');
+                    modal.classList.toggle('active');
+                    if (modal.classList.contains('active')) {
+                        document.body.style.overflow = 'hidden'; // Prevent scrolling
+                    } else {
+                        document.body.style.overflow = '';
+                    }
+                }
+
+                // Close modal when clicking outside
+                document.getElementById('booking-modal').addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        toggleBookingModal();
                     }
                 });
             </script>
-        </div>
-    </div>
-
-    <script>
-        function toggleBookingModal() {
-            const modal = document.getElementById('booking-modal');
-            modal.classList.toggle('active');
-            if (modal.classList.contains('active')) {
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
-            } else {
-                document.body.style.overflow = '';
-            }
-        }
-
-        // Close modal when clicking outside
-        document.getElementById('booking-modal').addEventListener('click', function (e) {
-            if (e.target === this) {
-                toggleBookingModal();
-            }
-        });
-    </script>
 </body>
 
 </html>
