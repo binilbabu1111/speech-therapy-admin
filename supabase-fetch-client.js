@@ -113,18 +113,58 @@ class SupabaseFetchClient {
 
     from(table) {
         const _this = this;
-        return {
-            select: (columns = '*', options = {}) => {
-                let path = `${_this.url}/rest/v1/${table}?select=${columns}`;
-                return _this._dbRequest('GET', path);
+
+        // Internal state for the current query chain
+        const query = {
+            table: table,
+            select: '*',
+            filters: [],
+            order: null,
+            isSingle: false
+        };
+
+        const builder = {
+            select: (columns = '*') => {
+                query.select = columns;
+                return builder;
             },
+            eq: (column, value) => {
+                query.filters.push(`${column}=eq.${value}`);
+                return builder;
+            },
+            order: (column, { ascending = true } = {}) => {
+                query.order = `${column}.${ascending ? 'asc' : 'desc'}`;
+                return builder;
+            },
+            single: () => {
+                query.isSingle = true;
+                // Since this is a terminal call in Supabase, we execute it
+                return builder.execute();
+            },
+            // Terminal method to actually run the fetch
+            execute: async () => {
+                let path = `${_this.url}/rest/v1/${query.table}?select=${query.select}`;
+                if (query.filters.length > 0) {
+                    path += `&${query.filters.join('&')}`;
+                }
+                if (query.order) {
+                    path += `&order=${query.order}`;
+                }
+
+                const headers = {};
+                if (query.isSingle) {
+                    headers['Accept'] = 'application/vnd.pgrst.object+json';
+                }
+
+                return _this._dbRequest('GET', path, null, headers);
+            },
+            // Logic for INSERT/UPDATE/DELETE
             insert: (values) => {
                 let path = `${_this.url}/rest/v1/${table}`;
                 return _this._dbRequest('POST', path, values);
             },
             upsert: (values, options = {}) => {
                 let path = `${_this.url}/rest/v1/${table}`;
-                // Supabase upsert via REST uses Prefer: resolution=merge-duplicates or specific headers
                 return _this._dbRequest('POST', path, values, { 'Prefer': 'resolution=merge-duplicates' });
             },
             update: (values) => {
@@ -142,19 +182,14 @@ class SupabaseFetchClient {
                         return _this._dbRequest('DELETE', path);
                     }
                 };
-            },
-            eq: (column, value) => {
-                // Return a combined object for chainable queries
-                const path = `${_this.url}/rest/v1/${table}?${column}=eq.${value}`;
-                return {
-                    select: (cols = '*') => _this._dbRequest('GET', `${path}&select=${cols}`),
-                    single: async () => {
-                        const res = await _this._dbRequest('GET', path, null, { 'Accept': 'application/vnd.pgrst.object+json' });
-                        return res;
-                    }
-                };
             }
         };
+
+        // If we await the builder itself (e.g. `const {data} = await supabase.from('x').select('*')`)
+        // we should make the builder thenable
+        builder.then = (onFulfilled) => builder.execute().then(onFulfilled);
+
+        return builder;
     }
 
     async _dbRequest(method, url, body = null, extraHeaders = {}) {
