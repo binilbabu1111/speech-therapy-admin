@@ -556,13 +556,13 @@
                         </div>
 
                         <!-- Tabs -->
-                        <div class="flex border-b border-gray-200 px-6">
+                        <div id="user-tabs-container" class="flex border-b border-gray-200 px-6">
                             <button class="px-4 py-3 text-sm font-medium text-[#C4A484] border-b-2 border-[#C4A484]"
-                                onclick="currentTab='users'; renderUsers()">Parents</button>
+                                onclick="switchUserTab('parent', this)">Parents</button>
                             <button class="px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700"
-                                onclick="currentTab='appointments'; loadUsers()">Students</button>
-                            <button
-                                class="px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700">Therapists</button>
+                                onclick="switchUserTab('student', this)">Students</button>
+                            <button class="px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700"
+                                onclick="switchUserTab('therapist', this)">Therapists</button>
                         </div>
 
                         <div class="overflow-x-auto">
@@ -1426,6 +1426,9 @@
         // ---------------------------------------------------------
         // USER MANAGEMENT MODULE
         // ---------------------------------------------------------
+        let allUsersCache = [];
+        let currentUserRoleFilter = 'parent';
+
         window.loadUsers = async () => {
             const tbody = document.getElementById('user-table-body');
             const loading = document.getElementById('loading-users');
@@ -1438,30 +1441,57 @@
             if (empty) empty.style.display = 'none';
 
             try {
-                const users = await getAllUsers();
+                allUsersCache = await getAllUsers();
                 if (loading) loading.style.display = 'none';
 
-                if (!users || users.length === 0) {
-                    if (empty) empty.style.display = 'block';
-                    return;
-                }
-
-                renderUsers(users);
-                // Update Dashboard Count real-time if possible
-                // document.getElementById('total-users').textContent = users.length;
+                renderUsers();
             } catch (error) {
                 console.error("Error loading users:", error);
                 if (loading) loading.textContent = "Error loading data.";
             }
         };
 
-        function renderUsers(users) {
+        window.switchUserTab = (role, btn) => {
+            currentUserRoleFilter = role;
+
+            // UI Updates
+            const tabButtons = document.querySelectorAll('#user-tabs-container button');
+            tabButtons.forEach(b => {
+                b.classList.remove('text-[#C4A484]', 'border-b-2', 'border-[#C4A484]');
+                b.classList.add('text-gray-500');
+            });
+
+            if (btn) {
+                btn.classList.add('text-[#C4A484]', 'border-b-2', 'border-[#C4A484]');
+                btn.classList.remove('text-gray-500');
+            }
+
+            renderUsers();
+        };
+
+        function renderUsers() {
             const tbody = document.getElementById('user-table-body');
+            const empty = document.getElementById('empty-state-users');
             if (!tbody) return;
 
             tbody.innerHTML = '';
 
-            users.forEach(user => {
+            // Filter users based on role
+            // Mapping: 'parent' -> parent role, 'student' -> student role, 'therapist' -> therapist role
+            const filtered = allUsersCache.filter(u => {
+                const role = (u.role || '').toLowerCase();
+                if (currentUserRoleFilter === 'parent') return role === 'parent' || role === 'user' || !role;
+                return role === currentUserRoleFilter;
+            });
+
+            if (filtered.length === 0) {
+                if (empty) empty.style.display = 'block';
+                return;
+            } else {
+                if (empty) empty.style.display = 'none';
+            }
+
+            filtered.forEach(user => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-gray-50 transition-colors";
 

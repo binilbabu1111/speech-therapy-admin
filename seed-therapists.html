@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seed Therapists</title>
+    <title>Seed Therapists (v3.1)</title>
     <style>
         body {
             font-family: sans-serif;
@@ -38,6 +38,14 @@
             margin: 5px 0;
         }
 
+        .info {
+            color: #0c5460;
+            background: #d1ecf1;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+
         button {
             background: #5BA4CF;
             color: white;
@@ -56,15 +64,18 @@
             margin-top: 20px;
             border-top: 1px solid #eee;
             padding-top: 10px;
+            font-family: monospace;
+            font-size: 13px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>Seed 5 Therapists</h1>
-        <p>This script will register and promote 5 therapist accounts.</p>
-        <button id="seed-btn">Run Therapist Seeder</button>
+        <h1>Therapist Seeder <span style="font-size: 0.5em; color: #888;">v3.1</span></h1>
+        <p>This script will register and promote 5 therapist accounts. <br><b style="color:red">IMPORTANT: Apply the SQL
+                Fix first (v3.1), then REFRESH this page!</b></p>
+        <button id="seed-btn">Run Therapist Seeder (v3.1)</button>
         <div id="output"></div>
     </div>
 
@@ -76,14 +87,16 @@
 
         function log(msg, type = '') {
             const div = document.createElement('div');
-            div.textContent = msg;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
             if (type) div.className = type;
             output.appendChild(div);
+            window.scrollTo(0, document.body.scrollHeight);
         }
 
         btn.onclick = async () => {
             btn.disabled = true;
-            output.innerHTML = '<b>Seeding started...</b><br>';
+            output.innerHTML = '<b>Seeding started (v3.4)...</b><br>';
+            log("Version 3.4 active. Recursion fix and secondary table bypass applied...");
 
             const therapists = [
                 { email: 'sarah.miller@example.com', name: 'Sarah Miller' },
@@ -93,48 +106,80 @@
                 { email: 'lisa.ann@example.com', name: 'Lisa Ann' }
             ];
 
-            for (const t of therapists) {
+            for (let i = 0; i < therapists.length; i++) {
+                const t = therapists[i];
                 try {
                     log(`Processing ${t.name}...`);
+                    let userId = null;
 
-                    // 1. Sign Up
+                    // 1. Attempt Sign Up
                     const { data, error: authErr } = await supabase.auth.signUp({
                         email: t.email,
                         password: 'Password123!',
                         options: { data: { full_name: t.name } }
                     });
 
-                    let userId = data?.user?.id;
+                    if (data?.user?.id) {
+                        userId = data.user.id;
+                        log(`Sign up successful for ${t.name}: ${userId}`);
+                    } else if (authErr && authErr.message.includes('already registered')) {
+                        log(`User ${t.email} already exists in Auth. Recovering ID via Sign In...`, "info");
 
-                    if (authErr) {
-                        if (authErr.message.includes('already registered')) {
-                            log(`User ${t.email} already exists in Auth. Fetching ID...`);
-                            // Try to get existing user ID from public.users
-                            const { data: existingUser } = await supabase.from('users').select('id').eq('email', t.email).single();
-                            userId = existingUser?.id;
+                        const { data: sData, error: sErr } = await supabase.auth.signInWithPassword({
+                            email: t.email,
+                            password: 'Password123!'
+                        });
+
+                        if (sData?.user?.id) {
+                            userId = sData.user.id;
+                            log(`ID recovered: ${userId}`, "success");
                         } else {
-                            log(`Auth Error for ${t.name}: ${authErr.message}`, "error");
+                            log(`Recovery failed: ${sErr?.message}. Checking public table...`, "error");
+                            const { data: existingUser } = await supabase.from('users').select('id').eq('email', t.email).maybeSingle();
+                            userId = existingUser?.id;
                         }
                     }
 
                     if (userId) {
                         // 2. Promote to Therapist in public.users
+                        log(`Updating user role to 'therapist' for ${userId}...`);
                         const { error: pErr } = await supabase.from('users').upsert({
                             id: userId,
                             email: t.email,
                             display_name: t.name,
                             role: 'therapist',
-                            status: 'active'
+                            status: 'active',
+                            updated_at: new Date().toISOString()
                         });
 
-                        if (pErr) log(`RLS/DB Error promoting ${t.name}: ${pErr.message}`, "error");
-                        else log(`Success: ${t.name} is now a therapist!`, "success");
+                        if (pErr) {
+                            if (pErr.message.includes('recursion')) {
+                                log(`CRITICAL ERROR: Infinite recursion detected. Please run Version 3.0+ of the SQL script!`, "error");
+                            } else {
+                                log(`Promotion failed: ${pErr.message}`, "error");
+                            }
+                        } else {
+                            log(`SUCCESS: Role updated to therapist in users table.`, "success");
+
+                            // 3. Create entry in secondary therapists table
+                            const { data: { user } } = await supabase.auth.getUser();
+                            log(`Current Auth UID: ${user?.id}. Creating profile in secondary table...`);
+                            const { error: tErr } = await supabase.from('therapists').upsert({
+                                user_id: userId,
+                                specialization: i === 0 ? 'Speech Language Pathology' : 'Occupational Therapy',
+                                license_number: `SLP-${Math.floor(10000 + Math.random() * 90000)}`
+                            });
+
+                            if (tErr) log(`Secondary Table Error: ${tErr.message}`, "error");
+                            else log(`SUCCESS: Therapist profile created in secondary table!`, "success");
+                        }
                     } else {
-                        log(`Failed to get ID for ${t.name}`, "error");
+                        log(`Failed to obtain ID for ${t.name}`, "error");
                     }
                 } catch (err) {
-                    log(`Fatal error for ${t.name}: ${err.message}`, "error");
+                    log(`Fatal error: ${err.message}`, "error");
                 }
+                log("---");
             }
 
             log("<b>Seeding completed.</b>");
