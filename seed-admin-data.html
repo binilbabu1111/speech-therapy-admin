@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed Admin Data</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Center Admin Data Seeder</h1>
+    <p>This script will seed test students and therapists for dashboard verification.</p>
+    <button id="seed-btn">Run Seeder</button>
+    <div id="output"></div>
+
+    <script type="module">
+        import { getAllUsers, upsertUser, createStudent, getParents } from './db-service.js';
+        import { supabase } from './supabase-config.js';
+
+        const btn = document.getElementById('seed-btn');
+        const output = document.getElementById('output');
+
+        function log(msg, type = '') {
+            const p = document.createElement('p');
+            p.textContent = msg;
+            if (type) p.className = type;
+            output.appendChild(p);
+        }
+
+        btn.onclick = async () => {
+            btn.disabled = true;
+            output.innerHTML = 'Starting...<br>';
+
+            try {
+                // 1. Promote a user to therapist
+                log("Promoting testadmin to admin/therapist role...");
+                const users = await getAllUsers();
+                const adminUser = users.find(u => u.email === 'testadmin@example.com');
+
+                if (adminUser) {
+                    await upsertUser(adminUser, { role: 'admin' });
+                    log("Promoted testadmin successfully.", "success");
+                }
+
+                // 2. Ensure a parent exists
+                log("Checking for parents...");
+                let parentsList = await getParents();
+
+                if (parentsList.length === 0) {
+                    log("No parents found. Creating a test parent record...");
+                    const testParentEmail = 'testparent@example.com';
+                    let parentUser = users.find(u => u.email === testParentEmail);
+
+                    if (!parentUser) {
+                        log("Creating testparent user record...");
+                        const { data: newUser, error: userError } = await supabase.from('users').upsert([{
+                            id: '00000000-0000-0000-0000-000000000001',
+                            email: testParentEmail,
+                            name: 'Test Parent',
+                            role: 'parent'
+                        }]).select().single();
+                        if (userError) throw userError;
+                        parentUser = newUser;
+                    }
+
+                    log("Upserting into 'parents' table...");
+                    const { data: newParent, error: parentError } = await supabase.from('parents').upsert([{
+                        id: '00000000-0000-0000-0000-000000000001',
+                        user_id: parentUser.id,
+                        address: '123 Test St',
+                        emergency_contact: '555-0199'
+                    }]).select().single();
+                    if (parentError) throw parentError;
+
+                    parentsList = [{ id: newParent.id, email: testParentEmail }];
+                    log("Test parent created.", "success");
+                }
+
+                const parentId = parentsList[0].id;
+                log(`Adding students for parent ID: ${parentId}...`);
+
+                const students = [
+                    {
+                        first_name: "Leo",
+                        last_name: "John",
+                        dob: "2018-05-15",
+                        grade: "1st",
+                        diagnosis: "Speech Delay",
+                        parent_id: parentId,
+                        therapy_status: "Active"
+                    },
+                    {
+                        first_name: "Mia",
+                        last_name: "Smith",
+                        dob: "2019-11-20",
+                        grade: "Preschool",
+                        diagnosis: "Autism Spectrum",
+                        parent_id: parentId,
+                        therapy_status: "Evaluation"
+                    }
+                ];
+
+                for (const s of students) {
+                    try {
+                        await createStudent(s);
+                        log(`Added student: ${s.first_name}`, "success");
+                    } catch (e) {
+                        log(`Failed to add student ${s.first_name}: ${e.message}`, "error");
+                    }
+                }
+
+                log("Seeding complete.", "success");
+            } catch (err) {
+                log("Fatal error: " + err.message, "error");
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+
+</html>

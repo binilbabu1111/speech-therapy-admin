@@ -231,8 +231,8 @@ export async function getAppointments() {
         .from('appointments')
         .select(`
             *,
-            student:student_id (first_name, last_name),
-            therapist:therapist_id (specialization)
+            students (first_name, last_name),
+            users (name, email)
         `)
         .order('date_time', { ascending: true });
 
@@ -267,10 +267,10 @@ export async function getStudents() {
         .from('students')
         .select(`
             *,
-            parent:parent_id (
+            parents (
                 address,
                 emergency_contact,
-                user:user_id (name, email, phone)
+                users (name, email, phone)
             )
         `)
         .order('created_at', { ascending: false });
@@ -329,8 +329,8 @@ export async function getInvoices() {
         .from('invoices')
         .select(`
             *,
-            parent:parent_id (
-                user:user_id (name, email)
+            parents (
+                users (name, email)
             )
         `)
         .order('due_date', { ascending: true });

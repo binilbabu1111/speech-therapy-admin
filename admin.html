@@ -817,470 +817,658 @@
                     </div>
                 </section>
 
-                <!-- ADD INVOICE MODAL -->
-                <div id="invoice-modal"
-                    class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 animate-fadeIn">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-xl font-bold text-[#2D2D2D]">Create New Invoice</h3>
-                            <button onclick="document.getElementById('invoice-modal').classList.add('hidden')"
-                                class="text-gray-400 hover:text-gray-600">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
-                        <form id="add-invoice-form" class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Bill To (Parent)</label>
-                                <select name="parent_id" id="invoice-parent-select" required
-                                    class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
-                                    <option value="">-- Select Parent --</option>
-                                    <!-- Populated by JS -->
-                                </select>
-                                <div class="field-error" id="err-invoice-parent-select"></div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Amount ($)</label>
-                                    <input type="number" step="0.01" id="inv-amount" name="amount" required
-                                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
-                                    <div class="field-error" id="err-inv-amount"></div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
-                                    <input type="date" id="inv-due-date" name="due_date" required
-                                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
-                                    <div class="field-error" id="err-inv-due-date"></div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                <select name="status"
-                                    class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
-                                    <option value="Pending">Pending</option>
-                                    <option value="Paid">Paid</option>
-                                    <option value="Overdue">Overdue</option>
-                                    <option value="Cancelled">Cancelled</option>
-                                </select>
-                            </div>
-                            <div class="form-error" id="invoice-error-msg"></div>
-
-                            <div class="pt-4 flex justify-end gap-3">
-                                <button type="button"
-                                    onclick="document.getElementById('invoice-modal').classList.add('hidden')"
-                                    class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Cancel</button>
-                                <button type="submit"
-                                    class="px-6 py-2 bg-[#C4A484] text-white font-medium rounded-lg hover:bg-[#b08d6f] transition-colors shadow-lg shadow-[#C4A484]/20">Generate
-                                    Invoice</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- STUDENT MANAGEMENT MODULE (Module 2 Extended) -->
-                <section id="section-students" class="admin-section">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-                        <div>
-                            <h2 class="text-2xl font-bold text-[#2D2D2D] input-font">Student Management</h2>
-                            <p class="text-gray-500 mt-1">Manage student profiles and therapy status.</p>
-                        </div>
-                        <button
-                            onclick="document.getElementById('student-modal').classList.remove('hidden'); loadParentOptions();"
-                            class="flex items-center gap-2 bg-[#2D2D2D] text-white px-5 py-2.5 rounded-xl hover:bg-[#1a1a1a] transition-colors shadow-lg shadow-gray-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            Add Student
-                        </button>
-                    </div>
-
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead class="bg-gray-50/50 border-b border-gray-100">
-                                    <tr>
-                                        <th
-                                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                            Student Name</th>
-                                        <th
-                                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                            Details</th>
-                                        <th
-                                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                            Parent/Guardian</th>
-                                        <th
-                                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                            Status</th>
-                                        <th
-                                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                            Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="students-table-body" class="divide-y divide-gray-100">
-                                    <!-- Populated by JS -->
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Loading / Empty States -->
-                        <div id="loading-students" class="hidden p-8 text-center text-gray-500">Loading students...
-                        </div>
-                        <div id="empty-state-students" class="hidden p-12 text-center">
-                            <div
-                                class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <h3 class="text-lg font-medium text-gray-900">No students yet</h3>
-                            <p class="text-gray-500 mt-1">Get started by adding a new student profile.</p>
+                <!-- MODULE 7: THERAPY PLANS (Placeholder) -->
+                <section id="section-plans" class="admin-section">
+                    <div class="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
+                        <div class="text-5xl mb-4">📝</div>
+                        <h3 class="text-xl font-bold text-gray-800">Therapy Plans</h3>
+                        <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">Create and manage individualized
+                            developmental programs. This module is currently under development.</p>
+                        <div class="mt-8">
+                            <button
+                                class="px-6 py-2.5 bg-gray-50 text-gray-400 rounded-xl font-medium cursor-not-allowed border border-gray-100">Coming
+                                Soon</button>
                         </div>
                     </div>
                 </section>
 
-                <!-- ADD STUDENT MODAL -->
-                <div id="student-modal"
-                    class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 animate-fadeIn">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-xl font-bold text-[#2D2D2D]">Add New Student</h3>
-                            <button onclick="document.getElementById('student-modal').classList.add('hidden')"
-                                class="text-gray-400 hover:text-gray-600">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
+                <!-- MODULE 8: ASSESSMENTS (Placeholder) -->
+                <section id="section-assessments" class="admin-section">
+                    <div class="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
+                        <div class="text-5xl mb-4">📋</div>
+                        <h3 class="text-xl font-bold text-gray-800">Assessments</h3>
+                        <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">Digitize and track clinical assessment
+                            results and developmental milestones.</p>
+                        <div class="mt-8">
+                            <button
+                                class="px-6 py-2.5 bg-gray-50 text-gray-400 rounded-xl font-medium cursor-not-allowed border border-gray-100">Coming
+                                Soon</button>
                         </div>
-                        <form id="add-student-form" class="space-y-4">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                                    <input type="text" id="s-first-name" name="first_name" required
-                                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
-                                    <div class="field-error" id="err-s-first-name"></div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                                    <input type="text" id="s-last-name" name="last_name" required
-                                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
-                                    <div class="field-error" id="err-s-last-name"></div>
-                                </div>
-                            </div>
+                    </div>
+                </section>
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-                                <input type="date" id="s-dob" name="dob"
-                                    class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
-                                <div class="field-error" id="err-s-dob"></div>
-                            </div>
+                <!-- MODULE 9: DOCUMENTS (Placeholder) -->
+                <section id="section-documents" class="admin-section">
+                    <div class="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
+                        <div class="text-5xl mb-4">📂</div>
+                        <h3 class="text-xl font-bold text-gray-800">Documents</h3>
+                        <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">Secure storage for session transcripts,
+                            medical reports, and legal documentation.</p>
+                        <div class="mt-8">
+                            <button
+                                class="px-6 py-2.5 bg-gray-50 text-gray-400 rounded-xl font-medium cursor-not-allowed border border-gray-100">Coming
+                                Soon</button>
+                        </div>
+                    </div>
+                </section>
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Link Parent
-                                    Account</label>
-                                <select name="parent_id" id="parent-select"
-                                    class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
-                                    <option value="">-- No Parent Linked Yet --</option>
-                                    <!-- Populated by JS -->
-                                </select>
-                                <p class="text-xs text-gray-500 mt-1">If parent isn't registered, leave blank.</p>
-                            </div>
+                <!-- MODULE 10: CMS (Placeholder) -->
+                <section id="section-cms" class="admin-section">
+                    <div class="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
+                        <div class="text-5xl mb-4">🖥️</div>
+                        <h3 class="text-xl font-bold text-gray-800">Content Management</h3>
+                        <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">Update website content, team profiles,
+                            and service information directly from the dashboard.</p>
+                        <div class="mt-8 flex justify-center gap-4">
+                            <button
+                                class="px-5 py-2.5 bg-blue-50 text-blue-600 rounded-xl font-medium hover:bg-blue-100 transition-colors">Edit
+                                Homepage</button>
+                            <button
+                                class="px-5 py-2.5 bg-purple-50 text-purple-600 rounded-xl font-medium hover:bg-purple-100 transition-colors">Manage
+                                Team</button>
+                        </div>
+                    </div>
+                </section>
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Diagnosis /
-                                    Needs</label>
-                                <textarea id="s-diagnosis" name="diagnosis" rows="2"
-                                    class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all"></textarea>
-                                <div class="field-error" id="err-s-diagnosis"></div>
-                            </div>
-                            <div class="form-error" id="student-error-msg"></div>
+                <!-- MODULE 11: NOTIFICATIONS (Placeholder) -->
+                <section id="section-notifications" class="admin-section">
+                    <div class="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
+                        <div class="text-5xl mb-4">🔔</div>
+                        <h3 class="text-xl font-bold text-gray-800">Notifications</h3>
+                        <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">Broadcast critical updates to parents and
+                            staff via email and app notifications.</p>
+                        <div class="mt-8">
+                            <button
+                                class="px-6 py-2.5 bg-gray-50 text-gray-400 rounded-xl font-medium cursor-not-allowed border border-gray-100">Coming
+                                Soon</button>
+                        </div>
+                    </div>
+                </section>
 
-                            <div class="pt-4 flex justify-end gap-3">
-                                <button type="button"
-                                    onclick="document.getElementById('student-modal').classList.add('hidden')"
-                                    class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Cancel</button>
-                                <button type="submit"
-                                    class="px-6 py-2 bg-[#C4A484] text-white font-medium rounded-lg hover:bg-[#b08d6f] transition-colors shadow-lg shadow-[#C4A484]/20">Save
-                                    Student</button>
+                <!-- MODULE 12: REPORTS (Placeholder) -->
+                <section id="section-reports" class="admin-section">
+                    <div class="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
+                        <div class="text-5xl mb-4">📈</div>
+                        <h3 class="text-xl font-bold text-gray-800">Reports & Analytics</h3>
+                        <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">Visual performance indicators and student
+                            progress metrics.</p>
+                        <div class="mt-8">
+                            <button
+                                class="px-6 py-2.5 bg-gray-50 text-gray-400 rounded-xl font-medium cursor-not-allowed border border-gray-100">Coming
+                                Soon</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MODULE 13: SETTINGS (Placeholder) -->
+                <section id="section-settings" class="admin-section">
+                    <div class="bg-white rounded-xl shadow-sm p-12 border border-gray-100">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                            <span class="text-2xl">⚙️</span> System Settings
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                <h4 class="font-bold text-gray-700 mb-2">Center Information</h4>
+                                <p class="text-sm text-gray-500">Update address, contact email, and phone numbers.</p>
+                                <button class="mt-4 text-sm text-blue-600 font-bold hover:underline">Edit Info
+                                    &rarr;</button>
                             </div>
-                        </form>
+                            <div class="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                <h4 class="font-bold text-gray-700 mb-2">System Roles</h4>
+                                <p class="text-sm text-gray-500">Manage therapist permissions and invitation keys.</p>
+                                <button class="mt-4 text-sm text-blue-600 font-bold hover:underline">Permissions
+                                    &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- ADD APPOINTMENT MODAL -->
+    <div id="appointment-modal"
+        class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 animate-fadeIn">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-[#2D2D2D]">Schedule New Session</h3>
+                <button onclick="document.getElementById('appointment-modal').classList.add('hidden')"
+                    class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <form id="add-appointment-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Student</label>
+                    <select name="student_id" id="appointment-student-select" required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#8F9779]/20 focus:border-[#8F9779] outline-none transition-all">
+                        <option value="">-- Select Student --</option>
+                        <!-- Populated by JS -->
+                    </select>
+                    <div class="field-error" id="err-appointment-student-select"></div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Therapist</label>
+                    <select name="therapist_id" id="appointment-therapist-select" required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#8F9779]/20 focus:border-[#8F9779] outline-none transition-all">
+                        <option value="">-- Select Therapist --</option>
+                        <!-- Populated by JS -->
+                    </select>
+                    <div class="field-error" id="err-appointment-therapist-select"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                        <input type="date" id="appointment-date" name="date" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#8F9779]/20 focus:border-[#8F9779] outline-none transition-all">
+                        <div class="field-error" id="err-appointment-date"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                        <input type="time" id="appointment-time" name="time" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#8F9779]/20 focus:border-[#8F9779] outline-none transition-all">
+                        <div class="field-error" id="err-appointment-time"></div>
                     </div>
                 </div>
 
-                <script type="module" src="script.js"></script>
-                <script type="module" src="session-manager.js"></script>
-                <script type="module">
-                    import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js';
-                    import { supabase } from './supabase-fetch-client.js?v=2';
-                    import { getAllUsers, checkAdminStatus, upsertUser, updateUserStatus } from './db-service.js?v=2';
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Duration (minutes)</label>
+                    <input type="number" id="appointment-duration" name="duration" value="60" min="15" step="15"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#8F9779]/20 focus:border-[#8F9779] outline-none transition-all">
+                    <div class="field-error" id="err-appointment-duration"></div>
+                </div>
 
-                    // Admin Key for client-side check
-                    const ADMIN_KEY_HASH = '123456';
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                    <textarea id="appointment-notes" name="notes" rows="2"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#8F9779]/20 focus:border-[#8F9779] outline-none transition-all"></textarea>
+                </div>
+                <div class="form-error" id="appointment-error-msg"></div>
 
-                    // DOM Elements
-                    const loginOverlay = document.getElementById('login-overlay');
-                    const dashboardContainer = document.getElementById('admin-dashboard');
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" onclick="document.getElementById('appointment-modal').classList.add('hidden')"
+                        class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Cancel</button>
+                    <button type="submit"
+                        class="px-6 py-2 bg-[#8F9779] text-white font-medium rounded-lg hover:bg-[#7A8268] transition-colors shadow-lg shadow-[#8F9779]/20">Schedule
+                        Session</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                    // State
-                    window.currentSection = 'dashboard';
+    <!-- ADD INVOICE MODAL -->
+    <div id="invoice-modal"
+        class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 animate-fadeIn">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-[#2D2D2D]">Create New Invoice</h3>
+                <button onclick="document.getElementById('invoice-modal').classList.add('hidden')"
+                    class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <form id="add-invoice-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bill To (Parent)</label>
+                    <select name="parent_id" id="invoice-parent-select" required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
+                        <option value="">-- Select Parent --</option>
+                        <!-- Populated by JS -->
+                    </select>
+                    <div class="field-error" id="err-invoice-parent-select"></div>
+                </div>
 
-                    // Initialize
-                    window.addEventListener('load', () => {
-                        checkAccess();
-                    });
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Amount ($)</label>
+                        <input type="number" step="0.01" id="inv-amount" name="amount" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
+                        <div class="field-error" id="err-inv-amount"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                        <input type="date" id="inv-due-date" name="due_date" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
+                        <div class="field-error" id="err-inv-due-date"></div>
+                    </div>
+                </div>
 
-                    // ---------------------------------------------------------
-                    // ACCESS CONTROL
-                    // ---------------------------------------------------------
-                    async function checkAccess() {
-                        try {
-                            const { data: { session } } = await supabase.auth.getSession();
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <select name="status"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
+                        <option value="Pending">Pending</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Overdue">Overdue</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="form-error" id="invoice-error-msg"></div>
 
-                            if (!session) {
-                                showLogin();
-                                return;
-                            }
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" onclick="document.getElementById('invoice-modal').classList.add('hidden')"
+                        class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Cancel</button>
+                    <button type="submit"
+                        class="px-6 py-2 bg-[#C4A484] text-white font-medium rounded-lg hover:bg-[#b08d6f] transition-colors shadow-lg shadow-[#C4A484]/20">Generate
+                        Invoice</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                            // Verify Admin Role
-                            const status = await checkAdminStatus(session.user.id);
-                            if (!status.isAdmin) {
-                                const role = status.role || 'none';
-                                const userEmail = session.user.email;
+    <!-- STUDENT MANAGEMENT MODULE (Module 2 Extended) -->
+    <section id="section-students" class="admin-section">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <div>
+                <h2 class="text-2xl font-bold text-[#2D2D2D] input-font">Student Management</h2>
+                <p class="text-gray-500 mt-1">Manage student profiles and therapy status.</p>
+            </div>
+            <button onclick="document.getElementById('student-modal').classList.remove('hidden'); loadParentOptions();"
+                class="flex items-center gap-2 bg-[#2D2D2D] text-white px-5 py-2.5 rounded-xl hover:bg-[#1a1a1a] transition-colors shadow-lg shadow-gray-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Add Student
+            </button>
+        </div>
 
-                                // Instead of alerting and signing out, show the login overlay with a promotion message
-                                showLogin(userEmail, role);
-                                return;
-                            }
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50/50 border-b border-gray-100">
+                        <tr>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Student Name</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Details</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Parent/Guardian</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Status</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-table-body" class="divide-y divide-gray-100">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
 
-                            // Access Granted
-                            showDashboard(session.user);
-                        } catch (err) {
-                            console.error("checkAccess error:", err);
-                            showLogin();
-                        }
-                    }
+            <!-- Loading / Empty States -->
+            <div id="loading-students" class="hidden p-8 text-center text-gray-500">Loading students...
+            </div>
+            <div id="empty-state-students" class="hidden p-12 text-center">
+                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900">No students yet</h3>
+                <p class="text-gray-500 mt-1">Get started by adding a new student profile.</p>
+            </div>
+        </div>
+    </section>
 
-                    function showLogin(email = '', role = '') {
-                        loginOverlay.style.display = 'flex';
-                        if (dashboardContainer) dashboardContainer.style.display = 'none';
+    <!-- ADD STUDENT MODAL -->
+    <div id="student-modal"
+        class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 animate-fadeIn">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-[#2D2D2D]">Add New Student</h3>
+                <button onclick="document.getElementById('student-modal').classList.add('hidden')"
+                    class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <form id="add-student-form" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <input type="text" id="s-first-name" name="first_name" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
+                        <div class="field-error" id="err-s-first-name"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <input type="text" id="s-last-name" name="last_name" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
+                        <div class="field-error" id="err-s-last-name"></div>
+                    </div>
+                </div>
 
-                        const promoMsg = document.getElementById('promo-message');
-                        const emailInput = document.getElementById('admin-email');
-                        const passwordGroup = document.getElementById('password-group');
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                    <input type="date" id="s-dob" name="dob"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
+                    <div class="field-error" id="err-s-dob"></div>
+                </div>
 
-                        if (email && (role === 'none' || role === 'user' || role === 'parent')) {
-                            // User is logged in but lacks admin role
-                            promoMsg.innerHTML = `<div style="background:#fff4e5; color:#663c00; padding:10px; border-radius:8px; font-size:13px; margin-bottom:15px; border:1px solid #ffdcb1;">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Link Parent
+                        Account</label>
+                    <select name="parent_id" id="parent-select"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all">
+                        <option value="">-- No Parent Linked Yet --</option>
+                        <!-- Populated by JS -->
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">If parent isn't registered, leave blank.</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Diagnosis /
+                        Needs</label>
+                    <textarea id="s-diagnosis" name="diagnosis" rows="2"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C4A484]/20 focus:border-[#C4A484] outline-none transition-all"></textarea>
+                    <div class="field-error" id="err-s-diagnosis"></div>
+                </div>
+                <div class="form-error" id="student-error-msg"></div>
+
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" onclick="document.getElementById('student-modal').classList.add('hidden')"
+                        class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Cancel</button>
+                    <button type="submit"
+                        class="px-6 py-2 bg-[#C4A484] text-white font-medium rounded-lg hover:bg-[#b08d6f] transition-colors shadow-lg shadow-[#C4A484]/20">Save
+                        Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script type="module" src="session-manager.js"></script>
+    <script type="module">
+        import { validators, toggleError, clearAllErrors, initRealTimeValidation } from './validation.js';
+        import { supabase } from './supabase-fetch-client.js?v=2';
+        import { getAllUsers, checkAdminStatus, upsertUser, updateUserStatus } from './db-service.js?v=2';
+
+        // Admin Key for client-side check
+        const ADMIN_KEY_HASH = '123456';
+
+        // DOM Elements
+        const loginOverlay = document.getElementById('login-overlay');
+        const dashboardContainer = document.getElementById('admin-dashboard');
+
+        // State
+        window.currentSection = 'dashboard';
+
+        // Initialize
+        window.addEventListener('load', () => {
+            checkAccess();
+        });
+
+        // ---------------------------------------------------------
+        // ACCESS CONTROL
+        // ---------------------------------------------------------
+        async function checkAccess() {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+
+                if (!session) {
+                    showLogin();
+                    return;
+                }
+
+                // Verify Admin Role
+                const status = await checkAdminStatus(session.user.id);
+                if (!status.isAdmin) {
+                    const role = status.role || 'none';
+                    const userEmail = session.user.email;
+
+                    // Instead of alerting and signing out, show the login overlay with a promotion message
+                    showLogin(userEmail, role);
+                    return;
+                }
+
+                // Access Granted
+                showDashboard(session.user);
+            } catch (err) {
+                console.error("checkAccess error:", err);
+                showLogin();
+            }
+        }
+
+        function showLogin(email = '', role = '') {
+            loginOverlay.style.display = 'flex';
+            if (dashboardContainer) dashboardContainer.style.display = 'none';
+
+            const promoMsg = document.getElementById('promo-message');
+            const emailInput = document.getElementById('admin-email');
+            const passwordGroup = document.getElementById('password-group');
+
+            if (email && (role === 'none' || role === 'user' || role === 'parent')) {
+                // User is logged in but lacks admin role
+                promoMsg.innerHTML = `<div style="background:#fff4e5; color:#663c00; padding:10px; border-radius:8px; font-size:13px; margin-bottom:15px; border:1px solid #ffdcb1;">
                                 <strong>Authenticated:</strong> ${email}<br>
                                 <strong>Role:</strong> ${role}<br>
                                 <span style="font-size:12px;">Enter Admin Key below to gain administrative access.</span>
                             </div>`;
-                            emailInput.value = email;
-                            emailInput.readOnly = true;
-                            if (passwordGroup) passwordGroup.style.display = 'none';
-                        } else {
-                            // Fresh login or no session
-                            promoMsg.innerHTML = '';
-                            emailInput.readOnly = false;
-                            if (passwordGroup) passwordGroup.style.display = 'block';
-                        }
-                    }
+                emailInput.value = email;
+                emailInput.readOnly = true;
+                if (passwordGroup) passwordGroup.style.display = 'none';
+            } else {
+                // Fresh login or no session
+                promoMsg.innerHTML = '';
+                emailInput.readOnly = false;
+                if (passwordGroup) passwordGroup.style.display = 'block';
+            }
+        }
 
-                    function showDashboard(user) {
-                        loginOverlay.style.display = 'none';
-                        if (dashboardContainer) {
-                            dashboardContainer.style.display = 'flex'; // Flex for sidebar layout
-                            loadDashboardStats();
-                        }
-                    }
+        function showDashboard(user) {
+            loginOverlay.style.display = 'none';
+            if (dashboardContainer) {
+                dashboardContainer.style.display = 'flex'; // Flex for sidebar layout
+                loadDashboardStats();
+            }
+        }
 
-                    const loginForm = document.getElementById('admin-login-form');
-                    if (loginForm) {
-                        initRealTimeValidation('#admin-login-form');
-                        loginForm.addEventListener('submit', async (e) => {
-                            e.preventDefault();
-                            const errorMsg = document.getElementById('auth-error');
-                            clearAllErrors('#admin-login-form');
+        const loginForm = document.getElementById('admin-login-form');
+        if (loginForm) {
+            initRealTimeValidation('#admin-login-form');
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const errorMsg = document.getElementById('auth-error');
+                clearAllErrors('#admin-login-form');
 
-                            const email = document.getElementById('admin-email').value.trim();
-                            const password = document.getElementById('admin-password').value;
-                            const key = document.getElementById('admin-key').value.trim();
+                const email = document.getElementById('admin-email').value.trim();
+                const password = document.getElementById('admin-password').value;
+                const key = document.getElementById('admin-key').value.trim();
 
-                            let hasError = false;
-                            if (!toggleError('admin-email', "Email required", validators.isRequired(email))) hasError = true;
-                            else if (!toggleError('admin-email', "Invalid format", validators.isEmail(email))) hasError = true;
+                let hasError = false;
+                if (!toggleError('admin-email', "Email required", validators.isRequired(email))) hasError = true;
+                else if (!toggleError('admin-email', "Invalid format", validators.isEmail(email))) hasError = true;
 
-                            // Only require password if field is visible
-                            if (document.getElementById('password-group').style.display !== 'none') {
-                                if (!toggleError('admin-password', "Password required", validators.isRequired(password))) hasError = true;
-                            }
+                // Only require password if field is visible
+                if (document.getElementById('password-group').style.display !== 'none') {
+                    if (!toggleError('admin-password', "Password required", validators.isRequired(password))) hasError = true;
+                }
 
-                            if (!toggleError('admin-key', "Key required", validators.isRequired(key))) hasError = true;
+                if (!toggleError('admin-key', "Key required", validators.isRequired(key))) hasError = true;
 
-                            if (hasError) return;
+                if (hasError) return;
 
-                            if (key !== ADMIN_KEY_HASH) {
-                                errorMsg.textContent = "Invalid Admin Key.";
-                                errorMsg.style.display = 'block';
-                                return;
-                            }
+                if (key !== ADMIN_KEY_HASH) {
+                    errorMsg.textContent = "Invalid Admin Key.";
+                    errorMsg.style.display = 'block';
+                    return;
+                }
 
-                            try {
-                                let currentUser;
-                                const { data: { session } } = await supabase.auth.getSession();
+                try {
+                    let currentUser;
+                    const { data: { session } } = await supabase.auth.getSession();
 
-                                if (session && session.user.email === email) {
-                                    // Use existing session
-                                    currentUser = session.user;
-                                } else {
-                                    // Perform fresh sign-in
-                                    const { data, error } = await supabase.auth.signInWithPassword({
-                                        email, password
-                                    });
-                                    if (error) throw error;
-                                    currentUser = data.user;
-                                }
-
-                                // Auto-promote to admin role since they have the valid key
-                                const { error: upsertError } = await upsertUser(currentUser, { role: 'admin' });
-                                if (upsertError) throw new Error("Role update failed: " + upsertError);
-
-                                checkAccess(); // Re-verify
-                            } catch (err) {
-                                console.error("Admin Auth Error:", err);
-                                errorMsg.textContent = err.message || "Login failed.";
-                                errorMsg.style.display = 'block';
-                            }
+                    if (session && session.user.email === email) {
+                        // Use existing session
+                        currentUser = session.user;
+                    } else {
+                        // Perform fresh sign-in
+                        const { data, error } = await supabase.auth.signInWithPassword({
+                            email, password
                         });
+                        if (error) throw error;
+                        currentUser = data.user;
                     }
 
-                    window.endSession = async () => {
-                        await supabase.auth.signOut();
-                        window.location.reload();
-                    }
+                    // Auto-promote to admin role since they have the valid key
+                    const { error: upsertError } = await upsertUser(currentUser, { role: 'admin' });
+                    if (upsertError) throw new Error("Role update failed: " + upsertError);
 
-                    // ---------------------------------------------------------
-                    // NAVIGATION & LAYOUT
-                    // ---------------------------------------------------------
-                    window.switchSection = (sectionId, linkElement) => {
-                        // 1. Update Sidebar Active State
-                        if (linkElement) {
-                            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                            linkElement.classList.add('active');
-                        }
+                    checkAccess(); // Re-verify
+                } catch (err) {
+                    console.error("Admin Auth Error:", err);
+                    errorMsg.textContent = err.message || "Login failed.";
+                    errorMsg.style.display = 'block';
+                }
+            });
+        }
 
-                        // 2. Hide all sections
-                        document.querySelectorAll('.admin-section').forEach(el => el.classList.remove('active'));
+        window.endSession = async () => {
+            await supabase.auth.signOut();
+            window.location.reload();
+        }
 
-                        // 3. Show target section
-                        const target = document.getElementById(`section-${sectionId}`);
-                        if (target) {
-                            target.classList.add('active');
-                        }
+        // ---------------------------------------------------------
+        // NAVIGATION & LAYOUT
+        // ---------------------------------------------------------
+        window.switchSection = (sectionId, linkElement) => {
+            // 1. Update Sidebar Active State
+            if (linkElement) {
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                linkElement.classList.add('active');
+            }
 
-                        // 4. Update Header Title
-                        const titles = {
-                            'dashboard': 'Dashboard',
-                            'users': 'User Management',
-                            'inquiries': 'Inquiry Management'
-                        };
-                        const titleEl = document.getElementById('page-title');
-                        if (titleEl) titleEl.textContent = titles[sectionId] || 'Admin';
+            // 2. Hide all sections
+            document.querySelectorAll('.admin-section').forEach(el => el.classList.remove('active'));
 
-                        // 5. Load Data if needed
-                        if (sectionId === 'users') loadUsers();
-                        if (sectionId === 'dashboard') loadDashboardStats();
-                    };
+            // 3. Show target section
+            const target = document.getElementById(`section-${sectionId}`);
+            if (target) {
+                target.classList.add('active');
+            }
 
-                    // ---------------------------------------------------------
-                    // DASHBOARD MODULE
-                    // ---------------------------------------------------------
-                    async function loadDashboardStats() {
-                        try {
-                            const users = await getAllUsers();
-                            const { getInquiries, getAppointments, getInvoices } = await import('./db-service.js');
-                            const inquiries = await getInquiries();
-                            const appointments = await getAppointments();
-                            const invoices = await getInvoices();
+            // 4. Update Header Title
+            const titles = {
+                'dashboard': 'Dashboard',
+                'users': 'User Management',
+                'inquiries': 'Inquiry Management'
+            };
+            const titleEl = document.getElementById('page-title');
+            if (titleEl) titleEl.textContent = titles[sectionId] || 'Admin';
 
-                            // Update Sidebar Badges
-                            const newInquiries = inquiries.filter(i => (i.status || 'New').toLowerCase() === 'new').length;
-                            const inquiryBadge = document.getElementById('sidebar-inquiry-count');
-                            if (inquiryBadge) {
-                                inquiryBadge.textContent = newInquiries;
-                                inquiryBadge.classList.toggle('hidden', newInquiries === 0);
-                            }
+            // 5. Load Data if needed
+            if (sectionId === 'users') loadUsers();
+            if (sectionId === 'dashboard') loadDashboardStats();
+        };
 
-                            // Update Stat Cards
-                            const studentCount = users.filter(u => u.role === 'student' || u.role === 'parent').length; // Heuristic
-                            document.getElementById('total-users-stat').textContent = users.length;
-                            document.getElementById('new-inquiries-stat').textContent = inquiries.length;
-                            document.getElementById('appointments-today-stat').textContent = appointments.length;
+        // ---------------------------------------------------------
+        // DASHBOARD MODULE
+        // ---------------------------------------------------------
+        async function loadDashboardStats() {
+            try {
+                const users = await getAllUsers();
+                const { getInquiries, getAppointments, getInvoices } = await import('./db-service.js');
+                const inquiries = await getInquiries();
+                const appointments = await getAppointments();
+                const invoices = await getInvoices();
 
-                            const pendingTotal = invoices
-                                .filter(inv => inv.status === 'Pending')
-                                .reduce((sum, inv) => sum + (parseFloat(inv.amount) || 0), 0);
-                            document.getElementById('pending-payments-stat').textContent = '$' + pendingTotal.toLocaleString();
+                // Update Sidebar Badges
+                const newInquiries = inquiries.filter(i => (i.status || 'New').toLowerCase() === 'new').length;
+                const inquiryBadge = document.getElementById('sidebar-inquiry-count');
+                if (inquiryBadge) {
+                    inquiryBadge.textContent = newInquiries;
+                    inquiryBadge.classList.toggle('hidden', newInquiries === 0);
+                }
 
-                        } catch (err) {
-                            console.error("Dashboard Stats Error:", err);
-                        }
-                    }
+                // Update Stat Cards
+                const studentCount = users.filter(u => u.role === 'student' || u.role === 'parent').length; // Heuristic
+                document.getElementById('total-users-stat').textContent = users.length;
+                document.getElementById('new-inquiries-stat').textContent = inquiries.length;
+                document.getElementById('appointments-today-stat').textContent = appointments.length;
 
-                    // ---------------------------------------------------------
-                    // USER MANAGEMENT MODULE
-                    // ---------------------------------------------------------
-                    window.loadUsers = async () => {
-                        const tbody = document.getElementById('user-table-body');
-                        const loading = document.getElementById('loading-users');
-                        const empty = document.getElementById('empty-state-users');
+                const pendingTotal = invoices
+                    .filter(inv => inv.status === 'Pending')
+                    .reduce((sum, inv) => sum + (parseFloat(inv.amount) || 0), 0);
+                document.getElementById('pending-payments-stat').textContent = '$' + pendingTotal.toLocaleString();
 
-                        if (!tbody) return;
+            } catch (err) {
+                console.error("Dashboard Stats Error:", err);
+            }
+        }
 
-                        tbody.innerHTML = '';
-                        if (loading) loading.style.display = 'block';
-                        if (empty) empty.style.display = 'none';
+        // ---------------------------------------------------------
+        // USER MANAGEMENT MODULE
+        // ---------------------------------------------------------
+        window.loadUsers = async () => {
+            const tbody = document.getElementById('user-table-body');
+            const loading = document.getElementById('loading-users');
+            const empty = document.getElementById('empty-state-users');
 
-                        try {
-                            const users = await getAllUsers();
-                            if (loading) loading.style.display = 'none';
+            if (!tbody) return;
 
-                            if (!users || users.length === 0) {
-                                if (empty) empty.style.display = 'block';
-                                return;
-                            }
+            tbody.innerHTML = '';
+            if (loading) loading.style.display = 'block';
+            if (empty) empty.style.display = 'none';
 
-                            renderUsers(users);
-                            // Update Dashboard Count real-time if possible
-                            // document.getElementById('total-users').textContent = users.length;
-                        } catch (error) {
-                            console.error("Error loading users:", error);
-                            if (loading) loading.textContent = "Error loading data.";
-                        }
-                    };
+            try {
+                const users = await getAllUsers();
+                if (loading) loading.style.display = 'none';
 
-                    function renderUsers(users) {
-                        const tbody = document.getElementById('user-table-body');
-                        if (!tbody) return;
+                if (!users || users.length === 0) {
+                    if (empty) empty.style.display = 'block';
+                    return;
+                }
 
-                        tbody.innerHTML = '';
+                renderUsers(users);
+                // Update Dashboard Count real-time if possible
+                // document.getElementById('total-users').textContent = users.length;
+            } catch (error) {
+                console.error("Error loading users:", error);
+                if (loading) loading.textContent = "Error loading data.";
+            }
+        };
 
-                        users.forEach(user => {
-                            const tr = document.createElement('tr');
-                            tr.className = "hover:bg-gray-50 transition-colors";
+        function renderUsers(users) {
+            const tbody = document.getElementById('user-table-body');
+            if (!tbody) return;
 
-                            const date = new Date(user.created_at).toLocaleDateString();
-                            const statusColor = user.status === 'blocked' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
+            tbody.innerHTML = '';
 
-                            tr.innerHTML = `
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-colors";
+
+                const date = new Date(user.created_at).toLocaleDateString();
+                const statusColor = user.status === 'blocked' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
+
+                tr.innerHTML = `
                     <td class="px-6 py-4">
                         <div class="flex items-center">
                             <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 mr-3">
@@ -1308,128 +1496,109 @@
                         </button>
                     </td>
                 `;
-                            tbody.appendChild(tr);
-                        });
-                    }
+                tbody.appendChild(tr);
+            });
+        }
 
 
-                    window.toggleUserStatus = async (id, email, currentStatus) => {
-                        const newStatus = currentStatus === 'blocked' ? 'active' : 'blocked';
-                        if (!confirm(`Are you sure you want to ${newStatus === 'blocked' ? 'BLOCK' : 'UNBLOCK'} ${email}?`)) {
-                            return;
-                        }
+        window.toggleUserStatus = async (id, email, currentStatus) => {
+            const newStatus = currentStatus === 'blocked' ? 'active' : 'blocked';
+            if (!confirm(`Are you sure you want to ${newStatus === 'blocked' ? 'BLOCK' : 'UNBLOCK'} ${email}?`)) {
+                return;
+            }
 
-                        try {
-                            await updateUserStatus(id, newStatus);
-                            loadUsers(); // Refresh list
-                        } catch (err) {
-                            alert("Failed to update status: " + err.message);
-                        }
-                    };
+            try {
+                await updateUserStatus(id, newStatus);
+                loadUsers(); // Refresh list
+            } catch (err) {
+                alert("Failed to update status: " + err.message);
+            }
+        };
 
-                    // ---------------------------------------------------------
-                    // INQUIRY MANAGEMENT MODULE
-                    // ---------------------------------------------------------
+        // ---------------------------------------------------------
+        // INQUIRY MANAGEMENT MODULE
+        // ---------------------------------------------------------
 
-                    // Enhance switchSection to load inquiries
-                    window.switchSection = (sectionId, linkElement) => {
-                        if (linkElement) {
-                            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                            linkElement.classList.add('active');
-                        }
-                        document.querySelectorAll('.admin-section').forEach(el => el.classList.remove('active'));
-                        const target = document.getElementById(`section-${sectionId}`);
-                        if (target) target.classList.add('active');
+        // Enhance switchSection to load inquiries
 
-                        const titleEl = document.getElementById('page-title');
-                        if (titleEl) {
-                            const titles = { 'dashboard': 'Dashboard', 'users': 'User Management', 'inquiries': 'Inquiry Management' };
-                            titleEl.textContent = titles[sectionId] || 'Admin';
-                        }
+        let allInquiries = []; // Cache for filtering
 
-                        if (sectionId === 'users') loadUsers();
-                        if (sectionId === 'dashboard') loadDashboardStats();
-                        if (sectionId === 'inquiries') loadInquiries();
-                    };
+        window.loadInquiries = async () => {
+            const tbody = document.getElementById('inquiries-table-body');
+            const loading = document.getElementById('loading-inquiries');
+            const empty = document.getElementById('empty-state-inquiries');
 
-                    let allInquiries = []; // Cache for filtering
+            if (!tbody) return;
 
-                    window.loadInquiries = async () => {
-                        const tbody = document.getElementById('inquiries-table-body');
-                        const loading = document.getElementById('loading-inquiries');
-                        const empty = document.getElementById('empty-state-inquiries');
+            tbody.innerHTML = '';
+            if (loading) loading.style.display = 'block';
+            if (empty) empty.style.display = 'none';
 
-                        if (!tbody) return;
+            try {
+                // Use 'getInquiries' for Leads
+                const { getInquiries } = await import('./db-service.js');
+                allInquiries = await getInquiries();
 
-                        tbody.innerHTML = '';
-                        if (loading) loading.style.display = 'block';
-                        if (empty) empty.style.display = 'none';
+                if (loading) loading.style.display = 'none';
 
-                        try {
-                            // Use 'getInquiries' for Leads
-                            const { getInquiries } = await import('./db-service.js');
-                            allInquiries = await getInquiries();
+                if (!allInquiries || allInquiries.length === 0) {
+                    if (empty) empty.style.display = 'block';
+                    return;
+                }
 
-                            if (loading) loading.style.display = 'none';
+                // Update Badge Count
+                const newCount = allInquiries.filter(i => (i.status || 'New').toLowerCase() === 'new').length;
+                const countBadge = document.getElementById('count-new');
+                if (countBadge) countBadge.textContent = newCount;
 
-                            if (!allInquiries || allInquiries.length === 0) {
-                                if (empty) empty.style.display = 'block';
-                                return;
-                            }
+                filterInquiries('all', null);
 
-                            // Update Badge Count
-                            const newCount = allInquiries.filter(i => (i.status || 'New').toLowerCase() === 'new').length;
-                            const countBadge = document.getElementById('count-new');
-                            if (countBadge) countBadge.textContent = newCount;
+            } catch (error) {
+                console.error("Error loading inquiries:", error);
+                if (loading) loading.textContent = "Error loading data.";
+            }
+        };
 
-                            filterInquiries('all', null);
+        window.filterInquiries = (status, btn) => {
+            // Update tabs
+            if (btn) {
+                const parent = btn.parentElement;
+                parent.querySelectorAll('button').forEach(b => {
+                    b.classList.remove('text-[#C4A484]', 'border-b-2', 'border-[#C4A484]');
+                    b.classList.add('text-gray-500');
+                });
+                btn.classList.remove('text-gray-500');
+                btn.classList.add('text-[#C4A484]', 'border-b-2', 'border-[#C4A484]');
+            }
 
-                        } catch (error) {
-                            console.error("Error loading inquiries:", error);
-                            if (loading) loading.textContent = "Error loading data.";
-                        }
-                    };
+            const filtered = status === 'all'
+                ? allInquiries
+                : allInquiries.filter(i => (i.status || 'New').toLowerCase() === status.toLowerCase());
 
-                    window.filterInquiries = (status, btn) => {
-                        // Update tabs
-                        if (btn) {
-                            const parent = btn.parentElement;
-                            parent.querySelectorAll('button').forEach(b => {
-                                b.classList.remove('text-[#C4A484]', 'border-b-2', 'border-[#C4A484]');
-                                b.classList.add('text-gray-500');
-                            });
-                            btn.classList.remove('text-gray-500');
-                            btn.classList.add('text-[#C4A484]', 'border-b-2', 'border-[#C4A484]');
-                        }
+            renderInquiries(filtered);
+        };
 
-                        const filtered = status === 'all'
-                            ? allInquiries
-                            : allInquiries.filter(i => (i.status || 'New').toLowerCase() === status.toLowerCase());
+        function renderInquiries(items) {
+            const tbody = document.getElementById('inquiries-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
 
-                        renderInquiries(filtered);
-                    };
+            items.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-colors";
 
-                    function renderInquiries(items) {
-                        const tbody = document.getElementById('inquiries-table-body');
-                        if (!tbody) return;
-                        tbody.innerHTML = '';
+                const date = new Date(item.created_at).toLocaleDateString();
+                const status = (item.status || 'new').toLowerCase();
+                let badgeClass = 'bg-gray-100 text-gray-800';
+                if (status === 'new') badgeClass = 'bg-red-100 text-red-800';
+                if (status === 'contacted') badgeClass = 'bg-blue-100 text-blue-800';
+                if (status === 'converted') badgeClass = 'bg-green-100 text-green-800';
+                if (status === 'closed') badgeClass = 'bg-gray-200 text-gray-600';
 
-                        items.forEach(item => {
-                            const tr = document.createElement('tr');
-                            tr.className = "hover:bg-gray-50 transition-colors";
+                // Fix: Use child_info from DB, not child_name
+                const childDisplay = item.child_info || 'N/A';
 
-                            const date = new Date(item.created_at).toLocaleDateString();
-                            const status = (item.status || 'new').toLowerCase();
-                            let badgeClass = 'bg-gray-100 text-gray-800';
-                            if (status === 'new') badgeClass = 'bg-red-100 text-red-800';
-                            if (status === 'contacted') badgeClass = 'bg-blue-100 text-blue-800';
-                            if (status === 'converted') badgeClass = 'bg-green-100 text-green-800';
-                            if (status === 'closed') badgeClass = 'bg-gray-200 text-gray-600';
-
-                            // Fix: Use child_info from DB, not child_name
-                            const childDisplay = item.child_info || 'N/A';
-
-                            tr.innerHTML = `
+                tr.innerHTML = `
                     <td class="px-6 py-4 text-sm text-gray-500">${date}</td>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900">${item.name}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">
@@ -1455,156 +1624,156 @@
                             <option value="closed" ${status === 'closed' ? 'selected' : ''}>Closed</option>
                         </select>
                         ${status !== 'converted' ?
-                                    `<button onclick="convertInquiryToStudent('${item.id}')" class="text-xs bg-[#2D2D2D] text-white px-2 py-1 rounded hover:bg-gray-700">
+                        `<button onclick="convertInquiryToStudent('${item.id}')" class="text-xs bg-[#2D2D2D] text-white px-2 py-1 rounded hover:bg-gray-700">
                                 Convert
                             </button>` : ''}
                     </td>
                 `;
-                            tbody.appendChild(tr);
-                        });
-                    }
+                tbody.appendChild(tr);
+            });
+        }
 
-                    window.updateInquiryStatus = async (id, newStatus) => {
-                        const { updateInquiry } = await import('./db-service.js');
-                        try {
-                            await updateInquiry(id, { status: newStatus });
-                            const idx = allInquiries.findIndex(i => i.id === id);
-                            if (idx !== -1) allInquiries[idx].status = newStatus;
+        window.updateInquiryStatus = async (id, newStatus) => {
+            const { updateInquiry } = await import('./db-service.js');
+            try {
+                await updateInquiry(id, { status: newStatus });
+                const idx = allInquiries.findIndex(i => i.id === id);
+                if (idx !== -1) allInquiries[idx].status = newStatus;
 
-                            // Re-render
-                            const activeBtn = document.querySelector('#section-inquiries .border-b-2');
-                            const currentFilter = activeBtn ? activeBtn.textContent.trim().toLowerCase().split(' ')[0] : 'all';
-                            filterInquiries(currentFilter === 'all' ? 'all' : currentFilter, null);
+                // Re-render
+                const activeBtn = document.querySelector('#section-inquiries .border-b-2');
+                const currentFilter = activeBtn ? activeBtn.textContent.trim().toLowerCase().split(' ')[0] : 'all';
+                filterInquiries(currentFilter === 'all' ? 'all' : currentFilter, null);
 
-                        } catch (err) {
-                            alert("Failed to update: " + err.message);
-                        }
-                    };
+            } catch (err) {
+                alert("Failed to update: " + err.message);
+            }
+        };
 
-                    window.convertInquiryToStudent = (id) => {
-                        const inquiry = allInquiries.find(i => i.id === id);
-                        if (!inquiry) return;
+        window.convertInquiryToStudent = (id) => {
+            const inquiry = allInquiries.find(i => i.id === id);
+            if (!inquiry) return;
 
-                        // Switch to Student Section & Open Modal
-                        switchSection('students', document.querySelector('a[onclick*="students"]'));
-                        document.getElementById('student-modal').classList.remove('hidden');
-                        loadParentOptions();
+            // Switch to Student Section & Open Modal
+            switchSection('students', document.querySelector('a[onclick*="students"]'));
+            document.getElementById('student-modal').classList.remove('hidden');
+            loadParentOptions();
 
-                        // Pre-fill Form
-                        const form = document.getElementById('add-student-form');
-                        if (!form) return;
+            // Pre-fill Form
+            const form = document.getElementById('add-student-form');
+            if (!form) return;
 
-                        // Try to parse "Child: Name, Age: X"
-                        let firstName = '';
-                        let lastName = '';
-                        if (inquiry.child_info) {
-                            // Simple heuristic: Remove "Child:" labels and take first string
-                            let clean = inquiry.child_info.replace(/Child:/i, '').replace(/Age:.*/i, '').trim();
-                            if (clean.includes(',')) clean = clean.split(',')[0].trim();
+            // Try to parse "Child: Name, Age: X"
+            let firstName = '';
+            let lastName = '';
+            if (inquiry.child_info) {
+                // Simple heuristic: Remove "Child:" labels and take first string
+                let clean = inquiry.child_info.replace(/Child:/i, '').replace(/Age:.*/i, '').trim();
+                if (clean.includes(',')) clean = clean.split(',')[0].trim();
 
-                            const parts = clean.split(' ');
-                            if (parts.length > 0) firstName = parts[0];
-                            if (parts.length > 1) lastName = parts.slice(1).join(' ');
-                        }
+                const parts = clean.split(' ');
+                if (parts.length > 0) firstName = parts[0];
+                if (parts.length > 1) lastName = parts.slice(1).join(' ');
+            }
 
-                        form.querySelector('[name="first_name"]').value = firstName;
-                        form.querySelector('[name="last_name"]').value = lastName;
-                        form.querySelector('[name="diagnosis"]').value = `From Inquiry: ${inquiry.message || ''}`;
+            form.querySelector('[name="first_name"]').value = firstName;
+            form.querySelector('[name="last_name"]').value = lastName;
+            form.querySelector('[name="diagnosis"]').value = `From Inquiry: ${inquiry.message || ''}`;
 
-                        alert(`Step 1: Create Student Profile.\n\nTip: The parent "${inquiry.name}" (${inquiry.email}) needs to register separately to be linked.`);
-                    };
+            alert(`Step 1: Create Student Profile.\n\nTip: The parent "${inquiry.name}" (${inquiry.email}) needs to register separately to be linked.`);
+        };
 
-                    // ---------------------------------------------------------
-                    // SESSION MANAGEMENT MODULE (Module 4)
-                    // ---------------------------------------------------------
-                    // Update switchSection to handle 'students' and 'invoices'
-                    window.switchSection = (sectionId, linkElement) => {
-                        if (linkElement) {
-                            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                            linkElement.classList.add('active');
-                        }
-                        document.querySelectorAll('.admin-section').forEach(el => el.classList.remove('active'));
-                        const target = document.getElementById(`section-${sectionId}`);
-                        if (target) target.classList.add('active');
+        // ---------------------------------------------------------
+        // SESSION MANAGEMENT MODULE (Module 4)
+        // ---------------------------------------------------------
+        // Update switchSection to handle 'students' and 'invoices'
+        window.switchSection = (sectionId, linkElement) => {
+            if (linkElement) {
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                linkElement.classList.add('active');
+            }
+            document.querySelectorAll('.admin-section').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById(`section-${sectionId}`);
+            if (target) target.classList.add('active');
 
-                        const titleEl = document.getElementById('page-title');
-                        if (titleEl) {
-                            const titles = {
-                                'dashboard': 'Dashboard',
-                                'users': 'User Management',
-                                'inquiries': 'Inquiry Management',
-                                'appointments': 'Session Calendar',
-                                'students': 'Student Management',
-                                'invoices': 'Billing & Invoices',
-                                'plans': 'Therapy Plans',
-                                'assessments': 'Assessments',
-                                'documents': 'Documents',
-                                'cms': 'CMS',
-                                'notifications': 'Notifications',
-                                'reports': 'Reports',
-                                'settings': 'Settings'
-                            };
-                            titleEl.textContent = titles[sectionId] || 'Admin';
-                        }
+            const titleEl = document.getElementById('page-title');
+            if (titleEl) {
+                const titles = {
+                    'dashboard': 'Dashboard',
+                    'users': 'User Management',
+                    'inquiries': 'Inquiry Management',
+                    'appointments': 'Session Calendar',
+                    'students': 'Student Management',
+                    'invoices': 'Billing & Invoices',
+                    'plans': 'Therapy Plans',
+                    'assessments': 'Assessments',
+                    'documents': 'Documents',
+                    'cms': 'CMS',
+                    'notifications': 'Notifications',
+                    'reports': 'Reports',
+                    'settings': 'Settings'
+                };
+                titleEl.textContent = titles[sectionId] || 'Admin';
+            }
 
-                        if (sectionId === 'users') loadUsers();
-                        if (sectionId === 'dashboard') loadDashboardStats();
-                        if (sectionId === 'inquiries') loadInquiries();
-                        if (sectionId === 'appointments') loadSessions();
-                        if (sectionId === 'students') loadStudents();
-                        if (sectionId === 'invoices') loadInvoices();
-                    };
+            if (sectionId === 'users') loadUsers();
+            if (sectionId === 'dashboard') loadDashboardStats();
+            if (sectionId === 'inquiries') loadInquiries();
+            if (sectionId === 'appointments') loadSessions();
+            if (sectionId === 'students') loadStudents();
+            if (sectionId === 'invoices') loadInvoices();
+        };
 
-                    window.loadSessions = async () => {
-                        const tbody = document.getElementById('sessions-table-body');
-                        const loading = document.getElementById('loading-sessions');
-                        const empty = document.getElementById('empty-state-sessions');
+        window.loadSessions = async () => {
+            const tbody = document.getElementById('sessions-table-body');
+            const loading = document.getElementById('loading-sessions');
+            const empty = document.getElementById('empty-state-sessions');
 
-                        if (!tbody) return;
+            if (!tbody) return;
 
-                        tbody.innerHTML = '';
-                        if (loading) loading.style.display = 'flex';
-                        if (empty) empty.style.display = 'none';
+            tbody.innerHTML = '';
+            if (loading) loading.style.display = 'flex';
+            if (empty) empty.style.display = 'none';
 
-                        try {
-                            // Use 'getAppointments' for Calendar Sessions
-                            const { getAppointments } = await import('./db-service.js');
-                            const sessions = await getAppointments();
+            try {
+                // Use 'getAppointments' for Calendar Sessions
+                const { getAppointments } = await import('./db-service.js');
+                const sessions = await getAppointments();
 
-                            if (loading) loading.style.display = 'none';
+                if (loading) loading.style.display = 'none';
 
-                            if (!sessions || sessions.length === 0) {
-                                if (empty) empty.style.display = 'flex';
-                                return;
-                            }
+                if (!sessions || sessions.length === 0) {
+                    if (empty) empty.style.display = 'flex';
+                    return;
+                }
 
-                            renderSessions(sessions);
+                renderSessions(sessions);
 
-                        } catch (error) {
-                            console.error("Error loading sessions:", error);
-                            if (loading) loading.textContent = "Error loading data.";
-                        }
-                    };
+            } catch (error) {
+                console.error("Error loading sessions:", error);
+                if (loading) loading.textContent = "Error loading data.";
+            }
+        };
 
-                    function renderSessions(sessions) {
-                        const tbody = document.getElementById('sessions-table-body');
-                        if (!tbody) return;
-                        tbody.innerHTML = '';
+        function renderSessions(sessions) {
+            const tbody = document.getElementById('sessions-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
 
-                        sessions.forEach(session => {
-                            const tr = document.createElement('tr');
-                            tr.className = "hover:bg-gray-50 transition-colors";
+            sessions.forEach(session => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-colors";
 
-                            const start = new Date(session.date_time); // Changed from start_time
-                            const date = start.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-                            const time = start.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+                const start = new Date(session.date_time); // Changed from start_time
+                const date = start.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+                const time = start.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
 
-                            let statusColor = 'bg-gray-100 text-gray-800';
-                            if (session.status === 'Scheduled') statusColor = 'bg-blue-100 text-blue-800';
-                            if (session.status === 'Completed') statusColor = 'bg-green-100 text-green-800';
-                            if (session.status === 'Cancelled') statusColor = 'bg-red-100 text-red-800';
+                let statusColor = 'bg-gray-100 text-gray-800';
+                if (session.status === 'Scheduled') statusColor = 'bg-blue-100 text-blue-800';
+                if (session.status === 'Completed') statusColor = 'bg-green-100 text-green-800';
+                if (session.status === 'Cancelled') statusColor = 'bg-red-100 text-red-800';
 
-                            tr.innerHTML = `
+                tr.innerHTML = `
                     <td class="px-6 py-4 text-sm font-medium text-gray-900">
                         ${date}<br><span class="text-gray-500 font-normal">${time}</span>
                     </td>
@@ -1613,10 +1782,10 @@
                         <div class="text-xs text-gray-500">Therapy Session</div>
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-500">
-                        ${session.therapist?.specialization || 'Therapist'}
+                        ${session.users?.name || 'Therapist'}
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-500">
-                        ${session.student?.first_name || 'Student'} ${session.student?.last_name || ''}
+                        ${session.students?.first_name || 'Student'} ${session.students?.last_name || ''}
                     </td>
                     <td class="px-6 py-4">
                         <span class="px-2 py-1 rounded-full text-xs font-medium ${statusColor}">
@@ -1627,60 +1796,63 @@
                         <button class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
                     </td>
                 `;
-                            tbody.appendChild(tr);
-                        });
-                    }
+                tbody.appendChild(tr);
+            });
+        }
 
-                    // ---------------------------------------------------------
-                    // STUDENT MANAGEMENT MODULE (Module 2)
-                    // ---------------------------------------------------------
+        // ---------------------------------------------------------
+        // STUDENT MANAGEMENT MODULE (Module 2)
+        // ---------------------------------------------------------
 
-                    window.loadStudents = async () => {
-                        const tbody = document.getElementById('students-table-body');
-                        const loading = document.getElementById('loading-students');
-                        const empty = document.getElementById('empty-state-students');
+        window.loadStudents = async () => {
+            const tbody = document.getElementById('students-table-body');
+            const loading = document.getElementById('loading-students');
+            const empty = document.getElementById('empty-state-students');
 
-                        if (!tbody) return;
+            if (!tbody) return;
 
-                        tbody.innerHTML = '';
-                        if (loading) loading.style.display = 'block';
-                        if (empty) empty.style.display = 'none';
+            tbody.innerHTML = '';
+            if (loading) loading.style.display = 'block';
+            if (empty) empty.style.display = 'none';
 
-                        try {
-                            const { getStudents } = await import('./db-service.js');
-                            const students = await getStudents();
+            try {
+                const { getStudents } = await import('./db-service.js');
+                const students = await getStudents();
 
-                            if (loading) loading.style.display = 'none';
+                if (loading) loading.style.display = 'none';
 
-                            if (!students || students.length === 0) {
-                                if (empty) empty.style.display = 'block';
-                                return;
-                            }
+                if (!students || students.length === 0) {
+                    if (empty) empty.style.display = 'block';
+                    return;
+                }
 
-                            renderStudents(students);
-                        } catch (error) {
-                            console.error("Error loading students:", error);
-                            if (loading) loading.textContent = "Error loading data.";
-                        }
-                    };
+                renderStudents(students);
+            } catch (error) {
+                console.error("Error loading students:", error);
+                if (loading) loading.textContent = "Error loading data.";
+            }
+        };
 
-                    function renderStudents(students) {
-                        const tbody = document.getElementById('students-table-body');
-                        if (!tbody) return;
-                        tbody.innerHTML = '';
+        function renderStudents(students) {
+            const tbody = document.getElementById('students-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
 
-                        students.forEach(student => {
-                            const tr = document.createElement('tr');
-                            tr.className = "hover:bg-gray-50 transition-colors";
+            students.forEach(student => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-colors";
 
-                            const parentName = student.parent?.user?.name || 'Unlinked';
-                            const parentEmail = student.parent?.user?.email || '-';
+                const studentName = student.first_name ? `${student.first_name} ${student.last_name}` : 'Unknown';
+                const therapistName = student.therapist ? student.therapist.name : 'N/A'; // Assuming student might have a linked therapist
 
-                            let statusColor = 'bg-green-100 text-green-800';
-                            if (student.therapy_status === 'Waiting') statusColor = 'bg-yellow-100 text-yellow-800';
-                            if (student.therapy_status === 'Completed') statusColor = 'bg-gray-100 text-gray-800';
+                const parentName = student.parents?.users?.name || 'Unlinked';
+                const parentEmail = student.parents?.users?.email || '-';
 
-                            tr.innerHTML = `
+                let statusColor = 'bg-green-100 text-green-800';
+                if (student.therapy_status === 'Waiting') statusColor = 'bg-yellow-100 text-yellow-800';
+                if (student.therapy_status === 'Completed') statusColor = 'bg-gray-100 text-gray-800';
+
+                tr.innerHTML = `
                     <td class="px-6 py-4">
                         <div class="text-sm font-medium text-gray-900">${student.first_name} ${student.last_name}</div>
                         <div class="text-xs text-gray-500">Grade: ${student.grade || 'N/A'}</div>
@@ -1701,133 +1873,209 @@
                         <button class="text-indigo-600 hover:text-indigo-900 mr-2">Edit</button>
                     </td>
                 `;
-                            tbody.appendChild(tr);
-                        });
-                    }
+                tbody.appendChild(tr);
+            });
+        }
 
-                    window.loadParentOptions = async () => {
-                        const select = document.getElementById('parent-select');
-                        if (!select || select.dataset.loaded) return;
+        window.loadParentOptions = async () => {
+            const select = document.getElementById('parent-select');
+            if (!select || select.dataset.loaded) return;
 
-                        try {
-                            const { getParents } = await import('./db-service.js');
-                            const parents = await getParents();
+            try {
+                const { getParents } = await import('./db-service.js');
+                const parents = await getParents();
 
-                            // Keep first option
-                            select.innerHTML = '<option value="">-- No Parent Linked Yet --</option>';
+                // Keep first option
+                select.innerHTML = '<option value="">-- No Parent Linked Yet --</option>';
 
-                            parents.forEach(p => {
-                                const option = document.createElement('option');
-                                option.value = p.id;
-                                option.textContent = `${p.name} (${p.email})`;
-                                select.appendChild(option);
-                            });
-                            select.dataset.loaded = "true";
-                        } catch (err) {
-                            console.error("Error loading parents:", err);
-                        }
-                    };
+                parents.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.id;
+                    option.textContent = `${p.name} (${p.email})`;
+                    select.appendChild(option);
+                });
+                select.dataset.loaded = "true";
+            } catch (err) {
+                console.error("Error loading parents:", err);
+            }
+        };
 
-                    // Form Handler
-                    const addStudentForm = document.getElementById('add-student-form');
-                    if (addStudentForm) {
-                        initRealTimeValidation('#add-student-form');
-                        addStudentForm.addEventListener('submit', async (e) => {
-                            e.preventDefault();
-                            const errorMsg = document.getElementById('student-error-msg');
-                            clearAllErrors('#add-student-form');
+        // Form Handler
+        const addStudentForm = document.getElementById('add-student-form');
+        if (addStudentForm) {
+            initRealTimeValidation('#add-student-form');
+            addStudentForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const errorMsg = document.getElementById('student-error-msg');
+                clearAllErrors('#add-student-form');
 
-                            const btn = addStudentForm.querySelector('button[type="submit"]');
-                            const originalText = btn.textContent;
+                const btn = addStudentForm.querySelector('button[type="submit"]');
+                const originalText = btn.textContent;
 
-                            const formData = new FormData(addStudentForm);
-                            const studentData = Object.fromEntries(formData.entries());
+                const formData = new FormData(addStudentForm);
+                const studentData = Object.fromEntries(formData.entries());
 
-                            let hasError = false;
-                            if (!toggleError('s-first-name', "Required", validators.isRequired(studentData.first_name))) hasError = true;
-                            if (!toggleError('s-last-name', "Required", validators.isRequired(studentData.last_name))) hasError = true;
-                            if (!toggleError('s-dob', "Birth date required", validators.isRequired(studentData.dob))) hasError = true;
+                let hasError = false;
+                if (!toggleError('s-first-name', "Required", validators.isRequired(studentData.first_name))) hasError = true;
+                if (!toggleError('s-last-name', "Required", validators.isRequired(studentData.last_name))) hasError = true;
+                if (!toggleError('s-dob', "Birth date required", validators.isRequired(studentData.dob))) hasError = true;
 
-                            if (hasError) return;
+                if (hasError) return;
 
-                            btn.disabled = true;
-                            btn.textContent = "Saving...";
+                btn.disabled = true;
+                btn.textContent = "Saving...";
 
-                            // Cleanup empty parent_id
-                            if (!studentData.parent_id) delete studentData.parent_id;
+                // Cleanup empty parent_id
+                if (!studentData.parent_id) delete studentData.parent_id;
 
-                            try {
-                                const { createStudent } = await import('./db-service.js');
-                                await createStudent(studentData);
+                try {
+                    const { createStudent } = await import('./db-service.js');
+                    await createStudent(studentData);
+                    addStudentForm.reset();
+                    document.getElementById('student-modal').classList.add('hidden');
+                    loadStudents();
+                } catch (err) {
+                    errorMsg.textContent = err.message || "Failed to save student.";
+                    errorMsg.classList.add('visible');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
+            });
+        }
 
-                                alert("Student added successfully!");
-                                document.getElementById('student-modal').classList.add('hidden');
-                                addStudentForm.reset();
-                                loadStudents(); // Refresh table
+        // ---------------------------------------------------------
+        // APPOINTMENT LOGIC
+        // ---------------------------------------------------------
+        window.loadAppointmentDropdowns = async () => {
+            const sSelect = document.getElementById('appointment-student-select');
+            const tSelect = document.getElementById('appointment-therapist-select');
+            if (!sSelect || sSelect.dataset.loaded) return;
 
-                            } catch (err) {
-                                errorMsg.textContent = "Error: " + err.message;
-                                errorMsg.classList.add('visible');
-                            } finally {
-                                btn.disabled = false;
-                                btn.textContent = originalText;
-                            }
-                        });
-                    }
+            try {
+                const { getStudents, getAllUsers } = await import('./db-service.js');
+                const [students, users] = await Promise.all([getStudents(), getAllUsers()]);
 
-                    // ---------------------------------------------------------
-                    // INVOICE MANAGEMENT MODULE (Module 5)
-                    // ---------------------------------------------------------
+                sSelect.innerHTML = '<option value="">-- Select Student --</option>';
+                students.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = `${s.first_name} ${s.last_name}`;
+                    sSelect.appendChild(opt);
+                });
 
-                    window.loadInvoices = async () => {
-                        const tbody = document.getElementById('invoices-table-body');
-                        const loading = document.getElementById('loading-invoices');
-                        const empty = document.getElementById('empty-state-invoices');
+                tSelect.innerHTML = '<option value="">-- Select Therapist --</option>';
+                users.filter(u => u.role === 'therapist' || u.role === 'admin').forEach(u => {
+                    const opt = document.createElement('option');
+                    opt.value = u.id;
+                    opt.textContent = u.name || u.email; // Use name if available
+                    tSelect.appendChild(opt);
+                });
 
-                        if (!tbody) return;
+                sSelect.dataset.loaded = "true";
+            } catch (err) {
+                console.error("Error loading dropdowns:", err);
+            }
+        };
 
-                        tbody.innerHTML = '';
-                        if (loading) loading.style.display = 'block';
-                        if (empty) empty.style.display = 'none';
+        const addApptForm = document.getElementById('add-appointment-form');
+        if (addApptForm) {
+            initRealTimeValidation('#add-appointment-form');
+            addApptForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const errorMsg = document.getElementById('appt-error-msg');
+                errorMsg.textContent = '';
+                clearAllErrors('#add-appointment-form');
 
-                        try {
-                            const { getInvoices } = await import('./db-service.js');
-                            const invoices = await getInvoices();
+                const btn = addApptForm.querySelector('button[type="submit"]');
+                const originalText = btn.textContent;
 
-                            if (loading) loading.style.display = 'none';
+                const formData = new FormData(addApptForm);
+                const rawData = Object.fromEntries(formData.entries());
 
-                            if (!invoices || invoices.length === 0) {
-                                if (empty) empty.style.display = 'block';
-                                return;
-                            }
+                // Combine Date and Time for DB
+                const apptData = {
+                    student_id: rawData.student_id,
+                    therapist_id: rawData.therapist_id,
+                    date_time: `${rawData.date}T${rawData.time}:00`,
+                    duration: parseInt(rawData.duration),
+                    notes: rawData.notes,
+                    status: 'Scheduled'
+                };
 
-                            renderInvoices(invoices);
-                        } catch (error) {
-                            console.error("Error loading invoices:", error);
-                            if (loading) loading.textContent = "Error loading data.";
-                        }
-                    };
+                btn.disabled = true;
+                btn.textContent = "Scheduling...";
 
-                    function renderInvoices(invoices) {
-                        const tbody = document.getElementById('invoices-table-body');
-                        if (!tbody) return;
-                        tbody.innerHTML = '';
+                try {
+                    const { createAppointment } = await import('./db-service.js');
+                    await createAppointment(apptData);
+                    addApptForm.reset();
+                    document.getElementById('appointment-modal').classList.add('hidden');
+                    if (window.loadSessions) loadSessions();
+                    if (window.loadDashboardStats) loadDashboardStats();
+                } catch (err) {
+                    errorMsg.textContent = err.message || "Failed to schedule.";
+                    errorMsg.style.display = 'block';
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
+            });
+        }
 
-                        invoices.forEach(inv => {
-                            const tr = document.createElement('tr');
-                            tr.className = "hover:bg-gray-50 transition-colors";
+        // ---------------------------------------------------------
+        // INVOICE MANAGEMENT MODULE (Module 5)
+        // ---------------------------------------------------------
 
-                            const invoiceDate = new Date(inv.invoice_date).toLocaleDateString();
-                            const dueDate = new Date(inv.due_date).toLocaleDateString();
+        window.loadInvoices = async () => {
+            const tbody = document.getElementById('invoices-table-body');
+            const loading = document.getElementById('loading-invoices');
+            const empty = document.getElementById('empty-state-invoices');
 
-                            let statusColor = 'bg-gray-100 text-gray-800';
-                            if (inv.status === 'Pending') statusColor = 'bg-yellow-100 text-yellow-800';
-                            if (inv.status === 'Paid') statusColor = 'bg-green-100 text-green-800';
-                            if (inv.status === 'Overdue') statusColor = 'bg-red-100 text-red-800';
+            if (!tbody) return;
 
-                            tr.innerHTML = `
+            tbody.innerHTML = '';
+            if (loading) loading.style.display = 'block';
+            if (empty) empty.style.display = 'none';
+
+            try {
+                const { getInvoices } = await import('./db-service.js');
+                const invoices = await getInvoices();
+
+                if (loading) loading.style.display = 'none';
+
+                if (!invoices || invoices.length === 0) {
+                    if (empty) empty.style.display = 'block';
+                    return;
+                }
+
+                renderInvoices(invoices);
+            } catch (error) {
+                console.error("Error loading invoices:", error);
+                if (loading) loading.textContent = "Error loading data.";
+            }
+        };
+
+        function renderInvoices(invoices) {
+            const tbody = document.getElementById('invoices-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            invoices.forEach(inv => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-colors";
+
+                const invoiceDate = new Date(inv.invoice_date).toLocaleDateString();
+                const dueDate = new Date(inv.due_date).toLocaleDateString();
+
+                let statusColor = 'bg-gray-100 text-gray-800';
+                if (inv.status === 'Pending') statusColor = 'bg-yellow-100 text-yellow-800';
+                if (inv.status === 'Paid') statusColor = 'bg-green-100 text-green-800';
+                if (inv.status === 'Overdue') statusColor = 'bg-red-100 text-red-800';
+
+                tr.innerHTML = `
                     <td class="px-6 py-4 text-sm font-medium text-gray-900">${inv.invoice_number}</td>
-                    <td class="px-6 py-4 text-sm text-gray-500">${inv.parent?.user?.name || 'N/A'}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${inv.parents?.users?.name || 'N/A'}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${invoiceDate}</td>
                     <td class="px-6 py-4 text-sm font-bold text-gray-900">$${inv.amount}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${dueDate}</td>
@@ -1845,85 +2093,85 @@
                         </select>
                     </td>
                                 `;
-                            tbody.appendChild(tr);
-                        });
-                    }
+                tbody.appendChild(tr);
+            });
+        }
 
-                    window.updateInvoiceStatus = async (id, status) => {
-                        const { updateInvoiceStatus } = await import('./db-service.js');
-                        try {
-                            await updateInvoiceStatus(id, status);
-                            loadInvoices(); // Refresh to update colors
-                        } catch (err) {
-                            alert("Failed to update: " + err.message);
-                        }
-                    };
+        window.updateInvoiceStatus = async (id, status) => {
+            const { updateInvoiceStatus } = await import('./db-service.js');
+            try {
+                await updateInvoiceStatus(id, status);
+                loadInvoices(); // Refresh to update colors
+            } catch (err) {
+                alert("Failed to update: " + err.message);
+            }
+        };
 
-                    window.loadParentOptionsForInvoice = async () => {
-                        const select = document.getElementById('invoice-parent-select');
-                        if (!select || select.dataset.loaded) return;
+        window.loadParentOptionsForInvoice = async () => {
+            const select = document.getElementById('invoice-parent-select');
+            if (!select || select.dataset.loaded) return;
 
-                        try {
-                            const { getParents } = await import('./db-service.js');
-                            const parents = await getParents();
+            try {
+                const { getParents } = await import('./db-service.js');
+                const parents = await getParents();
 
-                            select.innerHTML = '<option value="">-- Select Parent --</option>';
-                            parents.forEach(p => {
-                                const option = document.createElement('option');
-                                option.value = p.id;
-                                option.textContent = `${p.name} (${p.email})`;
-                                select.appendChild(option);
-                            });
-                            select.dataset.loaded = "true";
-                        } catch (err) {
-                            console.error("Error loading parents:", err);
-                        }
-                    };
+                select.innerHTML = '<option value="">-- Select Parent --</option>';
+                parents.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.id;
+                    option.textContent = `${p.name} (${p.email})`;
+                    select.appendChild(option);
+                });
+                select.dataset.loaded = "true";
+            } catch (err) {
+                console.error("Error loading parents:", err);
+            }
+        };
 
-                    // Invoice Form Handler
-                    const addInvoiceForm = document.getElementById('add-invoice-form');
-                    if (addInvoiceForm) {
-                        initRealTimeValidation('#add-invoice-form');
-                        addInvoiceForm.addEventListener('submit', async (e) => {
-                            e.preventDefault();
-                            const errorMsg = document.getElementById('invoice-error-msg');
-                            clearAllErrors('#add-invoice-form');
+        // Invoice Form Handler
+        const addInvoiceForm = document.getElementById('add-invoice-form');
+        if (addInvoiceForm) {
+            initRealTimeValidation('#add-invoice-form');
+            addInvoiceForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const errorMsg = document.getElementById('invoice-error-msg');
+                clearAllErrors('#add-invoice-form');
 
-                            const btn = addInvoiceForm.querySelector('button[type="submit"]');
-                            const originalText = btn.textContent;
+                const btn = addInvoiceForm.querySelector('button[type="submit"]');
+                const originalText = btn.textContent;
 
-                            const formData = new FormData(addInvoiceForm);
-                            const invoiceData = Object.fromEntries(formData.entries());
+                const formData = new FormData(addInvoiceForm);
+                const invoiceData = Object.fromEntries(formData.entries());
 
-                            let hasError = false;
-                            if (!toggleError('invoice-parent-select', "Please select a parent", validators.isRequired(invoiceData.parent_id))) hasError = true;
-                            if (!toggleError('inv-amount', "Enter a valid amount", validators.isRequired(invoiceData.amount) && Number(invoiceData.amount) > 0)) hasError = true;
-                            if (!toggleError('inv-due-date', "Due date required", validators.isRequired(invoiceData.due_date))) hasError = true;
+                let hasError = false;
+                if (!toggleError('invoice-parent-select', "Please select a parent", validators.isRequired(invoiceData.parent_id))) hasError = true;
+                if (!toggleError('inv-amount', "Enter a valid amount", validators.isRequired(invoiceData.amount) && Number(invoiceData.amount) > 0)) hasError = true;
+                if (!toggleError('inv-due-date', "Due date required", validators.isRequired(invoiceData.due_date))) hasError = true;
 
-                            if (hasError) return;
+                if (hasError) return;
 
-                            btn.disabled = true;
-                            btn.textContent = "Generating...";
+                btn.disabled = true;
+                btn.textContent = "Generating...";
 
-                            try {
-                                const { createInvoice } = await import('./db-service.js');
-                                await createInvoice(invoiceData);
+                try {
+                    const { createInvoice } = await import('./db-service.js');
+                    await createInvoice(invoiceData);
 
-                                alert("Invoice generated successfully!");
-                                document.getElementById('invoice-modal').classList.add('hidden');
-                                addInvoiceForm.reset();
-                                loadInvoices();
+                    alert("Invoice generated successfully!");
+                    document.getElementById('invoice-modal').classList.add('hidden');
+                    addInvoiceForm.reset();
+                    loadInvoices();
 
-                            } catch (err) {
-                                errorMsg.textContent = "Error: " + err.message;
-                                errorMsg.classList.add('visible');
-                            } finally {
-                                btn.disabled = false;
-                                btn.textContent = originalText;
-                            }
-                        });
-                    }
-                </script>
+                } catch (err) {
+                    errorMsg.textContent = "Error: " + err.message;
+                    errorMsg.classList.add('visible');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>
